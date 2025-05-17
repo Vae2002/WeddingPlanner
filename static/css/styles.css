@@ -187,3 +187,15 @@ main {
 .profile-link:hover {
     border-color: #007bff;
 }
+
+.profile-header {
+    display: flex;
+    align-items: center; /* vertically center the image and text */
+    gap: 16px; /* space between image and h2 */
+    margin-top: 1em;
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
