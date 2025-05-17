@@ -1,5 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from datetime import datetime
+import os
+
 
 app = Flask(__name__)
 
@@ -13,7 +15,15 @@ def home():
 
 @app.route('/search')
 def search():
-    return render_template('search.html', show_footer=True)
+    image_folder = os.path.join('static', 'images')
+    image_files = [
+        os.path.join(file)
+        for file in os.listdir(image_folder)
+        if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
+    ]
+      # Debugging output
+    print("Images sent to template:", image_files)
+    return render_template('search.html', images=image_files, show_footer=True)
 
 @app.route('/capture')
 def capture():
