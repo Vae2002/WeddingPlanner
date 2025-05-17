@@ -75,7 +75,15 @@ def reels():
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html', show_footer=True)
+    image_folder = os.path.join('static', 'images')
+    image_files = [
+        os.path.join(file)
+        for file in os.listdir(image_folder)
+        if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
+    ]
+      # Debugging output
+    print("Images sent to template:", image_files)
+    return render_template('profile.html', images=image_files, show_footer=True)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
