@@ -4,7 +4,7 @@
     <!-- S&E Logo top-left -->
     <a href="{{ url_for('home') }}" class="logo-link" title="Home">
         <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="S&E Logo">
-    </a>
+    </a>  
 
     <a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -14,14 +14,98 @@
 
     <br><br><br><br>
 
-    <div class="profile-header">
-        <a class="profile-link">
-            <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
-        </a>
-        <div class="text-info">
-            <h2>laststeftoeunity</h2>
-            <h4>Trembesi Hotel BSD</h4>
+    <div class="feed-wrapper">
+        <div class="profile-header">
+            <a class="profile-link">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <h2>laststeftoeunity</h2>
+                <h4>Trembesi Hotel BSD</h4>
+            </div>
         </div>
+        <!-- Image Box Inserted Here -->
+        <div class="image-carousel">
+            <div class="carousel-window">
+                <div class="carousel-track">
+                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Photo 1" />
+                    <img src="{{ url_for('static', filename='images/picture.jpg') }}" alt="Photo 2" />
+                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Photo 3" />
+                </div>
+            </div>
+            <button class="carousel-btn prev">‹</button>
+            <button class="carousel-btn next">›</button>
+        </div>
+        <div class="carousel-dots" id="carousel-dots"></div>
+
+        <div class="horizontal-icon-wrapper">
+            <!-- Heart icon -->
+            <a href="#" class="icon-button" title="Like">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z"></path>
+                </svg>
+            </a>
+
+            <!-- Paper plane icon -->
+            <a href="#" class="icon-button" title="Send">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </a>
+
+            <!-- Bookmark icon -->
+            <a href="#" class="icon-button" title="Bookmark">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                </svg>
+            </a>
+        </div>
+
     </div>
+    
+    <div class="liked-by-wrapper">
+        <div class="small-profiles">
+            <a class="profile-link small-profile-link" style="z-index: 3; left: 0px;">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 1">
+            </a>
+            <a class="profile-link small-profile-link" style="z-index: 2; left: 12px;">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 2">
+            </a>
+            <a class="profile-link small-profile-link" style="z-index: 1; left: 24px;">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 3">
+            </a>
+        </div>
+        <h4 class="extra-info liked-by-text">
+            Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
+        </h4>
+    </div>
+
+    <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
+
+    <p id="days-left" style="margin-top: 1rem;"></p>
+
+    <script>
+        // Calculate days until September 6, 2025
+        const targetDate = new Date('2025-09-06');
+        const today = new Date();
+
+        // Remove the time part for accurate day count
+        targetDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const diffTime = targetDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        const daysLeftEl = document.getElementById('days-left');
+        if (diffDays > 0) {
+            daysLeftEl.textContent = `${diffDays} days left`;
+        } else {
+            daysLeftEl.textContent = `The big day has arrived or passed! 🎉`;
+        }
+    </script>
+
+    <br><br><br><br><br><br>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 
 {% endblock %}

@@ -13,10 +13,18 @@ html, body {
     overflow-x: hidden;
 }
 
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* or space-around/space-evenly depending on desired layout */
+  padding: 10px 16px;
+}
+
+
 .logo-link {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 1.5rem;
+    left: 1.5rem;
     display: inline-block;
     width: 40px;      /* adjust size as needed */
     height: 40px;
@@ -82,8 +90,8 @@ footer {
 
 .close-button {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
+    top: 1.5rem;
+    left: 1.5rem;
     z-index: 20; /* Higher than video/canvas */
     background-color: rgba(255,255,255,0.7);
     padding: 8px 12px;
@@ -100,8 +108,8 @@ footer {
 
 .message-icon {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 1.5rem;
+    right: 1.5rem;
     font-size: 24px;
     text-decoration: none;
     background: #f0f0f0;
@@ -142,7 +150,7 @@ footer {
 .call-icon,
 .vidcall-icon {
     position: absolute;
-    top: 10px;
+    top: 1.5rem;
     background: #f0f0f0;
     border-radius: 50%;
     padding: 6px;
@@ -159,12 +167,12 @@ footer {
 
 /* Position voice call on top right with some margin */
 .call-icon {
-    right: 60px; /* adjust spacing from right */
+    right: 5rem; /* adjust spacing from right */
 }
 
 /* Position video call right corner */
 .vidcall-icon {
-    right: 10px;
+    right: 1.5rem;
 }
 
 /* If using .footer-icons for the footer nav */
@@ -205,6 +213,15 @@ footer {
     height: 42px;
 }
 
+.switch-camera-button svg {
+    width: 28px;
+    height: 28px;
+    stroke: white;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px;
+    border-radius: 50%;
+}
+
 /* Profile image with circle frame */
 .profile-link {
     display: inline-block;
@@ -226,8 +243,8 @@ footer {
 
 /* Modifier: large version */
 .profile-large {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     border: 3px solid #bbb;
 }
 
@@ -283,6 +300,20 @@ footer {
     margin-top: 1em;
 }
 
+.profile-header.heading {
+    position: absolute;
+    top: -10px;
+    left: 3.5rem;
+    z-index: 20; /* Higher than video/canvas */
+    background-color: rgba(255,255,255,0.7);
+    padding: 8px 12px;
+    border-radius: 50%;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
 .profile-header h2 {
     margin: 0;
     font-size: 1.5em;
@@ -317,7 +348,9 @@ footer {
     padding-left: 0px; /* aligns text with the start of text-info (adjust based on profile-link width + gap) */
 }
 
+.text-info h1,
 .text-info h2,
+.text-info h3,
 .text-info h4 {
     margin: 0;           /* Remove all margin */
     line-height: 1.2;    /* Adjust line spacing (you can tweak this) */
@@ -352,6 +385,14 @@ footer {
     gap: 20px;
     z-index: 1000;
 }
+
+.horizontal-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* spacing between icons */
+  margin-top: 1rem; /* optional */
+}
+
 
 .icon-button {
     width: 40px;
@@ -448,7 +489,6 @@ footer {
   padding: 6px;
 }
 
-/* images with square frame */
 .photo-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 items per row */
@@ -463,13 +503,26 @@ footer {
     background-color: #ccc;
 }
 
-.camera-container {
+.camera-wrapper {
     position: relative;
+    width: 90vw; /* or any width you prefer */
+    top: -3rem;
+    max-width: 450px;
+    aspect-ratio: 9 / 16;
+    z-index: 1;
+    background: black;
+}
+
+.camera-container {
+    position: fixed;
     width: 100vw;
     height: 100vh;
+    display: flex;
+    justify-content: center;   /* centers horizontally */
+    align-items: center;       /* centers vertically */
     overflow: hidden;
-    background-color: black;
 }
+
 
 .camera-container video {
     width: 100%;
@@ -486,6 +539,8 @@ footer {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 8px;
+    transform: scaleX(-1); /* Mirror the video */
 }
 
 .capture-button {
@@ -559,3 +614,154 @@ footer {
     z-index: 10;
     display: none; /* hidden by default */
 }
+
+  .questionnaire-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1rem;
+    max-height: 100%;
+  }
+
+  .chat-box {
+    flex-grow: 1;
+    overflow-y: auto;
+    /* background: #f9f9f9; */
+    padding: 1rem;
+    /* border: 1px solid #ccc; */
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .message {
+    margin: 0.5rem 0;
+    padding: 0.6rem 1rem;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+  }
+
+  .message.question {
+    background-color: #e0e0e0;
+    align-self: flex-start;
+  }
+
+  .message.answer {
+    background-color: #d1e7dd;
+    align-self: flex-end;
+    text-align: right;
+  }
+
+  .input-area {
+    position: fixed;
+    bottom: 3rem;
+    left: 5rem;
+    width: 90%;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .input-area input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  .input-area button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .input-area button:hover {
+    background: #0056b3;
+  }
+
+.feed-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    overflow:visible;
+}
+
+.image-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem auto;
+}
+
+.carousel-window {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 12px;
+  width: 100%;
+  height: auto;
+  position: relative; /* Optional */
+}
+
+.carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-track img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex: 0 0 100%;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  font-size: 2rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  z-index: 10; /* Make sure it's above everything */
+  border-radius: 50%;
+  user-select: none;
+}
+
+.carousel-btn.prev {
+  left: 10px;
+}
+
+.carousel-btn.next {
+  right: 10px;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+  gap: 0.4rem;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.carousel-dot.active {
+  background-color: #333;
+}
+
+
+
+
