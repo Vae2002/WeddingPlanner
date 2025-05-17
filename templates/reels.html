@@ -1,6 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
 
+    <div class="center-container">
+        <h1>S&E</h1>
+    </div>
+
+    <div class="profile-header sticky-bottom">
+        <div class="profile-main">
+            <a class="profile-link">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <h2>laststeftoeunity</h2>
+                <h4>Nama lagu nya</h4>
+            </div>
+        </div>
+        <h4 class="extra-info">Our prewedding video</h4>
+        
+        <div class="liked-by-wrapper">
+            <div class="small-profiles">
+                <a class="profile-link small-profile-link" style="z-index: 3; left: 0px;">
+                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 1">
+                </a>
+                <a class="profile-link small-profile-link" style="z-index: 2; left: 12px;">
+                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 2">
+                </a>
+                <a class="profile-link small-profile-link" style="z-index: 1; left: 24px;">
+                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 3">
+                </a>
+            </div>
+            <h4 class="extra-info liked-by-text">
+                Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
+            </h4>
+        </div>
+    </div>
+
+    <div class="vertical-icon-wrapper">
+        <!-- Heart icon -->
+        <a href="#" class="icon-button" title="Like">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z"></path>
+            </svg>
+        </a>
+
+        <!-- Paper plane icon -->
+        <a href="#" class="icon-button" title="Send">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </a>
+
+        <!-- 3 horizontal dots -->
+        <a href="#" class="icon-button" title="More options">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="black" viewBox="0 0 24 24">
+                <circle cx="5" cy="12" r="2"/>
+                <circle cx="12" cy="12" r="2"/>
+                <circle cx="19" cy="12" r="2"/>
+            </svg>
+        </a>
+
+        <!-- Round framed profile image -->
+        <a href="#" class="profile-link vertical-profile-link" title="Profile">
+            <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+        </a>
+    </div>
+
+
+
 
 
 
