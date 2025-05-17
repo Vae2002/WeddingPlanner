@@ -664,23 +664,58 @@ footer {
     align-items: left;
 }
 
-.image-box {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    aspect-ratio: 4 / 5; /* Maintain 4:5 ratio */
-    overflow: hidden;
-    border-radius: 12px;
-    margin: 1rem auto; /* centers the box */
+.image-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem auto;
 }
 
-.image-box img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Crops image to fill */
+.carousel-window {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 12px;
+  width: 100%;
+  height: auto;
+  position: relative; /* Optional */
 }
+
+.carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-track img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex: 0 0 100%;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  font-size: 2rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  z-index: 10; /* Make sure it's above everything */
+  border-radius: 50%;
+  user-select: none;
+}
+
+.carousel-btn.prev {
+  left: 10px;
+}
+
+.carousel-btn.next {
+  right: 10px;
+}
+
+
+
 
 
