@@ -1,0 +1,189 @@
+/* Make page fill the whole viewport height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.center-container {
+    text-align: center;
+}
+
+/* Push footer to the bottom */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    padding: 2em;
+    position: relative;
+}
+
+/* Make footer taller */
+footer {
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    padding: 15px 0;       /* increase vertical padding for height */
+}
+
+/* Adjust footer nav items to vertically center inside taller footer */
+.footer-nav ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;   /* center icons vertically */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* If using .footer-icons for the footer nav */
+.footer-icons {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;   /* vertically center icons */
+    padding: 0;
+    margin: 0;
+    height: 60px;          /* set fixed height bigger than before */
+}
+
+main {
+    padding: 2em;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    text-decoration: none;
+    color: #333;
+    background: #f0f0f0;
+    border-radius: 50%;
+    padding: 6px 12px;
+    line-height: 1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.close-button:hover {
+    background: #ddd;
+}
+
+.message-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    text-decoration: none;
+    background: #f0f0f0;
+    padding: 6px 12px;
+    border-radius: 50%;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s;
+}
+
+.message-icon:hover {
+    background: #ddd;
+}
+
+.call-icon,
+.vidcall-icon {
+    position: absolute;
+    top: 10px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    padding: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.call-icon:hover,
+.vidcall-icon:hover {
+    background: #ddd;
+}
+
+/* Position voice call on top right with some margin */
+.call-icon {
+    right: 60px; /* adjust spacing from right */
+}
+
+/* Position video call right corner */
+.vidcall-icon {
+    right: 10px;
+}
+
+/* If using .footer-icons for the footer nav */
+.footer-icons {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;   /* vertically center icons */
+    padding: 0;
+    margin: 0;
+    height: 60px;          /* set fixed height bigger than before */
+}
+
+/* Footer list items */
+.footer-icons li {
+    flex: 1;
+    text-align: center;
+}
+
+/* Icon links styling */
+.icon-link {
+    display: inline-block;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+    line-height: 1;
+    vertical-align: middle;
+    font-size: 28px;      /* increase icon size slightly */
+}
+
+.icon-link:hover {
+    color: #007bff;
+}
+
+/* Capture icon bigger */
+.capture-icon svg {
+    width: 42px;
+    height: 42px;
+}
+
+/* Profile image with circle frame */
+.profile-link {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2.5px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+.profile-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+}
+
+/* Modifier: large version */
+.profile-large {
+    width: 150px;
+    height: 150px;
+    border: 3px solid #bbb;
+}
+
+.profile-link:hover {
+    border-color: #007bff;
+}
