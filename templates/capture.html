@@ -4,4 +4,28 @@
 <a href="{{ url_for('home') }}" class="close-button">✕</a>
 
 
+<div class="camera-container">
+    <video id="camera-stream" autoplay playsinline></video>
+    <canvas id="capture-canvas" style="display: none;"></canvas>
+
+    <!-- Capture button -->
+    <button id="capture-btn" class="capture-button" title="Take Photo"></button>
+
+    <!-- Modal for captured photo -->
+    <div id="photo-modal" class="photo-modal">
+        <div class="modal-content">
+            <img id="captured-image-preview" src="" alt="Captured Image">
+            <div class="modal-buttons">
+                <button id="share-btn">Share</button>
+                <button id="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
 {% endblock %}
