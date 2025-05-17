@@ -5,6 +5,8 @@ html, body {
     padding: 0;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow-x: hidden;
 }
 
 .logo-link {
@@ -32,6 +34,7 @@ html, body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding-bottom: 0px;
 }
 
 main {
@@ -42,9 +45,14 @@ main {
 
 /* Make footer taller */
 footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     background-color: #f8f8f8;
     border-top: 1px solid #ddd;
-    padding: 35px 0;       /* increase vertical padding for height */
+    padding: 5px 0;
+    z-index: 1000; /* keep it above other content */
 }
 
 /* Adjust footer nav items to vertically center inside taller footer */
@@ -65,7 +73,7 @@ footer {
     align-items: center;   /* vertically center icons */
     padding: 0;
     margin: 0;
-    height: 60px;          /* set fixed height bigger than before */
+    height: 5px;          /* set fixed height bigger than before */
 }
 
 .close-button {
@@ -278,7 +286,7 @@ footer {
 
 .profile-header.sticky-bottom {
     position: fixed;
-    bottom: 150px;
+    bottom: 90px;
     left: 0;
     width: 100%;
     padding: 10px 20px;
@@ -333,7 +341,7 @@ footer {
 
 .vertical-icon-wrapper {
     position: fixed;
-    bottom: 150px;
+    bottom: 100px;
     right: 20px;
     display: flex;
     flex-direction: column;
@@ -384,10 +392,10 @@ footer {
 
 #background-video {
   position: fixed;
-  top: 0;            /* Align video to top */
+  top: 0;          
   left: 0;
   width: 100vw;
-  height: calc(100vh - 130px);  /* Full viewport height minus 150px */
+  height: calc(100vh - 70px); 
   object-fit: contain;
   z-index: -1;
 }
