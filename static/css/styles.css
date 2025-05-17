@@ -9,6 +9,14 @@ html, body {
     overflow-x: hidden;
 }
 
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* or space-around/space-evenly depending on desired layout */
+  padding: 10px 16px;
+}
+
+
 .logo-link {
     position: absolute;
     top: 10px;
@@ -78,7 +86,7 @@ footer {
 
 .close-button {
     position: absolute;
-    top: 1rem;
+    top: 1.5rem;
     left: 1rem;
     z-index: 20; /* Higher than video/canvas */
     background-color: rgba(255,255,255,0.7);
@@ -138,7 +146,7 @@ footer {
 .call-icon,
 .vidcall-icon {
     position: absolute;
-    top: 10px;
+    top: 1.5rem;
     background: #f0f0f0;
     border-radius: 50%;
     padding: 6px;
@@ -222,8 +230,8 @@ footer {
 
 /* Modifier: large version */
 .profile-large {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     border: 3px solid #bbb;
 }
 
@@ -279,6 +287,20 @@ footer {
     margin-top: 1em;
 }
 
+.profile-header.heading {
+    position: absolute;
+    top: -10px;
+    left: 2.5rem;
+    z-index: 20; /* Higher than video/canvas */
+    background-color: rgba(255,255,255,0.7);
+    padding: 8px 12px;
+    border-radius: 50%;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
 .profile-header h2 {
     margin: 0;
     font-size: 1.5em;
@@ -313,7 +335,9 @@ footer {
     padding-left: 0px; /* aligns text with the start of text-info (adjust based on profile-link width + gap) */
 }
 
+.text-info h1,
 .text-info h2,
+.text-info h3,
 .text-info h4 {
     margin: 0;           /* Remove all margin */
     line-height: 1.2;    /* Adjust line spacing (you can tweak this) */

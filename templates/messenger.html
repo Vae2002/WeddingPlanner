@@ -1,37 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
 
-<a href="{{ url_for('home') }}" class="close-button">&lt;</a>
+<header>
+  <a href="{{ url_for('home') }}" class="close-button">&lt;</a>
 
-<a href="{{ url_for('voice_call') }}" class="call-icon" title="Voice Call">
-  <!-- Voice Call Icon SVG -->
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1.21.37 2.4.72 3.54a2 2 0 0 1-.45 2.11L9.09 10.91a16 16 0 0 0 6 6l1.54-1.54a2 2 0 0 1 2.11-.45c1.14.35 2.33.59 3.54.72a2 2 0 0 1 1.72 2z"></path>
-  </svg>
-</a>
+  <div class="profile-header heading">
+    <a class="profile-link">
+        <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+    </a>
+    <div class="text-info">
+        <h2>Stefanus & Eunice</h2>
+        <h4>laststeftoeunity</h4>
+    </div>
+  </div>
 
-<a href="{{ url_for('video_call') }}" class="vidcall-icon" title="Video Call">
-  <!-- Video Call Icon SVG -->
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
-    <path d="M23 7l-7 5 7 5V7z"></path>
-    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-  </svg>
-</a>
+  <a href="{{ url_for('voice_call') }}" class="call-icon" title="Voice Call">
+    <!-- Voice Call Icon SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1.21.37 2.4.72 3.54a2 2 0 0 1-.45 2.11L9.09 10.91a16 16 0 0 0 6 6l1.54-1.54a2 2 0 0 1 2.11-.45c1.14.35 2.33.59 3.54.72a2 2 0 0 1 1.72 2z"></path>
+    </svg>
+  </a>
+
+  <a href="{{ url_for('video_call') }}" class="vidcall-icon" title="Video Call">
+    <!-- Video Call Icon SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+      <path d="M23 7l-7 5 7 5V7z"></path>
+      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+    </svg>
+  </a>
+</header>
 
 <body>
+    <br><br><br>
     <div class="center-container">
         <a class="profile-link profile-large">
             <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
         </a>
-        <h1>Stefanus & Eunice</h1>
-        <h3>laststeftoeunity</h3>
-        <h3>...K followers ...posts</h3>
-        <h3>You follow each other on their wedding</h3>
+        <div class="text-info">
+          <h1>Stefanus & Eunice</h1>
+          <h3>laststeftoeunity</h3>
+          <h3>...K followers ...posts</h3>
+          <h3>You follow each other on their wedding</h3>
+        </div>
         <a href="{{ url_for('profile') }}">
             <button>View profile</button>
         </a>
-
-
     </div>
 </body>
     
