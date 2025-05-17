@@ -1,15 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <div class="profile-header">
-        <a class="profile-link">
-            <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
-        </a>
-        <div class="text-info">
-            <h2>laststeftoeunity</h2>
-            <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South Tangerang City, Banten 15311, Indonesia</h4>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile View</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="top-bar">
+            <input type="text" class="search-bar" placeholder="Explore/Search">
+        </header>
+
+        <div class="map-header">
+            <!-- Static or dynamic map background -->
+            <img src="{{ url_for('static', filename='map-sample.png') }}" alt="Map" class="map-image">
         </div>
+      
+        <div class="profile-header">
+            <a class="profile-link">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <h2>laststeftoeunity</h2>
+                <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South Tangerang City, Banten 15311, Indonesia</h4>
+            </div>
+        </div>
+
+        <section class="recent-posts">
+            <h4>Recent</h4>
+            <div class="grid">
+                {% for post in posts %}
+                    <div class="grid-item">
+                        <img src="{{ url_for('static', filename=post.image) }}" alt="Post">
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <footer class="bottom-nav">
+            <a href="/home"><img src="{{ url_for('static', filename='icons/home.png') }}" alt="Home"></a>
+            <a href="/search"><img src="{{ url_for('static', filename='icons/search.png') }}" alt="Search"></a>
+            <a href="/add"><img src="{{ url_for('static', filename='icons/plus.png') }}" alt="Add"></a>
+            <a href="/notifications"><img src="{{ url_for('static', filename='icons/bell.png') }}" alt="Notifications"></a>
+            <a href="/profile"><img src="{{ url_for('static', filename='icons/user.png') }}" alt="Profile"></a>
+        </footer>
     </div>
+</body>
+</html>
 
 
 {% endblock %}
