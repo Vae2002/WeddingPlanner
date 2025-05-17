@@ -254,7 +254,7 @@ main {
     left: 0;
     width: 100%;
     padding: 10px 20px;
-    background-color: white;
+    /* background-color: white; */
     /* box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1); */
     z-index: 999;
     display: flex;
@@ -353,3 +353,15 @@ main {
 .vertical-profile-link:hover {
     border-color: #007bff;
 }
+
+#background-video {
+  position: fixed;
+  top: 0;            /* Align video to top */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 130px);  /* Full viewport height minus 150px */
+  object-fit: contain;
+  z-index: -1;
+}
+
+

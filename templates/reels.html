@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <div class="center-container">
-        <h1>S&E</h1>
-    </div>
+    <video autoplay loop muted="false" controls id="background-video" playsinline>
+        <source src="{{ url_for('static', filename='videos/reels.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+
+
+    <a href="{{ url_for('home') }}" class="logo-link" title="Home">
+        <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="S&E Logo">
+    </a>
 
     <div class="profile-header sticky-bottom">
         <div class="profile-main">
