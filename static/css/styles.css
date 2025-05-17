@@ -7,6 +7,22 @@ html, body {
     flex-direction: column;
 }
 
+.logo-link {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: inline-block;
+    width: 40px;      /* adjust size as needed */
+    height: 40px;
+}
+
+.logo-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
 .center-container {
     text-align: center;
 }
@@ -28,7 +44,7 @@ main {
 footer {
     background-color: #f8f8f8;
     border-top: 1px solid #ddd;
-    padding: 15px 0;       /* increase vertical padding for height */
+    padding: 35px 0;       /* increase vertical padding for height */
 }
 
 /* Adjust footer nav items to vertically center inside taller footer */
@@ -184,6 +200,38 @@ main {
     border: 3px solid #bbb;
 }
 
+/* container to hold small profile pics stacked */
+.small-profiles {
+    position: relative;
+    width: 56px; /* enough width to show stacked pics */
+    height: 24px; /* same height as small profiles */
+}
+
+/* small profile pics */
+.small-profile-link {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    overflow: hidden;
+    box-sizing: content-box; /* keep border inside size */
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.small-profile-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0; /* container does rounding */
+}
+
+.small-profile-link:hover {
+    border-color: #007bff;
+}
+
 .profile-link:hover {
     border-color: #007bff;
 }
@@ -199,3 +247,121 @@ main {
     margin: 0;
     font-size: 1.5em;
 }
+
+.profile-header.sticky-bottom {
+    position: fixed;
+    bottom: 150px;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    /* background-color: white; */
+    /* box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1); */
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start; /* this aligns items to the left */
+}
+
+.profile-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.extra-info {
+    margin: 0;
+    color: #666;
+    font-weight: normal;
+    font-size: 1em;
+    padding-left: 0px; /* aligns text with the start of text-info (adjust based on profile-link width + gap) */
+}
+
+.text-info h2,
+.text-info h4 {
+    margin: 0;           /* Remove all margin */
+    line-height: 1.2;    /* Adjust line spacing (you can tweak this) */
+}
+
+.text-info h4 {
+    color: #666;         /* Optional: make the subtitle lighter */
+    font-weight: normal; /* Optional: make it less bold than h3 */
+    font-size: 1em;      /* Optional: adjust size */
+}
+
+.liked-by-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;  /* spacing between profile image and text */
+    padding-left: 0px; /* align with other .extra-info text */
+}
+
+.liked-by-text {
+    margin: 0;  /* keep no extra margin */
+    font-weight: normal;
+    font-size: 1em;
+    color: #666;
+}
+
+.vertical-icon-wrapper {
+    position: fixed;
+    bottom: 150px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1000;
+}
+
+.icon-button {
+    width: 40px;
+    height: 40px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: background 0.3s;
+    text-decoration: none;
+    color: black;
+}
+
+.icon-button:hover {
+    background: #ddd;
+}
+
+.vertical-profile-link {
+    width: 44px;  /* Slightly bigger */
+    height: 44px;
+    border: 2px solid #ccc;
+    overflow: hidden;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: border-color 0.3s;
+}
+
+.vertical-profile-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.vertical-profile-link:hover {
+    border-color: #007bff;
+}
+
+#background-video {
+  position: fixed;
+  top: 0;            /* Align video to top */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 130px);  /* Full viewport height minus 150px */
+  object-fit: contain;
+  z-index: -1;
+}
+
+

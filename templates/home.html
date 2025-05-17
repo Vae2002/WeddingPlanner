@@ -1,13 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 
-<a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
-  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-  </svg>
-</a>
+    <!-- S&E Logo top-left -->
+    <a href="{{ url_for('home') }}" class="logo-link" title="Home">
+        <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="S&E Logo">
+    </a>
 
-<h2>Welcome to the Home Page</h2>
-<p>This is the homepage of your Flask app.</p>
+    <a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    </a>
+
+    <br><br><br><br>
+
+    <div class="profile-header">
+        <a class="profile-link">
+            <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+        </a>
+        <div class="text-info">
+            <h2>laststeftoeunity</h2>
+            <h4>Trembesi Hotel BSD</h4>
+        </div>
+    </div>
 
 {% endblock %}

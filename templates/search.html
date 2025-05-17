@@ -17,17 +17,16 @@
             <!-- Static or dynamic map background -->
             <img src="{{ url_for('static', filename='map-sample.png') }}" alt="Map" class="map-image">
         </div>
-
-        <section class="profile-section">
-            <div class="profile-header">
-                <img src="{{ url_for('static', filename='placeholder-profile.png') }}" class="profile-icon" alt="Profile">
-                <div class="profile-info">
-                    <h3>@laststeptoeunity</h3>
-                    <p>Trembesi Hotel bla bla bla</p>
-                    <small>Wedding • posts<br>September 06 2025</small>
-                </div>
+      
+        <div class="profile-header">
+            <a class="profile-link">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <h2>laststeftoeunity</h2>
+                <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South Tangerang City, Banten 15311, Indonesia</h4>
             </div>
-        </section>
+        </div>
 
         <section class="recent-posts">
             <h4>Recent</h4>
@@ -50,8 +49,6 @@
     </div>
 </body>
 </html>
-
-
 
 
 {% endblock %}
