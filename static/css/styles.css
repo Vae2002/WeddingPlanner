@@ -68,10 +68,6 @@ footer {
     height: 60px;          /* set fixed height bigger than before */
 }
 
-main {
-    padding: 2em;
-}
-
 .close-button {
     position: absolute;
     top: 1rem;
@@ -107,6 +103,29 @@ main {
 .message-icon:hover {
     background: #ddd;
 }
+
+.profile-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    max-width: 300px;
+}
+
+.stat-group {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: gray;
+}
+
 
 .call-icon,
 .vidcall-icon {
@@ -234,6 +253,15 @@ main {
 
 .profile-link:hover {
     border-color: #007bff;
+}
+
+.profile-container {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    height: 100vh; /* full viewport height */
+    text-align: center;
+    flex-direction: column;
 }
 
 .profile-header {
