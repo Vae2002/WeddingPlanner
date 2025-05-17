@@ -9,6 +9,8 @@ html, body {
     padding: 0;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow-x: hidden;
 }
 
 .logo-link {
@@ -36,6 +38,7 @@ html, body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding-bottom: 0px;
 }
 
 main {
@@ -46,9 +49,14 @@ main {
 
 /* Make footer taller */
 footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     background-color: #f8f8f8;
     border-top: 1px solid #ddd;
-    padding: 35px 0;       /* increase vertical padding for height */
+    padding: 5px 0;
+    z-index: 1000; /* keep it above other content */
 }
 
 /* Adjust footer nav items to vertically center inside taller footer */
@@ -69,25 +77,21 @@ footer {
     align-items: center;   /* vertically center icons */
     padding: 0;
     margin: 0;
-    height: 60px;          /* set fixed height bigger than before */
-}
-
-main {
-    padding: 2em;
+    height: 5px;          /* set fixed height bigger than before */
 }
 
 .close-button {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 24px;
-    text-decoration: none;
-    color: #333;
-    background: #f0f0f0;
+    top: 1rem;
+    left: 1rem;
+    z-index: 20; /* Higher than video/canvas */
+    background-color: rgba(255,255,255,0.7);
+    padding: 8px 12px;
     border-radius: 50%;
-    padding: 6px 12px;
-    line-height: 1;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .close-button:hover {
@@ -111,6 +115,29 @@ main {
 .message-icon:hover {
     background: #ddd;
 }
+
+.profile-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    max-width: 300px;
+}
+
+.stat-group {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: gray;
+}
+
 
 .call-icon,
 .vidcall-icon {
@@ -240,6 +267,15 @@ main {
     border-color: #007bff;
 }
 
+.profile-container {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    height: 100vh; /* full viewport height */
+    text-align: center;
+    flex-direction: column;
+}
+
 .profile-header {
     display: flex;
     align-items: center; /* vertically center the image and text */
@@ -254,7 +290,7 @@ main {
 
 .profile-header.sticky-bottom {
     position: fixed;
-    bottom: 150px;
+    bottom: 90px;
     left: 0;
     width: 100%;
     padding: 10px 20px;
@@ -309,7 +345,7 @@ main {
 
 .vertical-icon-wrapper {
     position: fixed;
-    bottom: 150px;
+    bottom: 100px;
     right: 20px;
     display: flex;
     flex-direction: column;
@@ -360,10 +396,10 @@ main {
 
 #background-video {
   position: fixed;
-  top: 0;            /* Align video to top */
+  top: 0;          
   left: 0;
   width: 100vw;
-  height: calc(100vh - 130px);  /* Full viewport height minus 150px */
+  height: calc(100vh - 70px); 
   object-fit: contain;
   z-index: -1;
 }
@@ -425,4 +461,101 @@ main {
     aspect-ratio: 1 / 1;
     object-fit: cover;
     background-color: #ccc;
+}
+
+.camera-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: black;
+}
+
+.camera-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* lower than close button */
+}
+
+
+#camera-stream {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.capture-button {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: white;
+    border: 4px solid #ccc;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.photo-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 90%;
+}
+
+.modal-content img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.modal-buttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#share-btn {
+    background-color: #4caf50;
+    color: white;
+}
+
+#cancel-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.switch-camera-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: rgba(255,255,255,0.7);
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 1.2rem;
+    z-index: 10;
+    display: none; /* hidden by default */
 }

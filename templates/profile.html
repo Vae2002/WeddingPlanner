@@ -1,18 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <h2>laststeftoeunity</h2>
+<h2>laststeftoeunity</h2>
 
+<div class="profile-container">
     <div class="profile-header">
         <a class="profile-link profile-large">
             <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
         </a>
         <div class="text-info">
             <h1>Stefanus & Eunice</h1>
-            <h1>   ...  ...   ...</h1>
-            <h3>posts followers following</h3>
+
+            <!-- Stats wrapper -->
+            <div class="profile-stats">
+                <div class="stat-group">
+                    <div class="stat-number">...</div>
+                    <div class="stat-label">Posts</div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-number">...</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-number">...</div>
+                    <div class="stat-label">Following</div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
 
 {% endblock %}

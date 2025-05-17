@@ -1,9 +1,11 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 import os
-
+import base64
 
 app = Flask(__name__)
+UPLOAD_FOLDER = 'static/captures'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.context_processor
 def inject_year():
@@ -28,6 +30,32 @@ def search():
 @app.route('/capture')
 def capture():
     return render_template('capture.html', show_footer=False)
+
+@app.route('/save-photo', methods=['POST'])
+def save_photo():
+    data = request.get_json()
+    image_data = data['image']
+    
+    header, encoded = image_data.split(',', 1)
+    img_bytes = base64.b64decode(encoded)
+
+    filename = f"capture_{len(os.listdir(UPLOAD_FOLDER)) + 1}.jpg"
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    
+    with open(file_path, 'wb') as f:
+        f.write(img_bytes)
+    
+    return jsonify({"message": "Photo saved successfully!", "filename": filename})
+
+@app.route('/delete-photo/<filename>', methods=['DELETE'])
+def delete_photo(filename):
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({"message": "Photo deleted."})
+    else:
+        return jsonify({"error": "File not found."}), 404
+
 
 @app.route('/messenger')
 def messenger():
