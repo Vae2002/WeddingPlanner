@@ -1,46 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile View</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
 <body>
     <div class="container">
-        <header class="top-bar">
-            <input type="text" class="search-bar" placeholder="Explore/Search">
-        </header>
 
-        <div class="map-header">
-            <!-- Static or dynamic map background -->
-            <img src="{{ url_for('static', filename='map-sample.png') }}" alt="Map" class="map-image">
-        </div>
-      
+        <div id="map"></div>
+
+        <!--
+     The 'defer' attribute causes the callback to execute after the full HTML
+     document has been parsed. For non-blocking uses, avoiding race conditions,
+     and consistent behavior across browsers, consider loading using Promises
+     with https://www.npmjs.com/package/@googlemaps/js-api-loader.
+    -->
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrPzECEIOlqiEtrMAA70HzFXNioKcGZ2E&callback=initMap&v=weekly&solution_channel=GMP_CCS_simpleclickevents_v2"
+            async></script>
+            
+
         <div class="profile-header">
             <a class="profile-link">
                 <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
             </a>
             <div class="text-info">
                 <h2>laststeftoeunity</h2>
-                <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South Tangerang City, Banten 15311, Indonesia</h4>
+                <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South
+                    Tangerang City, Banten 15311, Indonesia</h4>
             </div>
         </div>
 
         <section class="recent-posts">
             <h4>Recent</h4>
-            <div class="grid">
-                {% for post in posts %}
-                    <div class="grid-item">
-                        <img src="{{ url_for('static', filename=post.image) }}" alt="Post">
-                    </div>
+            <div class="photo-grid">
+                {% for img in images %}
+
+                <div class="grid-item">
+                    <img src="{{ url_for('static', filename='images/' ~ img) }}" alt="Post">
+                </div>
                 {% endfor %}
             </div>
         </section>
     </div>
 </body>
-</html>
 
+</html>
 
 {% endblock %}
