@@ -299,7 +299,7 @@ footer {
 .profile-header.heading {
     position: absolute;
     top: -10px;
-    left: 3rem;
+    left: 3.5rem;
     z-index: 20; /* Higher than video/canvas */
     background-color: rgba(255,255,255,0.7);
     padding: 8px 12px;
@@ -588,3 +588,72 @@ footer {
     z-index: 10;
     display: none; /* hidden by default */
 }
+
+  .questionnaire-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1rem;
+    max-height: 100%;
+  }
+
+  .chat-box {
+    flex-grow: 1;
+    overflow-y: auto;
+    /* background: #f9f9f9; */
+    padding: 1rem;
+    /* border: 1px solid #ccc; */
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .message {
+    margin: 0.5rem 0;
+    padding: 0.6rem 1rem;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+  }
+
+  .message.question {
+    background-color: #e0e0e0;
+    align-self: flex-start;
+  }
+
+  .message.answer {
+    background-color: #d1e7dd;
+    align-self: flex-end;
+    text-align: right;
+  }
+
+  .input-area {
+    position: fixed;
+    bottom: 3rem;
+    left: 5rem;
+    width: 90%;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .input-area input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  .input-area button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .input-area button:hover {
+    background: #0056b3;
+  }

@@ -46,6 +46,21 @@
             <button>View profile</button>
         </a>
     </div>
+
+    <div class="questionnaire-container">
+      <div id="question-box" class="question-box hidden">
+        <p id="question-text"></p>
+      </div>
+
+      <div id="chat-box" class="chat-box"></div>
+
+      <div class="input-area">
+        <input type="text" id="answer-input" placeholder="Type your answer..." />
+        <button id="submit-answer">Send</button>
+      </div>
+    </div>
+
 </body>
-    
+
+<script src="{{ url_for('static', filename='js/messenger.js') }}"></script>
 {% endblock %}
