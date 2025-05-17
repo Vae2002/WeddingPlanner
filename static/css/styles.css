@@ -382,6 +382,14 @@ footer {
     z-index: 1000;
 }
 
+.horizontal-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* spacing between icons */
+  margin-top: 1rem; /* optional */
+}
+
+
 .icon-button {
     width: 40px;
     height: 40px;
@@ -662,6 +670,7 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: left;
+    overflow:visible;
 }
 
 .image-carousel {
@@ -715,6 +724,25 @@ footer {
   right: 10px;
 }
 
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+  gap: 0.4rem;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.carousel-dot.active {
+  background-color: #333;
+}
 
 
 
