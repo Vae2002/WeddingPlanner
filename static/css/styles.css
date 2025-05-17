@@ -19,8 +19,8 @@ header {
 
 .logo-link {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 1.5rem;
+    left: 1.5rem;
     display: inline-block;
     width: 40px;      /* adjust size as needed */
     height: 40px;
@@ -87,7 +87,7 @@ footer {
 .close-button {
     position: absolute;
     top: 1.5rem;
-    left: 1rem;
+    left: 1.5rem;
     z-index: 20; /* Higher than video/canvas */
     background-color: rgba(255,255,255,0.7);
     padding: 8px 12px;
@@ -104,8 +104,8 @@ footer {
 
 .message-icon {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 1.5rem;
+    right: 1.5rem;
     font-size: 24px;
     text-decoration: none;
     background: #f0f0f0;
@@ -163,12 +163,12 @@ footer {
 
 /* Position voice call on top right with some margin */
 .call-icon {
-    right: 60px; /* adjust spacing from right */
+    right: 5rem; /* adjust spacing from right */
 }
 
 /* Position video call right corner */
 .vidcall-icon {
-    right: 10px;
+    right: 1.5rem;
 }
 
 /* If using .footer-icons for the footer nav */
@@ -290,7 +290,7 @@ footer {
 .profile-header.heading {
     position: absolute;
     top: -10px;
-    left: 2.5rem;
+    left: 3rem;
     z-index: 20; /* Higher than video/canvas */
     background-color: rgba(255,255,255,0.7);
     padding: 8px 12px;
@@ -491,6 +491,7 @@ footer {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: scaleX(-1); /* Mirror the video */
 }
 
 .capture-button {
