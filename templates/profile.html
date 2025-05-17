@@ -28,7 +28,22 @@
             </div>
         </div>
     </div>
+    <section class="recent-posts">
+        <h2>Recent</h2>
+        <div class="photo-grid">
+            {% for img in images %}
+
+            <div class="grid-item">
+                <img src="{{ url_for('static', filename='images/' ~ img) }}" alt="Post">
+            </div>
+            {% endfor %}
+        </div>
+    </section>
 </div>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
 
 
 {% endblock %}
