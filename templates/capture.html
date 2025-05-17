@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-<a href="{{ url_for('home') }}" class="close-button">✕</a>
-
 
 <div class="camera-container">
+    <a href="{{ url_for('home') }}" class="close-button">✕</a>
+    <button id="switch-camera-btn" class="switch-camera-button" title="Switch Camera">🔄</button>
     <video id="camera-stream" autoplay playsinline></video>
     <canvas id="capture-canvas" style="display: none;"></canvas>
 

@@ -68,5 +68,40 @@ cancelBtn.addEventListener('click', () => {
     }
 });
 
-startCamera();
+let currentStream = null;
+let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
+
+const switchBtn = document.getElementById('switch-camera-btn');
+
+// Show the switch button only on mobile
+if (/Mobi|Android/i.test(navigator.userAgent)) {
+    switchBtn.style.display = 'block';
+}
+
+// Start the camera
+async function startCamera(facingMode = 'user') {
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+    }
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: facingMode } }
+        });
+
+        currentStream = stream;
+        video.srcObject = stream;
+    } catch (err) {
+        console.error('Error starting camera:', err);
+    }
+}
+
+// Flip camera when button is clicked
+switchBtn.addEventListener('click', () => {
+    currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+    startCamera(currentFacingMode);
+});
+
+startCamera(); // Initial start
+
 
