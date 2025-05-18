@@ -713,6 +713,12 @@ footer {
     background: #0056b3;
   }
 
+  .post-wrapper {
+    max-width: 700px;
+    margin: 0 auto 3rem auto; /* center and space below */
+    padding: 0 1rem;
+}
+
 .feed-wrapper{
     display: flex;
     flex-direction: column;

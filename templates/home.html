@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <!-- S&E Logo top-left -->
-    <a href="{{ url_for('home') }}" class="logo-link" title="Home">
-        <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="S&E Logo">
-    </a>  
+<!-- S&E Logo top-left -->
+<a href="{{ url_for('home') }}" class="logo-link" title="Home">
+    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="S&E Logo">
+</a>
 
-    <a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
+<a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
-    </a>
+</a>
 
-    <br><br><br><br>
+<br><br><br><br>
 
+<!-- ==== POST 1 ==== -->
+<div class="post-wrapper">
     <div class="feed-wrapper">
         <div class="profile-header">
             <a class="profile-link">
@@ -24,98 +26,139 @@
                 <h4>Trembesi Hotel BSD</h4>
             </div>
         </div>
-        <!-- Image Box Inserted Here -->
-        <div class="image-carousel">
+
+        <div class="image-carousel" id="carousel-1">
             <div class="carousel-window">
                 <div class="carousel-track">
                     <video autoplay loop muted playsinline>
                         <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
                     <video autoplay loop muted playsinline>
                         <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
                     <video autoplay loop muted playsinline>
                         <source src="{{ url_for('static', filename='videos/home3.mp4') }}" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
                 </div>
             </div>
-            <button class="carousel-btn prev">‹</button>
-            <button class="carousel-btn next">›</button>
+            <button class="carousel-btn prev" onclick="prevSlide('carousel-1')">‹</button>
+            <button class="carousel-btn next" onclick="nextSlide('carousel-1')">›</button>
+            <div class="carousel-dots" id="dots-1"></div>
         </div>
-        <div class="carousel-dots" id="carousel-dots"></div>
 
         <div class="horizontal-icon-wrapper">
-            <!-- Heart icon -->
-            <a href="#" class="icon-button" title="Like">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z"></path>
-                </svg>
-            </a>
+            <div class="horizontal-icon-wrapper">
+                <!-- Heart icon -->
+                <a href="#" class="icon-button" title="Like">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z"></path>
+                    </svg>
+                </a>
 
-            <!-- Paper plane icon -->
-            <a href="#" class="icon-button" title="Send">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-            </a>
+                <!-- Paper plane icon -->
+                <a href="#" class="icon-button" title="Send">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </a>
 
-            <!-- Bookmark icon -->
-            <a href="#" class="icon-button" title="Bookmark">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-                </svg>
-            </a>
+                <!-- Bookmark icon -->
+                <a href="#" class="icon-button" title="Bookmark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </a>
+            </div>
         </div>
-
     </div>
-    
+
     <div class="liked-by-wrapper">
-        <div class="small-profiles">
-            <a class="profile-link small-profile-link" style="z-index: 3; left: 0px;">
-                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 1">
-            </a>
-            <a class="profile-link small-profile-link" style="z-index: 2; left: 12px;">
-                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 2">
-            </a>
-            <a class="profile-link small-profile-link" style="z-index: 1; left: 24px;">
-                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 3">
-            </a>
-        </div>
-        
+        <!-- Small profile images... -->
         <h4 class="extra-info liked-by-text">
             Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
         </h4>
     </div>
 
     <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
+    <p class="days-left" id="days-left-1" style="margin-top: 1rem;"></p>
+</div>
 
-    <p id="days-left" style="margin-top: 1rem;"></p>
 
-    <script>
-        // Calculate days until September 6, 2025
-        const targetDate = new Date('2025-09-06');
-        const today = new Date();
 
-        // Remove the time part for accurate day count
-        targetDate.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
+<!-- ==== POST 2 ==== -->
+<div class="post-wrapper">
+    <div class="feed-wrapper">
+        <div class="profile-header">
+            <a class="profile-link">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <h2>laststeftoeunity</h2>
+                <h4>Trembesi Hotel BSD</h4>
+            </div>
+        </div>
 
-        const diffTime = targetDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        <div class="image-carousel" id="carousel-2">
+            <div class="carousel-window">
+                <div class="carousel-track">
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
+                    </video>
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
+                    </video>
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home3.mp4') }}" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+            <button class="carousel-btn prev" onclick="prevSlide('carousel-2')">‹</button>
+            <button class="carousel-btn next" onclick="nextSlide('carousel-2')">›</button>
+            <div class="carousel-dots" id="dots-2"></div>
+        </div>
 
-        const daysLeftEl = document.getElementById('days-left');
-        if (diffDays > 0) {
-            daysLeftEl.textContent = `${diffDays} days left`;
-        } else {
-            daysLeftEl.textContent = `The big day has arrived or passed! 🎉`;
-        }
-    </script>
+        <div class="horizontal-icon-wrapper">
+            <div class="horizontal-icon-wrapper">
+                <!-- Heart icon -->
+                <a href="#" class="icon-button" title="Like">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z"></path>
+                    </svg>
+                </a>
 
-    <br><br><br><br><br><br>
-    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+                <!-- Paper plane icon -->
+                <a href="#" class="icon-button" title="Send">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </a>
+
+                <!-- Bookmark icon -->
+                <a href="#" class="icon-button" title="Bookmark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="liked-by-wrapper">
+        <!-- Small profile images... -->
+        <h4 class="extra-info liked-by-text">
+            Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
+        </h4>
+    </div>
+
+    <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
+    <p class="days-left" id="days-left-2" style="margin-top: 1rem;"></p>
+
+</div>
+
+<br><br><br><br><br><br>
+
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
 
 {% endblock %}
