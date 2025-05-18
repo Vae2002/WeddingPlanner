@@ -3,7 +3,7 @@
 
 <!-- S&E Logo top-left -->
 <a href="{{ url_for('home') }}" class="logo-link" title="Home">
-    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="S&E Logo">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="S&E Logo">
 </a>
 
 <a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
@@ -22,8 +22,12 @@
                 <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
             </a>
             <div class="text-info">
-                <h2>laststeftoeunity</h2>
-                <h4>Trembesi Hotel BSD</h4>
+                <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                    <h2>laststeftoeunity</h2>
+                </a>
+                <a href="{{ url_for('search') }}" style="color: inherit; text-decoration: none;">
+                Trembesi Hotel BSD
+                </a>
             </div>
         </div>
 
@@ -31,10 +35,10 @@
             <div class="carousel-window">
                 <div class="carousel-track">
                     <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
+                        <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
                     </video>
                     <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
+                        <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
                     </video>
                     <video autoplay loop muted playsinline>
                         <source src="{{ url_for('static', filename='videos/home3.mp4') }}" type="video/mp4">
@@ -94,8 +98,12 @@
                 <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
             </a>
             <div class="text-info">
-                <h2>laststeftoeunity</h2>
-                <h4>Trembesi Hotel BSD</h4>
+                <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                    <h2>laststeftoeunity</h2>
+                </a>
+                <a href="{{ url_for('search') }}" style="color: inherit; text-decoration: none;">
+                Trembesi Hotel BSD
+                </a>
             </div>
         </div>
 
@@ -103,13 +111,13 @@
             <div class="carousel-window">
                 <div class="carousel-track">
                     <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
+                        <source src="{{ url_for('static', filename='videos/home4.mp4') }}" type="video/mp4">
                     </video>
                     <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
+                        <source src="{{ url_for('static', filename='videos/home5.mp4') }}" type="video/mp4">
                     </video>
                     <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home3.mp4') }}" type="video/mp4">
+                        <source src="{{ url_for('static', filename='videos/home6.mp4') }}" type="video/mp4">
                     </video>
                 </div>
             </div>

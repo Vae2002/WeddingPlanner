@@ -3,7 +3,7 @@
 
     <h2>laststeftoeunity</h2>
 
-    <div class="profile-container">
+    <div class="post-wrapper">
         <div class="profile-header">
             <a class="profile-link profile-large">
                 <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
@@ -30,7 +30,9 @@
         </div>
 
         <section class="recent-posts">
-            <h2>Recent</h2>
+            <div class="center-container">
+                <h1>Recent</h1>
+            </div>
             <div class="photo-grid">
                 {% for img in images %}
                 <div class="grid-item">
