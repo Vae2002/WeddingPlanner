@@ -28,9 +28,18 @@
         <div class="image-carousel">
             <div class="carousel-window">
                 <div class="carousel-track">
-                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Photo 1" />
-                    <img src="{{ url_for('static', filename='images/picture.jpg') }}" alt="Photo 2" />
-                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Photo 3" />
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home3.mp4') }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
             </div>
             <button class="carousel-btn prev">‹</button>
@@ -76,6 +85,7 @@
                 <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile 3">
             </a>
         </div>
+        
         <h4 class="extra-info liked-by-text">
             Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
         </h4>

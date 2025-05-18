@@ -1,39 +1,48 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const track = document.querySelector('.carousel-track');
-  const prevBtn = document.querySelector('.carousel-btn.prev');
-  const nextBtn = document.querySelector('.carousel-btn.next');
-  const images = track.querySelectorAll('img');
-  const dotsContainer = document.getElementById('carousel-dots');
-  let currentIndex = 0;
+document.addEventListener('DOMContentLoaded', function () {
+    const track = document.querySelector('.carousel-track');
+    const slides = Array.from(track.children);
+    const prevBtn = document.querySelector('.carousel-btn.prev');
+    const nextBtn = document.querySelector('.carousel-btn.next');
+    const dotsContainer = document.getElementById('carousel-dots');
 
-  // Generate navigation dots
-  images.forEach((_, index) => {
-    const dot = document.createElement('div');
-    dot.classList.add('carousel-dot');
-    if (index === 0) dot.classList.add('active');
-    dot.addEventListener('click', () => {
-      currentIndex = index;
-      updateCarousel();
+    let currentIndex = 0;
+
+    // Create dots
+    slides.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.classList.add('dot');
+        if (index === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+            currentIndex = index;
+            updateCarousel();
+        });
+        dotsContainer.appendChild(dot);
     });
-    dotsContainer.appendChild(dot);
-  });
 
-  function updateCarousel() {
-    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    function updateCarousel() {
+        const slideWidth = slides[0].getBoundingClientRect().width;
+        track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
 
-    // Update active dot
-    document.querySelectorAll('.carousel-dot').forEach((dot, idx) => {
-      dot.classList.toggle('active', idx === currentIndex);
+        // Update dots
+        document.querySelectorAll('.dot').forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === currentIndex);
+        });
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < slides.length - 1) {
+            currentIndex++;
+            updateCarousel();
+        }
     });
-  }
 
-  nextBtn.addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % images.length;
-    updateCarousel();
-  });
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+        }
+    });
 
-  prevBtn.addEventListener('click', () => {
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-    updateCarousel();
-  });
+    // Responsive adjustment
+    window.addEventListener('resize', updateCarousel);
 });

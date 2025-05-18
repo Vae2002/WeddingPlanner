@@ -742,12 +742,13 @@ footer {
   transition: transform 0.5s ease-in-out;
 }
 
-.carousel-track img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  flex: 0 0 100%;
+.carousel-track video {
+    width: 100%;
+    height: auto;
+    flex: 0 0 100%;
+    object-fit: contain;
 }
+
 
 .carousel-btn {
   position: absolute;
@@ -772,24 +773,22 @@ footer {
 }
 
 .carousel-dots {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
-  gap: 0.4rem;
+    text-align: center;
+    margin-top: 10px;
+}
+.dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.dot.active {
+    background-color: #717171;
 }
 
-.carousel-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #ccc;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.carousel-dot.active {
-  background-color: #333;
-}
 
 
 
