@@ -27,6 +27,16 @@ def search():
     print("Images sent to template:", image_files)
     return render_template('search.html', images=image_files, show_footer=True)
 
+def map_view():
+    latitude = 37.4219999
+    longitude = -122.0840575
+    label = "My+Location"
+    
+    # Google Maps URL for redirection
+    maps_url = f"https://www.google.com/maps/search/?api=1&query={latitude},{longitude}"
+
+    return render_template('search.html', lat=latitude, lng=longitude, maps_url=maps_url)
+
 @app.route('/capture')
 def capture():
     return render_template('capture.html', show_footer=False)

@@ -2,6 +2,46 @@
 {% block content %}
 
 <body>
+    <!-- <iframe
+        width="600"
+        height="450"
+        style="border:0"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=37.4219999,-122.0840575&z=15&output=embed">
+    </iframe> -->
+
+    <!-- Button to open in full Google Maps in a new tab -->
+    <!-- <button onclick="window.open('https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D', '_blank')">
+        Open in Google Maps
+    </button> -->
+
+    <div id="map" style="height: 250px; width: 100%;"></div>
+
+    <!-- Load Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        var lng = 106.6683;
+        var lat = -6.2943;
+        var map = L.map('map').setView([lat, lng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup('<a href="https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D' + lat + ',' + lng + '" target="_blank">Open in Google Maps</a>')
+            .openPopup();
+    </script>
+
+
+
+
+    
     <div class="container">
 
         <div id="map"></div>
