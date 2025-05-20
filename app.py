@@ -54,7 +54,7 @@ def logout():
 
 @app.route('/search')
 def search():
-    image_folder = os.path.join('static', 'images')
+    image_folder = os.path.join('static', 'images', 'explore')
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
@@ -122,7 +122,7 @@ def reels():
 
 @app.route('/profile')
 def profile():
-    image_folder = os.path.join('static', 'images')
+    image_folder = os.path.join('static', 'images', 'explore')
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)

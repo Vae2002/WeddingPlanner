@@ -36,7 +36,7 @@
             <div class="photo-grid">
                 {% for img in images %}
                 <div class="grid-item">
-                    <img src="{{ url_for('static', filename='images/' ~ img) }}"
+                    <img src="{{ url_for('static', filename='images/explore/' ~ img) }}"
                         alt="Post"
                         onclick="openModal(this.src)">
                 </div>
