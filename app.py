@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from sqlalchemy import create_engine
+import pandas as pd
 from datetime import datetime
 import os
 import base64
 
 app = Flask(__name__)
+app.secret_key = 'laststeftoeunity'
+
 UPLOAD_FOLDER = 'static/captures'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -11,13 +15,46 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def inject_year():
     return {'current_year': datetime.now().year}
 
-@app.route('/')
+csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxhbKO06Y36vTyEiFgxZXXVtWkNebIQ-3diUm5xpAtMT1uHJIGF4Jvkt3bm8dKYo-5C6PkdQwrAX21/pub?output=csv'
+df = pd.read_csv(csv_url)
+
+# Connect and save to SQLite
+engine = create_engine('sqlite:///guest.db')
+df.to_sql('guest_database', con=engine, if_exists='replace', index=False)
+
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        if username:
+            # Check if user exists
+            user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
+            if not user_df.empty:
+                session['username'] = username
+                return redirect(url_for('home'))
+            else:
+                return render_template('login.html', error="Username not found.")
+    return render_template('login.html')
+
+@app.route('/home')
 def home():
-    return render_template('home.html', show_footer=True)
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
+    user_data = user_df.iloc[0].to_dict() if not user_df.empty else {}
+
+    return render_template('home.html', user=user_data, show_footer = True)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/search')
 def search():
-    image_folder = os.path.join('static', 'images/explore')
+    image_folder = os.path.join('static', 'images')
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
