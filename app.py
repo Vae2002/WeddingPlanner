@@ -5,6 +5,10 @@ from datetime import datetime
 import os
 import base64
 from functools import wraps
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'laststeftoeunity'
@@ -18,6 +22,23 @@ def inject_year():
 
 csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxhbKO06Y36vTyEiFgxZXXVtWkNebIQ-3diUm5xpAtMT1uHJIGF4Jvkt3bm8dKYo-5C6PkdQwrAX21/pub?output=csv'
 df = pd.read_csv(csv_url)
+
+# Google Sheets setup
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+
+print(f"Using credentials file: {SERVICE_ACCOUNT_FILE}")
+if not os.path.exists(SERVICE_ACCOUNT_FILE):
+    raise FileNotFoundError(f"Credentials file not found at: {SERVICE_ACCOUNT_FILE}")
+
+# Spreadsheet details
+SPREADSHEET_ID = '1a-BSIrk5GKDXY6WNGZbYX5WEMx2Ph6lLxV-SYkoA83k'  # or spreadsheet ID from the URL
+SHEET_NAME = 'Sheet1'  # replace with your actual sheet name
+
+def get_sheet():
+    creds = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPES)
+    client = gspread.authorize(creds)
+    return client.open_by_key(SPREADSHEET_ID).worksheet(SHEET_NAME)
 
 # Connect and save to SQLite
 engine = create_engine('sqlite:///guest.db')
@@ -123,6 +144,46 @@ def delete_photo(filename):
 @login_required
 def messenger():
     return render_template('messenger.html', show_footer=False)
+
+@app.route('/submit-answers', methods=['POST'])
+def submit_answers():
+    if 'username' not in session:
+        return jsonify({"status": "error", "message": "Not logged in"}), 401
+
+    username = session['username']
+    data = request.json  # List of {question, answer}
+    
+    # Default to skip if unsure
+    is_coming_val = None
+    for item in data:
+        if item['question'].lower() == "are you coming?":
+            answer = item['answer'].strip().lower()
+            if answer == 'yes':
+                is_coming_val = 1
+            elif answer == 'no':
+                is_coming_val = 0
+            else:
+                return jsonify({"status": "skipped", "message": "User is still unsure."})
+
+    if is_coming_val is None:
+        return jsonify({"status": "skipped", "message": "No valid answer found."})
+
+    try:
+        sheet = get_sheet()
+        records = sheet.get_all_records()
+        
+        # Find the row number (offset by 2 since get_all_records skips header and gspread is 1-indexed)
+        for idx, record in enumerate(records, start=2):
+            if str(record.get('username')).strip().lower() == username.lower():
+                # Update the cell in the "is_coming" column
+                is_coming_col = list(record.keys()).index('is_coming') + 1
+                sheet.update_cell(idx, is_coming_col, is_coming_val)
+                return jsonify({"status": "success", "message": f"Updated 'is_coming' for {username}."})
+
+        return jsonify({"status": "error", "message": "Username not found in sheet."}), 404
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/voice_call')
 @login_required
