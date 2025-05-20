@@ -1,9 +1,14 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from sqlalchemy import create_engine
+import pandas as pd
 from datetime import datetime
 import os
 import base64
+from functools import wraps
 
 app = Flask(__name__)
+app.secret_key = 'laststeftoeunity'
+
 UPLOAD_FOLDER = 'static/captures'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -11,13 +16,57 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def inject_year():
     return {'current_year': datetime.now().year}
 
-@app.route('/')
+csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxhbKO06Y36vTyEiFgxZXXVtWkNebIQ-3diUm5xpAtMT1uHJIGF4Jvkt3bm8dKYo-5C6PkdQwrAX21/pub?output=csv'
+df = pd.read_csv(csv_url)
+
+# Connect and save to SQLite
+engine = create_engine('sqlite:///guest.db')
+df.to_sql('guest_database', con=engine, if_exists='replace', index=False)
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        if username:
+            # Check if user exists
+            user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
+            if not user_df.empty:
+                session['username'] = username
+                return redirect(url_for('home'))
+            else:
+                return render_template('login.html', error="Username not found.")
+    return render_template('login.html')
+
+@app.route('/reset-session')
+def reset_session():
+    session.clear()
+    return redirect(url_for('login'))
+
+@app.route('/home')
+@login_required
 def home():
-    return render_template('home.html', show_footer=True)
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
+    user_data = user_df.iloc[0].to_dict() if not user_df.empty else {}
+
+    return render_template('home.html', user=user_data, show_footer = True)
 
 @app.route('/search')
+@login_required
 def search():
-    image_folder = os.path.join('static', 'images')
+    image_folder = os.path.join('static', 'images', 'explore')
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
@@ -38,10 +87,12 @@ def map_view():
     return render_template('search.html', lat=latitude, lng=longitude, maps_url=maps_url)
 
 @app.route('/capture')
+@login_required
 def capture():
     return render_template('capture.html', show_footer=False)
 
 @app.route('/save-photo', methods=['POST'])
+@login_required
 def save_photo():
     data = request.get_json()
     image_data = data['image']
@@ -58,6 +109,7 @@ def save_photo():
     return jsonify({"message": "Photo saved successfully!", "filename": filename})
 
 @app.route('/delete-photo/<filename>', methods=['DELETE'])
+@login_required
 def delete_photo(filename):
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     if os.path.exists(file_path):
@@ -68,24 +120,29 @@ def delete_photo(filename):
 
 
 @app.route('/messenger')
+@login_required
 def messenger():
     return render_template('messenger.html', show_footer=False)
 
 @app.route('/voice_call')
+@login_required
 def voice_call():
     return render_template('voice_call.html', show_footer=False)
 
 @app.route('/video_call')
+@login_required
 def video_call():
     return render_template('video_call.html', show_footer=False)
 
 @app.route('/reels')
+@login_required
 def reels():
     return render_template('reels.html', show_footer=True)
 
 @app.route('/profile')
+@login_required
 def profile():
-    image_folder = os.path.join('static', 'images')
+    image_folder = os.path.join('static', 'images', 'explore')
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)

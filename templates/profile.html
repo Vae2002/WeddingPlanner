@@ -1,49 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>laststeftoeunity</h2>
+    <h2>laststeftoeunity</h2>
 
-<div class="profile-container">
-    <div class="profile-header">
-        <a class="profile-link profile-large">
-            <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
-        </a>
-        <div class="text-info">
-            <h1>Stefanus & Eunice</h1>
+    <div class="post-wrapper">
+        <div class="profile-header">
+            <a class="profile-link profile-large">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <h1>Stefanus & Eunice</h1>
 
-            <!-- Stats wrapper -->
-            <div class="profile-stats">
-                <div class="stat-group">
-                    <div class="stat-number">...</div>
-                    <div class="stat-label">Posts</div>
-                </div>
-                <div class="stat-group">
-                    <div class="stat-number">...</div>
-                    <div class="stat-label">Followers</div>
-                </div>
-                <div class="stat-group">
-                    <div class="stat-number">...</div>
-                    <div class="stat-label">Following</div>
+                <!-- Stats wrapper -->
+                <div class="profile-stats">
+                    <div class="stat-group">
+                        <div class="stat-number">...</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-number">...</div>
+                        <div class="stat-label">Followers</div>
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-number">...</div>
+                        <div class="stat-label">Following</div>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <section class="recent-posts">
+            <div class="center-container">
+                <h1>Recent</h1>
+            </div>
+            <div class="photo-grid">
+                {% for img in images %}
+                <div class="grid-item">
+                    <img src="{{ url_for('static', filename='images/explore/' ~ img) }}"
+                        alt="Post"
+                        onclick="openModal(this.src)">
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Modal -->
+        <div id="imgModal" class="modal" onclick="closeModal()">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="modalImage">
         </div>
     </div>
-    <section class="recent-posts">
-        <h2>Recent</h2>
-        <div class="photo-grid">
-            {% for img in images %}
 
-            <div class="grid-item">
-                <img src="{{ url_for('static', filename='images/' ~ img) }}" alt="Post">
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-</div>
-
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
-
+    <script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
 
 {% endblock %}
