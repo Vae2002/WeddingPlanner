@@ -17,7 +17,7 @@ def home():
 
 @app.route('/search')
 def search():
-    image_folder = os.path.join('static', 'images')
+    image_folder = os.path.join('static', 'images/explore')
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
