@@ -2,3 +2,4 @@ Flask>=2.0
 SQLAlchemy==2.0.25
 pandas==2.2.2
 gspread
+oauth2client
