@@ -53,11 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     appendMessage(questions[currentQuestion], 'question');
 
-    // Show buttons for first question, input for the others
     if (currentQuestion === 0) {
       showInputArea(false);
     } else {
       showInputArea(true);
+
+      // Show "No, thank you." button only on 3rd question
+      if (currentQuestion === 2) {
+        noThanksBtn.style.display = 'inline-block';
+      } else {
+        noThanksBtn.style.display = 'none';
+      }
     }
   }
 
@@ -95,6 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => {
       handleAnswerSubmit(button.getAttribute('data-answer'));
     });
+  });
+
+  const noThanksBtn = document.getElementById('no-thanks-btn');
+  noThanksBtn.addEventListener('click', () => {
+    handleAnswerSubmit("No");
   });
 
   askNextQuestion(); // Start the chat

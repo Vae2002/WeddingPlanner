@@ -151,34 +151,55 @@ def submit_answers():
         return jsonify({"status": "error", "message": "Not logged in"}), 401
 
     username = session['username']
-    data = request.json  # List of {question, answer}
-    
-    # Default to skip if unsure
+    data = request.json
+
     is_coming_val = None
+    n_person_val = None
+    wishes_val = ''
+
     for item in data:
-        if item['question'].lower() == "are you coming?":
-            answer = item['answer'].strip().lower()
-            if answer == 'yes':
+        question = item['question'].strip().lower()
+        answer = item['answer'].strip()
+
+        if question == "are you coming?":
+            if answer.lower() == 'yes':
                 is_coming_val = 1
-            elif answer == 'no':
+            elif answer.lower() == 'no':
                 is_coming_val = 0
             else:
                 return jsonify({"status": "skipped", "message": "User is still unsure."})
 
+        elif question == "how many people are attending?":
+            if answer.isdigit():
+                n_person_val = int(answer)
+            else:
+                n_person_val = None
+
+        elif question == "any wishes for the bride & groom?":
+            wishes_val = '' if answer.lower() == 'no' else answer
+
     if is_coming_val is None:
-        return jsonify({"status": "skipped", "message": "No valid answer found."})
+        return jsonify({"status": "skipped", "message": "No valid attendance answer found."})
 
     try:
         sheet = get_sheet()
         records = sheet.get_all_records()
-        
-        # Find the row number (offset by 2 since get_all_records skips header and gspread is 1-indexed)
+
+        # Find the row number
         for idx, record in enumerate(records, start=2):
             if str(record.get('username')).strip().lower() == username.lower():
-                # Update the cell in the "is_coming" column
-                is_coming_col = list(record.keys()).index('is_coming') + 1
+                # Get column indices
+                keys = list(record.keys())
+                is_coming_col = keys.index('is_coming') + 1
+                n_person_col = keys.index('n_person') + 1
+                wishes_col = keys.index('wishes') + 1
+
+                # Update each relevant cell
                 sheet.update_cell(idx, is_coming_col, is_coming_val)
-                return jsonify({"status": "success", "message": f"Updated 'is_coming' for {username}."})
+                sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
+                sheet.update_cell(idx, wishes_col, wishes_val)
+
+                return jsonify({"status": "success", "message": f"Updated RSVP for {username}."})
 
         return jsonify({"status": "error", "message": "Username not found in sheet."}), 404
 
