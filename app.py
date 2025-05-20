@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 import os
 import base64
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'laststeftoeunity'
@@ -22,6 +23,15 @@ df = pd.read_csv(csv_url)
 engine = create_engine('sqlite:///guest.db')
 df.to_sql('guest_database', con=engine, if_exists='replace', index=False)
 
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -36,7 +46,13 @@ def login():
                 return render_template('login.html', error="Username not found.")
     return render_template('login.html')
 
+@app.route('/reset-session')
+def reset_session():
+    session.clear()
+    return redirect(url_for('login'))
+
 @app.route('/home')
+@login_required
 def home():
     if 'username' not in session:
         return redirect(url_for('login'))
@@ -47,12 +63,8 @@ def home():
 
     return render_template('home.html', user=user_data, show_footer = True)
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
-
 @app.route('/search')
+@login_required
 def search():
     image_folder = os.path.join('static', 'images', 'explore')
     image_files = [
@@ -75,10 +87,12 @@ def map_view():
     return render_template('search.html', lat=latitude, lng=longitude, maps_url=maps_url)
 
 @app.route('/capture')
+@login_required
 def capture():
     return render_template('capture.html', show_footer=False)
 
 @app.route('/save-photo', methods=['POST'])
+@login_required
 def save_photo():
     data = request.get_json()
     image_data = data['image']
@@ -95,6 +109,7 @@ def save_photo():
     return jsonify({"message": "Photo saved successfully!", "filename": filename})
 
 @app.route('/delete-photo/<filename>', methods=['DELETE'])
+@login_required
 def delete_photo(filename):
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     if os.path.exists(file_path):
@@ -105,22 +120,27 @@ def delete_photo(filename):
 
 
 @app.route('/messenger')
+@login_required
 def messenger():
     return render_template('messenger.html', show_footer=False)
 
 @app.route('/voice_call')
+@login_required
 def voice_call():
     return render_template('voice_call.html', show_footer=False)
 
 @app.route('/video_call')
+@login_required
 def video_call():
     return render_template('video_call.html', show_footer=False)
 
 @app.route('/reels')
+@login_required
 def reels():
     return render_template('reels.html', show_footer=True)
 
 @app.route('/profile')
+@login_required
 def profile():
     image_folder = os.path.join('static', 'images', 'explore')
     image_files = [
