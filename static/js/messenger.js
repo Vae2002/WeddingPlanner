@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const questions = [
     "Are you coming?",
     "How many people are attending?",
-    "Any wishes for the bride & groom?"
+    "Any wishes for the bride & groom?",
+    "Are you sure with your wishes?"
   ];
 
   const onlineAnswers = [ // Only these buttons for online users
@@ -92,11 +93,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function askNextQuestion() {
     if (stopAsking || currentQuestion >= questions.length) {
       appendMessage("Thank you for your responses! ❤️", 'question');
+
       fetch('/submit-answers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(answers)
+      }).then(res => res.json()).then(res => {
+        if (res.status === 'success') {
+          const wishesButton = document.createElement('button');
+          wishesButton.textContent = "View all wishes 💌";
+          wishesButton.className = 'redirect-button';
+          wishesButton.addEventListener('click', () => {
+            window.location.href = "/wishes";  // You must define this route in Flask
+          });
+          chatBox.appendChild(wishesButton);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
       });
+
       disableInputs();
       return;
     }
@@ -112,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (currentQuestion === 0) {
       buttonAnswers.style.display = 'inline-block';
-      // If user is not online, restore default buttons (in case)
       if (!isOnlineUser) {
         buttonAnswers.innerHTML = `
           <button data-answer="Yes">Yes</button>
@@ -132,6 +145,17 @@ document.addEventListener('DOMContentLoaded', () => {
       answerInput.style.display = 'inline-block';
       submitBtn.style.display = 'inline-block';
       noThanksBtn.style.display = 'inline-block';
+    } else if (currentQuestion === 3) {
+      buttonAnswers.style.display = 'inline-block';
+      buttonAnswers.innerHTML = `
+        <button data-answer="Yes">Yes</button>
+        <button data-answer="No, I'd like to share my wishes">No, I'd like to share my wishes</button>
+      `;
+      buttonAnswers.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', () => {
+          handleAnswerSubmit(button.getAttribute('data-answer'));
+        });
+      });
     }
   }
 
@@ -142,23 +166,33 @@ document.addEventListener('DOMContentLoaded', () => {
     answers.push({ question: questions[currentQuestion], answer });
 
     if (currentQuestion === 0) {
-      if (answer.toLowerCase() === 'no') {
+      const lower = answer.toLowerCase();
+      if (lower === 'no') {
         appendMessage("We would still be delighted to have you join our online reception. 💌", 'question');
         stopAsking = true;
-      } else if (["i will be attending online", "yes, i will be attending online"].includes(answer.toLowerCase())) {
+      } else if (["i will be attending online", "yes, i will be attending online"].includes(lower)) {
         appendMessage("We look forward to seeing you online! 💌", 'question');
         currentQuestion = 2; // Skip to wishes
         setTimeout(askNextQuestion, 500);
         return;
-      } else if (answer.toLowerCase() === "i'm still not sure") {
+      } else if (lower === "i'm still not sure") {
         appendMessage("We kindly ask you to confirm your attendance by 22 August 2025 at the latest. 💌", 'question');
         stopAsking = true;
       }
     }
 
+    if (currentQuestion === 3) {
+      if (answer.toLowerCase() === "no, i'd like to share my wishes") {
+        answers.splice(2, 1); // Remove previous wishes
+        currentQuestion = 2;  // Go back to edit wishes
+        setTimeout(askNextQuestion, 500);
+        return;
+      }
+    }
+
     currentQuestion++;
 
-    if (currentQuestion === 3) {
+    if (currentQuestion === questions.length) {
       answerInput.style.display = 'none';
       submitBtn.style.display = 'none';
       noThanksBtn.style.display = 'none';
@@ -168,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(askNextQuestion, 500);
   }
+
 
   function disableInputs() {
     answerInput.disabled = true;
