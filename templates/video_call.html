@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <video autoplay loop muted="false" controls id="vidcall-video" playsinline>
+    <video id="vidcall-video" autoplay>
         <source src="{{ url_for('static', filename='videos/reels.mp4') }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
-    <div class="camera-container">
+    <script src="{{ url_for('static', filename='js/call.js') }}"></script>
+
+    <!-- <div class="camera-container">
         <video id="camera-stream" autoplay playsinline></video>
-    </div>
+    </div> -->
 
     <a href="{{ url_for('messenger') }}" class="close-button"><</a>
 
