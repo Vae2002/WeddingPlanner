@@ -23,21 +23,34 @@ def inject_year():
 csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxhbKO06Y36vTyEiFgxZXXVtWkNebIQ-3diUm5xpAtMT1uHJIGF4Jvkt3bm8dKYo-5C6PkdQwrAX21/pub?output=csv'
 df = pd.read_csv(csv_url)
 
-# Google Sheets setup
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
-print(f"Using credentials file: {SERVICE_ACCOUNT_FILE}")
-if not os.path.exists(SERVICE_ACCOUNT_FILE):
-    raise FileNotFoundError(f"Credentials file not found at: {SERVICE_ACCOUNT_FILE}")
+# Construct credentials dict from environment variables
+credentials_dict = {
+    "type": os.getenv("type"),
+    "project_id": os.getenv("project_id"),
+    "private_key_id": os.getenv("private_key_id"),
+    "private_key": os.getenv("private_key"),
+    "client_email": os.getenv("client_email"),
+    "client_id": os.getenv("client_id"),
+    "auth_uri": os.getenv("auth_uri"),
+    "token_uri": os.getenv("token_uri"),
+    "auth_provider_x509_cert_url": os.getenv("auth_provider_x509_cert_url"),
+    "client_x509_cert_url": os.getenv("client_x509_cert_url")
+}
 
 # Spreadsheet details
-SPREADSHEET_ID = '1a-BSIrk5GKDXY6WNGZbYX5WEMx2Ph6lLxV-SYkoA83k'  # or spreadsheet ID from the URL
-SHEET_NAME = 'Sheet1'  # replace with your actual sheet name
+SPREADSHEET_ID = '1a-BSIrk5GKDXY6WNGZbYX5WEMx2Ph6lLxV-SYkoA83k'
+SHEET_NAME = 'Sheet1'
 
 def get_sheet():
-    creds = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPES)
-    client = gspread.authorize(creds)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, SCOPES)
+    try:
+        client = gspread.authorize(creds)
+    except Exception as e:
+        print(f"Failed to authorize Google Sheets client: {e}")
+        client = None  # Optional: set client to None or handle accordingly
+
     return client.open_by_key(SPREADSHEET_ID).worksheet(SHEET_NAME)
 
 # Connect and save to SQLite
