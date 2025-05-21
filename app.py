@@ -238,6 +238,8 @@ def submit_answers():
                 is_coming_val = 1
             elif answer.lower() == 'no':
                 is_coming_val = 0
+            elif answer.lower() == "i will be attending online":
+                is_coming_val = 0
             else:
                 return jsonify({"status": "skipped", "message": "User is still unsure."})
 

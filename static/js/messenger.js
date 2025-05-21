@@ -101,13 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // If user is online and question > 0, skip questions 2 and 3
-    if (isOnlineUser && currentQuestion > 0) {
-      stopAsking = true;
-      askNextQuestion();
-      return;
-    }
-
     appendMessage(questions[currentQuestion], 'question');
 
     // Reset UI
@@ -154,7 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
         stopAsking = true;
       } else if (["i will be attending online", "yes, i will be attending online"].includes(answer.toLowerCase())) {
         appendMessage("We look forward to seeing you online! 💌", 'question');
-        stopAsking = true;
+        currentQuestion = 2; // Skip to wishes
+        setTimeout(askNextQuestion, 500);
+        return;
       } else if (answer.toLowerCase() === "i'm still not sure") {
         appendMessage("We kindly ask you to confirm your attendance by 22 August 2025 at the latest. 💌", 'question');
         stopAsking = true;
