@@ -191,7 +191,7 @@ def submit_answers():
                 # Get column indices
                 keys = list(record.keys())
                 is_coming_col = keys.index('is_coming') + 1
-                n_person_col = keys.index('n_person') + 1
+                n_person_col = keys.index('n_person_confirm') + 1
                 wishes_col = keys.index('wishes') + 1
 
                 # Update each relevant cell

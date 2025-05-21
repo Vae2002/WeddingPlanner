@@ -56,8 +56,15 @@
 
       <div class="input-area" style="display: flex; align-items: center; gap: 8px;">
         <button id="no-thanks-btn" style="display: none;">No, thank you.</button>
-        <input type="text" id="answer-input" placeholder="Type your answer..." />
-        <button id="submit-answer">Send</button>
+        <input type="text" id="answer-input" placeholder="Type your answer..." style="display: none;" />
+        <button id="submit-answer" style="display: none;">Send</button>
+
+        <div id="counter-controls" style="display: none; flex-direction: row; align-items: center; gap: 8px; margin-left: 10px;">
+          <button class="minus">-</button>
+          <span class="num">0</span>
+          <button class="plus">+</button>
+          <button id="submit-counter">Send</button>
+        </div>
 
         <div id="button-answers" style="display: none; margin-left: 10px;">
           <button class="btn-answer" data-answer="Yes">Yes</button>
@@ -65,8 +72,8 @@
           <button class="btn-answer" data-answer="I'm still not sure">I'm still not sure</button>
         </div>
       </div>
-
     </div>
+
 
 </body>
 

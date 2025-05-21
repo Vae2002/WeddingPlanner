@@ -8,11 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const answers = [];
   let currentQuestion = 0;
   let stopAsking = false;
+  let counter = 0;
 
   const chatBox = document.getElementById('chat-box');
   const answerInput = document.getElementById('answer-input');
   const submitBtn = document.getElementById('submit-answer');
+  const submitCounterBtn = document.getElementById('submit-counter');
   const buttonAnswers = document.getElementById('button-answers');
+  const counterControls = document.getElementById('counter-controls');
+  const noThanksBtn = document.getElementById('no-thanks-btn');
+  const counterDisplay = counterControls.querySelector('.num');
 
   function appendMessage(text, type) {
     const msg = document.createElement('div');
@@ -20,21 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     msg.textContent = text;
     chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  function showInputArea(showInput) {
-    if (showInput) {
-      answerInput.style.display = 'inline-block';
-      submitBtn.style.display = 'inline-block';
-      buttonAnswers.style.display = 'none';
-      answerInput.disabled = false;
-      submitBtn.disabled = false;
-      answerInput.focus();
-    } else {
-      answerInput.style.display = 'none';
-      submitBtn.style.display = 'none';
-      buttonAnswers.style.display = 'inline-block';
-    }
   }
 
   function askNextQuestion() {
@@ -45,25 +35,27 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(answers)
       });
-      submitBtn.disabled = true;
-      answerInput.disabled = true;
-      buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = true);
+      disableInputs();
       return;
     }
 
     appendMessage(questions[currentQuestion], 'question');
 
-    if (currentQuestion === 0) {
-      showInputArea(false);
-    } else {
-      showInputArea(true);
+    // Reset UI
+    buttonAnswers.style.display = 'none';
+    counterControls.style.display = 'none';
+    answerInput.style.display = 'none';
+    submitBtn.style.display = 'none';
+    noThanksBtn.style.display = 'none';
 
-      // Show "No, thank you." button only on 3rd question
-      if (currentQuestion === 2) {
-        noThanksBtn.style.display = 'inline-block';
-      } else {
-        noThanksBtn.style.display = 'none';
-      }
+    if (currentQuestion === 0) {
+      buttonAnswers.style.display = 'inline-block';
+    } else if (currentQuestion === 1) {
+      counterControls.style.display = 'flex';
+    } else if (currentQuestion === 2) {
+      answerInput.style.display = 'inline-block';
+      submitBtn.style.display = 'inline-block';
+      noThanksBtn.style.display = 'inline-block';
     }
   }
 
@@ -73,9 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
     appendMessage(answer, 'answer');
     answers.push({ question: questions[currentQuestion], answer });
 
-    // Special logic for the first question
     if (currentQuestion === 0 && answer.toLowerCase() === 'no') {
-      appendMessage("Thank you for your confirmation. We still welcome you to our online reception. 💌", 'question');
+      appendMessage("We would still be delighted to have you join our online reception. 💌", 'question');
+      stopAsking = true;
+    } else if (currentQuestion === 0 && answer.toLowerCase() === "i'm still not sure") {
+      appendMessage("We kindly ask you to confirm your attendance by 22 August 2025 at the latest. 💌", 'question');
       stopAsking = true;
     }
 
@@ -83,6 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(askNextQuestion, 500);
   }
 
+  function disableInputs() {
+    answerInput.disabled = true;
+    submitBtn.disabled = true;
+    noThanksBtn.disabled = true;
+    buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = true);
+    submitCounterBtn.disabled = true;
+  }
+
+  // Event Listeners
   submitBtn.addEventListener('click', () => {
     handleAnswerSubmit(answerInput.value.trim());
     answerInput.value = '';
@@ -96,17 +99,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add listeners to buttons
   buttonAnswers.querySelectorAll('button').forEach(button => {
     button.addEventListener('click', () => {
       handleAnswerSubmit(button.getAttribute('data-answer'));
     });
   });
 
-  const noThanksBtn = document.getElementById('no-thanks-btn');
   noThanksBtn.addEventListener('click', () => {
     handleAnswerSubmit("No");
   });
 
+  // Counter logic
+  counterControls.querySelector('.plus').addEventListener('click', () => {
+    counter++;
+    counterDisplay.textContent = counter;
+  });
+
+  counterControls.querySelector('.minus').addEventListener('click', () => {
+    if (counter > 0) {
+      counter--;
+      counterDisplay.textContent = counter;
+    }
+  });
+
+  submitCounterBtn.addEventListener('click', () => {
+    handleAnswerSubmit(`${counter}`);
+    counter = 0;
+    counterDisplay.textContent = counter;
+  });
+
   askNextQuestion(); // Start the chat
+
 });
