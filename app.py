@@ -162,7 +162,32 @@ def delete_photo(filename):
     else:
         return jsonify({"error": "File not found."}), 404
 
+@app.route('/wishes')
+@login_required
+def wishes():
+    return render_template('wishes.html', show_footer=True)
 
+@app.route('/get-all-wishes', methods=['GET'])
+@login_required
+def get_all_wishes():
+    try:
+        sheet = get_sheet()
+        records = sheet.get_all_records()
+
+        # Extract username and wishes, only if wish text exists
+        wishes_list = [
+            {
+                "username": record.get('username', 'Anonymous').strip(),
+                "wish": record.get('wishes', '').strip()
+            }
+            for record in records if record.get('wishes', '').strip()
+        ]
+
+        return jsonify({"wishes": wishes_list})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 @app.route('/messenger')
 @login_required
 def messenger():
