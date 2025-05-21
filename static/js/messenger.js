@@ -15,9 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const answers = [];
   let currentQuestion = 0;
   let stopAsking = false;
-  let counter = 0;
+  let counter = 1;
   let maxPerson = 1; // default max
   let isOnlineUser = false; // track if user is online
+  let isComing = null;
+  let wishesVal = '';
 
   const chatBox = document.getElementById('chat-box');
   const answerInput = document.getElementById('answer-input');
@@ -32,7 +34,58 @@ document.addEventListener('DOMContentLoaded', () => {
   fetch('/get-user-info')
     .then(response => response.json())
     .then(data => {
+      isComing = data.is_coming;
+      wishesVal = data.wishes;
       isOnlineUser = data.is_online === 1;
+
+      if (isComing === 0) {
+        appendMessage("Will you be attending online?", 'question');
+        appendMessage("No", 'answer');
+        appendMessage("We would still be delighted to have you join our online reception. 💌", 'question');
+
+        if (wishesVal && wishesVal.trim() !== '') {
+          appendMessage("Any wishes for the bride & groom?", 'question');
+          appendMessage(wishesVal, 'answer');
+        }
+
+        appendMessage("Thank you for your responses! ❤️", 'question');
+        disableInputs(); // Disable everything forever
+        return;
+      } else if (isComing === 1) {
+        appendMessage("You’ve already RSVP’d. Want to make changes?", 'question');
+        
+        const editBtn = document.createElement('button');
+        editBtn.textContent = "Edit my RSVP ✏️";
+        editBtn.className = 'redirect-button';
+        editBtn.addEventListener('click', () => {
+          currentQuestion = 0;
+          stopAsking = false;
+
+          // Reinitialize full questions array safely
+          questions.length = 0;
+          questions.push(
+            "Are you coming?",
+            "How many people are attending?",
+            "Any wishes for the bride & groom?",
+            "Are you sure with your wishes?"
+          );
+
+          if (wishesVal && wishesVal.trim() !== '') {
+            // Skip question 3 (wishes)
+            questions.splice(2, 1);
+          }
+
+          chatBox.innerHTML = '';
+          answers.length = 0; // Clear previous answers
+          askNextQuestion();
+        });
+
+        chatBox.appendChild(editBtn);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        disableInputs(); // Disable all until user chooses to edit
+        return;
+      }
 
       if (isOnlineUser) {
         // Change first question for online users
@@ -141,8 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (currentQuestion === 3) {
       buttonAnswers.style.display = 'inline-block';
       buttonAnswers.innerHTML = `
-        <button data-answer="Yes">Yes</button>
-        <button data-answer="No, I'd like to share my wishes">No, I'd like to share my wishes</button>
+        <button data-answer="Yes, please share my wishes">Yes, please share my wishes</button>
+        <button data-answer="No, I'd like to edit my wishes">No, I'd like to edit my wishes</button>
       `;
       buttonAnswers.querySelectorAll('button').forEach(button => {
         button.addEventListener('click', () => {
@@ -175,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (currentQuestion === 3) {
-      if (answer.toLowerCase() === "no, i'd like to share my wishes") {
+      if (answer.toLowerCase() === "no, i'd like to edit my wishes") {
         answers.splice(2, 1); // Remove previous wishes
         currentQuestion = 2;  // Go back to edit wishes
         setTimeout(askNextQuestion, 500);
@@ -204,8 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = true);
     submitCounterBtn.disabled = true;
   }
-
-  // Event listeners for inputs/counter remain the same as before...
 
   submitBtn.addEventListener('click', () => {
     handleAnswerSubmit(answerInput.value.trim());
