@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const audio = document.getElementById('bg-audio');
     const video = document.getElementById('camera-stream');
     const canvas = document.getElementById('capture-canvas');
     const captureBtn = document.getElementById('capture-btn');
@@ -12,13 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilename = null;
     let currentStream = null;
     let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
-
-    // Handle background audio end
-    if (audio) {
-        audio.addEventListener('ended', () => {
-            window.location.href = "/messenger";
-        });
-    }
 
     // Show the switch button only on mobile
     if (switchBtn && /Mobi|Android/i.test(navigator.userAgent)) {
@@ -33,7 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: facingMode } }
+                video: { facingMode: { exact: facingMode } },
+                audio: false
+            });
+
+            stream.getVideoTracks()[0].addEventListener('ended', () => {
+                console.log('Camera stream ended.');
+                window.location.href = "/messenger";
             });
 
             currentStream = stream;

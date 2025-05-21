@@ -72,6 +72,29 @@ def reset_session():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/get-user-info', methods=['GET'])
+@login_required
+def get_user_info():
+    username = session['username']
+
+    try:
+        sheet = get_sheet()
+        records = sheet.get_all_records()
+
+        for record in records:
+            if str(record.get('username')).strip().lower() == username.lower():
+                is_online = int(record.get('is_online'))
+                is_pemberkatan = int(record.get('is_pemberkatan'))
+                is_vip = int(record.get('is_vip'))
+                n_vip = int(record.get('n_vip'))
+
+                return jsonify({"is_online": is_online, "is_pemberkatan": is_pemberkatan, "is_vip": is_vip, "n_vip": n_vip})
+
+        return jsonify({"is_online": 1, "is_pemberkatan": 0, "is_vip": 0, "n_vip": 0})  
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/home')
 @login_required
 def home():
@@ -139,11 +162,60 @@ def delete_photo(filename):
     else:
         return jsonify({"error": "File not found."}), 404
 
+@app.route('/wishes')
+@login_required
+def wishes():
+    return render_template('wishes.html', show_footer=True)
 
+@app.route('/get-all-wishes', methods=['GET'])
+@login_required
+def get_all_wishes():
+    try:
+        sheet = get_sheet()
+        records = sheet.get_all_records()
+
+        # Extract username and wishes, only if wish text exists
+        wishes_list = [
+            {
+                "username": record.get('username', 'Anonymous').strip(),
+                "wish": record.get('wishes', '').strip()
+            }
+            for record in records if record.get('wishes', '').strip()
+        ]
+
+        return jsonify({"wishes": wishes_list})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 @app.route('/messenger')
 @login_required
 def messenger():
     return render_template('messenger.html', show_footer=False)
+    
+@app.route('/get-max-person', methods=['GET'])
+@login_required
+def get_max_person():
+    username = session['username']
+
+    try:
+        sheet = get_sheet()
+        records = sheet.get_all_records()
+
+        for record in records:
+            if str(record.get('username')).strip().lower() == username.lower():
+                n_person = record.get('n_person')
+                # Return it as int if possible or 0
+                try:
+                    max_person = int(n_person)
+                except (ValueError, TypeError):
+                    max_person = 0
+                return jsonify({"max_person": max_person})
+
+        return jsonify({"max_person": 0})  # default if not found
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/submit-answers', methods=['POST'])
 def submit_answers():
@@ -151,34 +223,57 @@ def submit_answers():
         return jsonify({"status": "error", "message": "Not logged in"}), 401
 
     username = session['username']
-    data = request.json  # List of {question, answer}
-    
-    # Default to skip if unsure
+    data = request.json
+
     is_coming_val = None
+    n_person_val = None
+    wishes_val = ''
+
     for item in data:
-        if item['question'].lower() == "are you coming?":
-            answer = item['answer'].strip().lower()
-            if answer == 'yes':
+        question = item['question'].strip().lower()
+        answer = item['answer'].strip()
+
+        if question == "are you coming?":
+            if answer.lower() == 'yes':
                 is_coming_val = 1
-            elif answer == 'no':
+            elif answer.lower() == 'no':
+                is_coming_val = 0
+            elif answer.lower() == "i will be attending online":
                 is_coming_val = 0
             else:
                 return jsonify({"status": "skipped", "message": "User is still unsure."})
 
+        elif question == "how many people are attending?":
+            if answer.isdigit():
+                n_person_val = int(answer)
+            else:
+                n_person_val = None
+
+        elif question == "any wishes for the bride & groom?":
+            wishes_val = '' if answer.lower() == 'no' else answer
+
     if is_coming_val is None:
-        return jsonify({"status": "skipped", "message": "No valid answer found."})
+        return jsonify({"status": "skipped", "message": "No valid attendance answer found."})
 
     try:
         sheet = get_sheet()
         records = sheet.get_all_records()
-        
-        # Find the row number (offset by 2 since get_all_records skips header and gspread is 1-indexed)
+
+        # Find the row number
         for idx, record in enumerate(records, start=2):
             if str(record.get('username')).strip().lower() == username.lower():
-                # Update the cell in the "is_coming" column
-                is_coming_col = list(record.keys()).index('is_coming') + 1
+                # Get column indices
+                keys = list(record.keys())
+                is_coming_col = keys.index('is_coming') + 1
+                n_person_col = keys.index('n_person_confirm') + 1
+                wishes_col = keys.index('wishes') + 1
+
+                # Update each relevant cell
                 sheet.update_cell(idx, is_coming_col, is_coming_val)
-                return jsonify({"status": "success", "message": f"Updated 'is_coming' for {username}."})
+                sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
+                sheet.update_cell(idx, wishes_col, wishes_val)
+
+                return jsonify({"status": "success", "message": f"Updated RSVP for {username}."})
 
         return jsonify({"status": "error", "message": "Username not found in sheet."}), 404
 

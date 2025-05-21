@@ -2,11 +2,11 @@
 {% block content %}
 
 <audio id="bg-audio" autoplay>
-    <source src="{{ url_for('static', filename='audio/voice_call.mp4') }}" type="audio/mpeg">
+    <source src="{{ url_for('static', filename='audio/voice_call.mp3') }}" type="audio/mpeg">
     Your browser does not support the audio element.
 </audio>
 
-<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/call.js') }}"></script>
 
 <a href="{{ url_for('messenger') }}" class="close-button"><</a>
 
