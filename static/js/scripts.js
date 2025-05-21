@@ -33,7 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: facingMode } }
+                video: { facingMode: { exact: facingMode } },
+                audio: false
+            });
+
+            stream.getVideoTracks()[0].addEventListener('ended', () => {
+                console.log('Camera stream ended.');
+                window.location.href = "/messenger";
             });
 
             currentStream = stream;
