@@ -145,6 +145,30 @@ def delete_photo(filename):
 def messenger():
     return render_template('messenger.html', show_footer=False)
 
+@app.route('/get-max-person', methods=['GET'])
+@login_required
+def get_max_person():
+    username = session['username']
+
+    try:
+        sheet = get_sheet()
+        records = sheet.get_all_records()
+
+        for record in records:
+            if str(record.get('username')).strip().lower() == username.lower():
+                n_person = record.get('n_person')
+                # Return it as int if possible or 0
+                try:
+                    max_person = int(n_person)
+                except (ValueError, TypeError):
+                    max_person = 0
+                return jsonify({"max_person": max_person})
+
+        return jsonify({"max_person": 0})  # default if not found
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/submit-answers', methods=['POST'])
 def submit_answers():
     if 'username' not in session:

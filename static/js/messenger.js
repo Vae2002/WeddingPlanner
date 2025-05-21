@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentQuestion = 0;
   let stopAsking = false;
   let counter = 0;
+  let maxPerson = 0; // default max
 
   const chatBox = document.getElementById('chat-box');
   const answerInput = document.getElementById('answer-input');
@@ -18,6 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const counterControls = document.getElementById('counter-controls');
   const noThanksBtn = document.getElementById('no-thanks-btn');
   const counterDisplay = counterControls.querySelector('.num');
+
+  // Fetch max person for current user
+  fetch('/get-max-person')
+    .then(response => response.json())
+    .then(data => {
+      if (data.max_person !== undefined) {
+        maxPerson = data.max_person;
+        counter = 0;
+        counterDisplay.textContent = counter;
+
+        // Optional: If maxPerson is zero or less, disable counter controls
+        if (maxPerson <= 0) {
+          counterControls.querySelector('.plus').disabled = true;
+          counterControls.querySelector('.minus').disabled = true;
+          submitCounterBtn.disabled = true;
+        }
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching max person:', err);
+    });
 
   function appendMessage(text, type) {
     const msg = document.createElement('div');
@@ -74,6 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     currentQuestion++;
+
+    if (currentQuestion === 3) { 
+      answerInput.style.display = 'none';
+      submitBtn.style.display = 'none';
+      noThanksBtn.style.display = 'none';
+      counterControls.style.display = 'none';
+      buttonAnswers.style.display = 'none';
+    }
+
     setTimeout(askNextQuestion, 500);
   }
 
@@ -111,8 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Counter logic
   counterControls.querySelector('.plus').addEventListener('click', () => {
-    counter++;
-    counterDisplay.textContent = counter;
+    if (counter < maxPerson) {
+      counter++;
+      counterDisplay.textContent = counter;
+    }
   });
 
   counterControls.querySelector('.minus').addEventListener('click', () => {
