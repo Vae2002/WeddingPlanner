@@ -58,28 +58,50 @@ document.addEventListener('DOMContentLoaded', () => {
         editBtn.textContent = "Edit my RSVP ✏️";
         editBtn.className = 'redirect-button';
         editBtn.addEventListener('click', () => {
-          currentQuestion = 0;
-          stopAsking = false;
+          fetch('/get-user-info')
+            .then(response => response.json())
+            .then(data => {
+              currentQuestion = 0;
+              stopAsking = false;
 
-          // Reinitialize full questions array safely
-          questions.length = 0;
-          questions.push(
-            "Are you coming?",
-            "How many people are attending?",
-            "Any wishes for the bride & groom?",
-            "Are you sure with your wishes?"
-          );
+              // Update values from fresh fetch
+              isComing = data.is_coming;
+              wishesVal = data.wishes;
+              isOnlineUser = data.is_online === 1;
+              maxPerson = data.max_person || 1;
+              counter = 1;
+              counterDisplay.textContent = counter;
 
-          if (wishesVal && wishesVal.trim() !== '') {
-            // Skip question 3 (wishes)
-            questions.splice(2, 1);
-          }
+              counterControls.querySelector('.plus').disabled = false;
+              counterControls.querySelector('.minus').disabled = false;
+              buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = false);
 
-          chatBox.innerHTML = '';
-          answers.length = 0; // Clear previous answers
-          askNextQuestion();
-        });
+              submitCounterBtn.disabled = false;
+              answerInput.disabled = false;
+              submitBtn.disabled = false;
+              noThanksBtn.disabled = false;
 
+
+              // Reinitialize full questions array safely
+              questions.length = 0;
+              questions.push(
+                "Are you coming?",
+                "How many people are attending?",
+                "Any wishes for the bride & groom?",
+                "Are you sure with your wishes?"
+              );
+
+              if (wishesVal && wishesVal.trim() !== '') {
+                // Skip question 3 (wishes)
+                questions.splice(2, 1);
+                stopAsking = true;
+              }
+
+              chatBox.innerHTML = '';
+              answers.length = 0;
+              askNextQuestion();
+            });
+          });
         chatBox.appendChild(editBtn);
         chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -137,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function askNextQuestion() {
-    if (stopAsking || currentQuestion >= questions.length) {
+    if (currentQuestion >= questions.length || stopAsking) {
       appendMessage("Thank you for your responses! ❤️", 'question');
 
       fetch('/submit-answers', {
@@ -150,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
           wishesButton.textContent = "View all wishes 💌";
           wishesButton.className = 'redirect-button';
           wishesButton.addEventListener('click', () => {
-            window.location.href = "/wishes";  // You must define this route in Flask
+            window.location.href = "/wishes";  
           });
           chatBox.appendChild(wishesButton);
           chatBox.scrollTop = chatBox.scrollHeight;
@@ -208,6 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleAnswerSubmit(answer) {
     if (!answer) return;
 
+    console.log("Submitting answer:", answer, "for question", questions[currentQuestion]);
+
     appendMessage(answer, 'answer');
     answers.push({ question: questions[currentQuestion], answer });
 
@@ -215,7 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const lower = answer.toLowerCase();
       if (lower === 'no') {
         appendMessage("We would still be delighted to have you join our online reception. 💌", 'question');
-        stopAsking = true;
+        currentQuestion = 2; // Skip to wishes
+        setTimeout(askNextQuestion, 500);
+        return;
       } else if (["i will be attending online", "yes, i will be attending online"].includes(lower)) {
         appendMessage("We look forward to seeing you online! 💌", 'question');
         currentQuestion = 2; // Skip to wishes
@@ -247,6 +273,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setTimeout(askNextQuestion, 500);
+
+    if (stopAsking) {
+      appendMessage("Thank you for your responses! ❤️", 'question');
+      
+      fetch('/submit-answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
+      }).then(res => res.json()).then(res => {
+        if (res.status === 'success') {
+          const wishesButton = document.createElement('button');
+          wishesButton.textContent = "View all wishes 💌";
+          wishesButton.className = 'redirect-button';
+          wishesButton.addEventListener('click', () => {
+            window.location.href = "/wishes";
+          });
+          chatBox.appendChild(wishesButton);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      });
+
+      disableInputs();
+      return;
+    }
   }
 
 
