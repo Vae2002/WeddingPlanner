@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, logging, render_template, request, jsonify, redirect, url_for, session
 from sqlalchemy import create_engine
 import pandas as pd
 from datetime import datetime
@@ -6,8 +6,12 @@ import os
 import base64
 from functools import wraps
 import gspread
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 from oauth2client.service_account import ServiceAccountCredentials
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from google.oauth2 import service_account
 load_dotenv()
 
 app = Flask(__name__)
@@ -57,7 +61,72 @@ def get_sheet():
 engine = create_engine('sqlite:///guest.db')
 df.to_sql('guest_database', con=engine, if_exists='replace', index=False)
 
+#gdrive connection
+SCOPES_GDRIVE = ['https://www.googleapis.com/auth/drive']
 
+def get_credentials_gdrive():
+    private_key_stef = os.getenv("PRIVATE_KEY2")
+
+    # Properly format the private key
+    formatted_key = private_key_stef.replace('\\n', '\n')
+
+    gdrive_credentials_info = {
+        "type": "service_account",
+        "project_id": os.getenv("PROJECT_ID2"),
+        "private_key_id": os.getenv("PRIVATE_KEY_ID2"),
+        "private_key": formatted_key,
+        "client_email": os.getenv("CLIENT_EMAIL2"),
+        "client_id": os.getenv("CLIENT_ID2"),
+        "auth_uri": os.getenv("AUTH_URI2"),
+        "token_uri": os.getenv("TOKEN_URI2"),
+        "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL2"),
+        "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL2")
+    }
+    credentials = service_account.Credentials.from_service_account_info(gdrive_credentials_info, scopes=SCOPES_GDRIVE)
+    return credentials
+    
+# Config
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+DRIVE_FOLDER_ID = '149JwIKVXdm_zD_1WFS2S_c19VN9-X-Q7'  # Replace with your Drive folder ID
+
+def upload_to_drive(file_path, file_name, credentials):
+    drive_service = build('drive', 'v3', credentials=credentials)
+
+    file_metadata = {
+        'name': file_name,
+        'parents': [DRIVE_FOLDER_ID]
+    }
+
+    media = MediaFileUpload(file_path, mimetype='image/jpeg')  # Adjust MIME type as needed
+    file = drive_service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id'
+    ).execute()
+
+    return file.get('id')
+
+@app.route('/upload-to-drive/<filename>', methods=['POST'])
+def upload_to_drive_route(filename):
+        print("masuk upload file - Debug: filename =", filename, flush=True)
+        if not filename:
+            return jsonify({'error': 'Filename is required'}), 400
+        
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if not os.path.exists(file_path):
+            return jsonify({'error': 'File not found'}), 404
+
+        credentials = get_credentials_gdrive()
+        file_id = upload_to_drive(file_path, filename, credentials)
+        
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        
+        return jsonify({'message': 'File uploaded successfully', 'file_id': file_id})
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}), 500
+    
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -160,11 +229,17 @@ def save_photo():
     filename = f"capture_{len(os.listdir(UPLOAD_FOLDER)) + 1}.jpg"
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     
+    print("Debug: filename =", filename, flush=True)
+
     with open(file_path, 'wb') as f:
         f.write(img_bytes)
-    
-    return jsonify({"message": "Photo saved successfully!", "filename": filename})
 
+        return jsonify({
+            "message": "Photo saved successfully!",
+            "filename": filename
+        })
+
+   
 @app.route('/delete-photo/<filename>', methods=['DELETE'])
 @login_required
 def delete_photo(filename):
