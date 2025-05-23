@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).then(() => {
                     currentFilename = null;
                     modal.style.display = 'none';
+                    alert('upload successful!');
                 });
         })
     }
