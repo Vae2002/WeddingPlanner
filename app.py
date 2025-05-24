@@ -1,3 +1,5 @@
+import io
+import uuid
 from flask import Flask, logging, render_template, request, jsonify, redirect, url_for, session
 from sqlalchemy import create_engine
 import pandas as pd
@@ -8,6 +10,7 @@ from functools import wraps
 import gspread
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 from oauth2client.service_account import ServiceAccountCredentials
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -126,6 +129,29 @@ def upload_to_drive_route(filename):
         return jsonify({'message': 'File uploaded successfully', 'file_id': file_id})
     # except Exception as e:
     #     return jsonify({'error': str(e)}), 500
+
+def download_images_from_drive(folder_id, destination_folder, credentials):
+    drive_service = build('drive', 'v3', credentials=credentials)
+    print("Debug: Downloading images from Google Drive...")
+    # List files in the Google Drive folder
+    results = drive_service.files().list(
+        q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
+        fields="files(id, name)"
+    ).execute()
+
+    files = results.get('files', [])
+
+    for file in files:
+        file_id = file['id']
+        file_name = file['name']
+        request = drive_service.files().get_media(fileId=file_id)
+        fh = io.FileIO(os.path.join(destination_folder, file_name), 'wb')
+        downloader = MediaIoBaseDownload(fh, request)
+
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+            print(f"Downloaded {file_name} {int(status.progress() * 100)}%")
     
 def login_required(f):
     @wraps(f)
@@ -193,6 +219,12 @@ def home():
 @login_required
 def search():
     image_folder = os.path.join('static', 'images', 'explore')
+    os.makedirs(image_folder, exist_ok=True)
+
+    # Download from Google Drive
+    credentials = get_credentials_gdrive()  # Your existing credential function
+    download_images_from_drive(DRIVE_FOLDER_ID, image_folder, credentials)
+ 
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
@@ -226,7 +258,7 @@ def save_photo():
     header, encoded = image_data.split(',', 1)
     img_bytes = base64.b64decode(encoded)
 
-    filename = f"capture_{len(os.listdir(UPLOAD_FOLDER)) + 1}.jpg"
+    filename = f"capture_{uuid.uuid4().hex}.jpg"
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     
     print("Debug: filename =", filename, flush=True)
