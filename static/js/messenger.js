@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const questions = [
     "Are you coming?",
     "How many people are attending?",
-    "Any wishes for the bride & groom?"
+    "Any wishes for the bride & groom?",
+    "Are you sure with your wishes?"
   ];
 
-  const onlineAnswers = [ // Only these buttons for online users
+  const onlineAnswers = [ 
     "No",
     "Yes, I will be attending online",
     "I'm still not sure"
@@ -14,9 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const answers = [];
   let currentQuestion = 0;
   let stopAsking = false;
-  let counter = 0;
-  let maxPerson = 0; // default max
+  let counter = 1;
+  let maxPerson = 1; // default max
   let isOnlineUser = false; // track if user is online
+  let isComing = null;
+  let wishesVal = '';
 
   const chatBox = document.getElementById('chat-box');
   const answerInput = document.getElementById('answer-input');
@@ -29,49 +32,115 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Fetch full user info first
   fetch('/get-user-info')
-  .then(response => response.json())
-  .then(data => {
-    isOnlineUser = data.is_online === 1;
+    .then(response => response.json())
+    .then(data => {
+      isComing = data.is_coming;
+      wishesVal = data.wishes;
+      isOnlineUser = data.is_online === 1;
 
-    if (isOnlineUser) {
-      // Change first question for online users
-      questions[0] = "Will you be attending online?";
+      if (isComing === 0) {
+        appendMessage("Will you be attending online?", 'question');
+        appendMessage("No", 'answer');
+        appendMessage("We would still be delighted to have you join our online reception. 💌", 'question');
 
-      // Restrict buttons for question 0
-      buttonAnswers.innerHTML = ''; // Clear old buttons
-      onlineAnswers.forEach(ans => {
-        const btn = document.createElement('button');
-        btn.textContent = ans;
-        btn.setAttribute('data-answer', ans);
-        buttonAnswers.appendChild(btn);
+        if (wishesVal && wishesVal.trim() !== '') {
+          appendMessage("Any wishes for the bride & groom?", 'question');
+          appendMessage(wishesVal, 'answer');
+        }
 
-        btn.addEventListener('click', () => {
-          handleAnswerSubmit(ans);
+        appendMessage("Thank you for your responses! ❤️", 'question');
+        disableInputs(); // Disable everything forever
+        return;
+      } else if (isComing === 1) {
+        appendMessage("You’ve already RSVP’d. Want to make changes?", 'question');
+        
+        const editBtn = document.createElement('button');
+        editBtn.textContent = "Edit my RSVP ✏️";
+        editBtn.className = 'redirect-button';
+        editBtn.addEventListener('click', () => {
+          fetch('/get-user-info')
+            .then(response => response.json())
+            .then(data => {
+              currentQuestion = 0;
+              stopAsking = false;
+
+              // Update values from fresh fetch
+              isComing = data.is_coming;
+              wishesVal = data.wishes;
+              isOnlineUser = data.is_online === 1;
+              maxPerson = data.max_person || 1;
+              counter = 1;
+              counterDisplay.textContent = counter;
+
+              counterControls.querySelector('.plus').disabled = false;
+              counterControls.querySelector('.minus').disabled = false;
+              buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = false);
+
+              submitCounterBtn.disabled = false;
+              answerInput.disabled = false;
+              submitBtn.disabled = false;
+              noThanksBtn.disabled = false;
+
+
+              // Reinitialize full questions array safely
+              questions.length = 0;
+              questions.push(
+                "Are you coming?",
+                "How many people are attending?",
+                "Any wishes for the bride & groom?",
+                "Are you sure with your wishes?"
+              );
+
+              if (wishesVal && wishesVal.trim() !== '') {
+                // Skip question 3 (wishes)
+                questions.splice(2, 1);
+                stopAsking = true;
+              }
+
+              chatBox.innerHTML = '';
+              answers.length = 0;
+              askNextQuestion();
+            });
+          });
+        chatBox.appendChild(editBtn);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        disableInputs(); // Disable all until user chooses to edit
+        return;
+      }
+
+      if (isOnlineUser) {
+        // Change first question for online users
+        questions[0] = "Will you be attending online?";
+
+        // Restrict buttons for question 0
+        buttonAnswers.innerHTML = ''; // Clear old buttons
+        onlineAnswers.forEach(ans => {
+          const btn = document.createElement('button');
+          btn.textContent = ans;
+          btn.setAttribute('data-answer', ans);
+          buttonAnswers.appendChild(btn);
+
+          btn.addEventListener('click', () => {
+            handleAnswerSubmit(ans);
+          });
         });
-      });
-    } else {
-      // Not online - keep original question and fetch max person
-      questions[0] = "Are you coming?";
+      } else {
+        // Not online - keep original question and use max_person
+        questions[0] = "Are you coming?";
 
-      fetch('/get-max-person')
-        .then(resp => resp.json())
-        .then(data => {
-          if (data.max_person !== undefined) {
-            maxPerson = data.max_person;
-            counter = 0;
-            counterDisplay.textContent = counter;
+        if (data.max_person !== undefined) {
+          maxPerson = data.max_person;
+          counter = 1;
+          counterDisplay.textContent = counter;
 
-            if (maxPerson <= 0) {
-              counterControls.querySelector('.plus').disabled = true;
-              counterControls.querySelector('.minus').disabled = true;
-              submitCounterBtn.disabled = true;
-            }
+          if (maxPerson <= 1) {
+            counterControls.querySelector('.plus').disabled = true;
+            counterControls.querySelector('.minus').disabled = true;
+            submitCounterBtn.disabled = true;
           }
-        })
-        .catch(err => {
-          console.error('Error fetching max person:', err);
-        });
-    }
+        }
+      }
 
     askNextQuestion(); // Start chat after user info loaded
   })
@@ -90,13 +159,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function askNextQuestion() {
-    if (stopAsking || currentQuestion >= questions.length) {
+    if (currentQuestion >= questions.length || stopAsking) {
       appendMessage("Thank you for your responses! ❤️", 'question');
+
       fetch('/submit-answers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(answers)
+      }).then(res => res.json()).then(res => {
+        if (res.status === 'success') {
+          const wishesButton = document.createElement('button');
+          wishesButton.textContent = "View all wishes 💌";
+          wishesButton.className = 'redirect-button';
+          wishesButton.addEventListener('click', () => {
+            window.location.href = "/wishes";  
+          });
+          chatBox.appendChild(wishesButton);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
       });
+
       disableInputs();
       return;
     }
@@ -112,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (currentQuestion === 0) {
       buttonAnswers.style.display = 'inline-block';
-      // If user is not online, restore default buttons (in case)
       if (!isOnlineUser) {
         buttonAnswers.innerHTML = `
           <button data-answer="Yes">Yes</button>
@@ -132,33 +213,60 @@ document.addEventListener('DOMContentLoaded', () => {
       answerInput.style.display = 'inline-block';
       submitBtn.style.display = 'inline-block';
       noThanksBtn.style.display = 'inline-block';
+    } else if (currentQuestion === 3) {
+      buttonAnswers.style.display = 'inline-block';
+      buttonAnswers.innerHTML = `
+        <button data-answer="Yes, please share my wishes">Yes, please share my wishes</button>
+        <button data-answer="No, I'd like to edit my wishes">No, I'd like to edit my wishes</button>
+      `;
+      buttonAnswers.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', () => {
+          handleAnswerSubmit(button.getAttribute('data-answer'));
+        });
+      });
     }
   }
 
   function handleAnswerSubmit(answer) {
     if (!answer) return;
 
+    console.log("Submitting answer:", answer, "for question", questions[currentQuestion]);
+
     appendMessage(answer, 'answer');
     answers.push({ question: questions[currentQuestion], answer });
 
     if (currentQuestion === 0) {
-      if (answer.toLowerCase() === 'no') {
+      const lower = answer.toLowerCase();
+      if (lower === 'no') {
+        handleAnswerSubmit(answer)
         appendMessage("We would still be delighted to have you join our online reception. 💌", 'question');
-        stopAsking = true;
-      } else if (["i will be attending online", "yes, i will be attending online"].includes(answer.toLowerCase())) {
+        currentQuestion = 2;
+        setTimeout(askNextQuestion, 500);
+        return;
+      } else if (["i will be attending online", "yes, i will be attending online"].includes(lower)) {
+        handleAnswerSubmit(answer)
         appendMessage("We look forward to seeing you online! 💌", 'question');
         currentQuestion = 2; // Skip to wishes
         setTimeout(askNextQuestion, 500);
         return;
-      } else if (answer.toLowerCase() === "i'm still not sure") {
+      } else if (lower === "i'm still not sure") {
         appendMessage("We kindly ask you to confirm your attendance by 22 August 2025 at the latest. 💌", 'question');
         stopAsking = true;
       }
     }
 
+    if (currentQuestion === 3) {
+      if (answer.toLowerCase() === "no, i'd like to edit my wishes") {
+        answers.splice(2, 1); // Remove previous wishes
+        currentQuestion = 2;  // Go back to edit wishes
+        setTimeout(askNextQuestion, 500);
+        return;
+      }
+    }
+
     currentQuestion++;
 
-    if (currentQuestion === 3) {
+    if (currentQuestion === questions.length) {
       answerInput.style.display = 'none';
       submitBtn.style.display = 'none';
       noThanksBtn.style.display = 'none';
@@ -167,7 +275,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setTimeout(askNextQuestion, 500);
+
+    if (stopAsking) {
+      appendMessage("Thank you for your responses! ❤️", 'question');
+      
+      fetch('/submit-answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
+      }).then(res => res.json()).then(res => {
+        if (res.status === 'success') {
+          const wishesButton = document.createElement('button');
+          wishesButton.textContent = "View all wishes 💌";
+          wishesButton.className = 'redirect-button';
+          wishesButton.addEventListener('click', () => {
+            window.location.href = "/wishes";
+          });
+          chatBox.appendChild(wishesButton);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      });
+
+      disableInputs();
+      return;
+    }
   }
+
 
   function disableInputs() {
     answerInput.disabled = true;
@@ -176,8 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
     buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = true);
     submitCounterBtn.disabled = true;
   }
-
-  // Event listeners for inputs/counter remain the same as before...
 
   submitBtn.addEventListener('click', () => {
     handleAnswerSubmit(answerInput.value.trim());
@@ -193,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   noThanksBtn.addEventListener('click', () => {
+    stopAsking = true;
     handleAnswerSubmit("No");
   });
 
@@ -204,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   counterControls.querySelector('.minus').addEventListener('click', () => {
-    if (counter > 0) {
+    if (counter > 1) {
       counter--;
       counterDisplay.textContent = counter;
     }
@@ -212,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   submitCounterBtn.addEventListener('click', () => {
     handleAnswerSubmit(`${counter}`);
-    counter = 0;
+    counter = 1;
     counterDisplay.textContent = counter;
   });
 

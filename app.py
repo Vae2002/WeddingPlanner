@@ -185,20 +185,50 @@ def reset_session():
 def get_user_info():
     username = session['username']
 
+    def safe_int(value, default=None):
+        try:
+            return int(value) if str(value).strip() != '' else default
+        except (ValueError, TypeError):
+            return default
+
     try:
         sheet = get_sheet()
         records = sheet.get_all_records()
 
         for record in records:
             if str(record.get('username')).strip().lower() == username.lower():
-                is_online = int(record.get('is_online'))
-                is_pemberkatan = int(record.get('is_pemberkatan'))
-                is_vip = int(record.get('is_vip'))
-                n_vip = int(record.get('n_vip'))
+                is_online = safe_int(record.get('is_online'), 0)
+                is_pemberkatan = safe_int(record.get('is_pemberkatan'), 0)
+                is_vip = safe_int(record.get('is_vip'), 0)
+                n_vip = safe_int(record.get('n_vip'), 0)
+                max_person = safe_int(record.get('n_person'), 1)
+                is_coming = safe_int(record.get('is_coming'), None)
 
-                return jsonify({"is_online": is_online, "is_pemberkatan": is_pemberkatan, "is_vip": is_vip, "n_vip": n_vip})
+                wishes_raw = record.get('wishes')
+                wishes = wishes_raw if wishes_raw and str(wishes_raw).strip() else None
 
-        return jsonify({"is_online": 1, "is_pemberkatan": 0, "is_vip": 0, "n_vip": 0})  
+                return jsonify({
+                    "username": username,
+                    "is_online": is_online,
+                    "is_pemberkatan": is_pemberkatan,
+                    "is_vip": is_vip,
+                    "n_vip": n_vip,
+                    "max_person": max_person,
+                    "is_coming": is_coming,
+                    "wishes": wishes
+                })
+
+        # User not found
+        return jsonify({
+            "username": username,
+            "is_online": None,
+            "is_pemberkatan": 0,
+            "is_vip": 0,
+            "n_vip": 0,
+            "max_person": 1,
+            "is_coming": None,
+            "wishes": None
+        })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -213,7 +243,7 @@ def home():
     user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
     user_data = user_df.iloc[0].to_dict() if not user_df.empty else {}
 
-    return render_template('home.html', user=user_data, show_footer = True)
+    return render_template('home.html', user=user_data, show_footer = True, play_audio = True)
 
 @app.route('/search')
 @login_required
@@ -232,7 +262,7 @@ def search():
     ]
       # Debugging output
     print("Images sent to template:", image_files)
-    return render_template('search.html', images=image_files, show_footer=True)
+    return render_template('search.html', images=image_files, show_footer=True, play_audio = True)
 
 def map_view():
     latitude = 37.4219999
@@ -247,7 +277,7 @@ def map_view():
 @app.route('/capture')
 @login_required
 def capture():
-    return render_template('capture.html', show_footer=False)
+    return render_template('capture.html', show_footer=False, play_audio = False)
 
 @app.route('/save-photo', methods=['POST'])
 @login_required
@@ -285,7 +315,7 @@ def delete_photo(filename):
 @app.route('/wishes')
 @login_required
 def wishes():
-    return render_template('wishes.html', show_footer=True)
+    return render_template('wishes.html', show_footer=True, play_audio = True)
 
 @app.route('/get-all-wishes', methods=['GET'])
 @login_required
@@ -312,30 +342,6 @@ def get_all_wishes():
 @login_required
 def messenger():
     return render_template('messenger.html', show_footer=False)
-    
-@app.route('/get-max-person', methods=['GET'])
-@login_required
-def get_max_person():
-    username = session['username']
-
-    try:
-        sheet = get_sheet()
-        records = sheet.get_all_records()
-
-        for record in records:
-            if str(record.get('username')).strip().lower() == username.lower():
-                n_person = record.get('n_person')
-                # Return it as int if possible or 0
-                try:
-                    max_person = int(n_person)
-                except (ValueError, TypeError):
-                    max_person = 0
-                return jsonify({"max_person": max_person})
-
-        return jsonify({"max_person": 0})  # default if not found
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 @app.route('/submit-answers', methods=['POST'])
 def submit_answers():
@@ -403,17 +409,17 @@ def submit_answers():
 @app.route('/voice_call')
 @login_required
 def voice_call():
-    return render_template('voice_call.html', show_footer=False)
+    return render_template('voice_call.html', show_footer=False, play_audio = False)
 
 @app.route('/video_call')
 @login_required
 def video_call():
-    return render_template('video_call.html', show_footer=False)
+    return render_template('video_call.html', show_footer=False, play_audio = False)
 
 @app.route('/reels')
 @login_required
 def reels():
-    return render_template('reels.html', show_footer=True)
+    return render_template('reels.html', show_footer=True, play_audio = False)
 
 @app.route('/profile')
 @login_required
@@ -426,7 +432,7 @@ def profile():
     ]
       # Debugging output
     print("Images sent to template:", image_files)
-    return render_template('profile.html', images=image_files, show_footer=True)
+    return render_template('profile.html', images=image_files, show_footer=True, play_audio = True)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
