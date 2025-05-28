@@ -238,11 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentQuestion === 0) {
       const lower = answer.toLowerCase();
       if (lower === 'no') {
+        handleAnswerSubmit(answer)
         appendMessage("We would still be delighted to have you join our online reception. 💌", 'question');
-        currentQuestion = 2; // Skip to wishes
+        currentQuestion = 2;
         setTimeout(askNextQuestion, 500);
         return;
       } else if (["i will be attending online", "yes, i will be attending online"].includes(lower)) {
+        handleAnswerSubmit(answer)
         appendMessage("We look forward to seeing you online! 💌", 'question');
         currentQuestion = 2; // Skip to wishes
         setTimeout(askNextQuestion, 500);

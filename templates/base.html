@@ -62,8 +62,20 @@
                 </ul>
             </nav>
         </footer>
+
     {% endif %}
 
+    {% if play_audio %}
+        <div id="audio-player" class="draggable-disc">
+            <img src="static/images/vinyl-disc.webp" alt="Spinning Disc" />
+            <audio id="background-audio" loop>
+                <source src="static/audio/background_song.mp3" type="audio/mpeg" />
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    {% endif %}
+
+    
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>

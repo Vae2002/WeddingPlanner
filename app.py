@@ -135,7 +135,7 @@ def home():
     user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
     user_data = user_df.iloc[0].to_dict() if not user_df.empty else {}
 
-    return render_template('home.html', user=user_data, show_footer = True)
+    return render_template('home.html', user=user_data, show_footer = True, play_audio = True)
 
 @app.route('/search')
 @login_required
@@ -148,7 +148,7 @@ def search():
     ]
       # Debugging output
     print("Images sent to template:", image_files)
-    return render_template('search.html', images=image_files, show_footer=True)
+    return render_template('search.html', images=image_files, show_footer=True, play_audio = True)
 
 def map_view():
     latitude = 37.4219999
@@ -163,7 +163,7 @@ def map_view():
 @app.route('/capture')
 @login_required
 def capture():
-    return render_template('capture.html', show_footer=False)
+    return render_template('capture.html', show_footer=False, play_audio = False)
 
 @app.route('/save-photo', methods=['POST'])
 @login_required
@@ -195,7 +195,7 @@ def delete_photo(filename):
 @app.route('/wishes')
 @login_required
 def wishes():
-    return render_template('wishes.html', show_footer=True)
+    return render_template('wishes.html', show_footer=True, play_audio = True)
 
 @app.route('/get-all-wishes', methods=['GET'])
 @login_required
@@ -289,17 +289,17 @@ def submit_answers():
 @app.route('/voice_call')
 @login_required
 def voice_call():
-    return render_template('voice_call.html', show_footer=False)
+    return render_template('voice_call.html', show_footer=False, play_audio = False)
 
 @app.route('/video_call')
 @login_required
 def video_call():
-    return render_template('video_call.html', show_footer=False)
+    return render_template('video_call.html', show_footer=False, play_audio = False)
 
 @app.route('/reels')
 @login_required
 def reels():
-    return render_template('reels.html', show_footer=True)
+    return render_template('reels.html', show_footer=True, play_audio = False)
 
 @app.route('/profile')
 @login_required
@@ -312,7 +312,7 @@ def profile():
     ]
       # Debugging output
     print("Images sent to template:", image_files)
-    return render_template('profile.html', images=image_files, show_footer=True)
+    return render_template('profile.html', images=image_files, show_footer=True, play_audio = True)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

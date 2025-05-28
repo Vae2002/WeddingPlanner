@@ -1,107 +1,103 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const video = document.getElementById('camera-stream');
-    const canvas = document.getElementById('capture-canvas');
-    const captureBtn = document.getElementById('capture-btn');
-    const modal = document.getElementById('photo-modal');
-    const capturedImg = document.getElementById('captured-image-preview');
-    const shareBtn = document.getElementById('share-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
-    const switchBtn = document.getElementById('switch-camera-btn');
+document.addEventListener("DOMContentLoaded", () => {
+  const disc = document.getElementById("audio-player");
+  const audio = document.getElementById("background-audio");
 
-    let currentFilename = null;
-    let currentStream = null;
-    let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let offsetX = 0;
+  let offsetY = 0;
 
-    // Show the switch button only on mobile
-    if (switchBtn && /Mobi|Android/i.test(navigator.userAgent)) {
-        switchBtn.style.display = 'block';
+  // First-time autoplay logic with timeout reset
+    const lastVisit = localStorage.getItem('lastVisit');
+    const TEN_MINUTES = 10 * 60 * 1000;
+    const now = Date.now();
+
+    if (!lastVisit || now - parseInt(lastVisit, 10) > TEN_MINUTES) {
+    // Treat as first visit
+    localStorage.setItem('hasVisited', 'true');
+    localStorage.setItem('lastVisit', now.toString());
+
+    audio.play().catch(() => {
+        console.warn("Autoplay blocked on first visit. User interaction required.");
+    });
+    } else {
+    // Not first visit recently, just try resuming
+    localStorage.setItem('lastVisit', now.toString()); // Update visit time
+    audio.play().catch(() => {});
     }
 
-    // Start the camera
-    async function startCamera(facingMode = 'user') {
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-        }
+  // Resume from saved time if available
+  const savedTime = localStorage.getItem('bgAudioTime');
+  if (savedTime) {
+    audio.currentTime = parseFloat(savedTime);
+  }
 
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: facingMode } },
-                audio: false
-            });
-
-            stream.getVideoTracks()[0].addEventListener('ended', () => {
-                console.log('Camera stream ended.');
-                window.location.href = "/messenger";
-            });
-
-            currentStream = stream;
-            if (video) {
-                video.srcObject = stream;
-            }
-        } catch (err) {
-            console.error('Error starting camera:', err);
-            alert('Camera access denied or not available.');
-        }
-    }
-
-    // Initial camera start
-    if (video) {
-        startCamera();
+    // First-time autoplay logic
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited) {
+    localStorage.setItem('hasVisited', 'true');
+    audio.play().catch(() => {
+        console.warn("Autoplay blocked on first visit. User interaction required.");
+    });
+    } else {
+    audio.play().catch(() => {});
     }
 
 
-    // Flip camera
-    if (switchBtn) {
-        switchBtn.addEventListener('click', () => {
-            currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-            startCamera(currentFacingMode);
-        });
+  // Click to toggle play/pause if not a drag
+  disc.addEventListener("click", (e) => {
+    const movedX = Math.abs(e.clientX - dragStartX);
+    const movedY = Math.abs(e.clientY - dragStartY);
+    const isClick = movedX < 5 && movedY < 5;
+
+    if (isClick) {
+      if (audio.paused) {
+        audio.play();
+        disc.classList.remove("paused");
+      } else {
+        audio.pause();
+        disc.classList.add("paused");
+      }
     }
+  });
 
-    // Capture photo
-    if (captureBtn && canvas && video && modal && capturedImg) {
-        captureBtn.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  disc.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    offsetX = e.clientX - disc.getBoundingClientRect().left;
+    offsetY = e.clientY - disc.getBoundingClientRect().top;
 
-            const imageData = canvas.toDataURL('image/jpeg');
-            capturedImg.src = imageData;
-            modal.style.display = 'flex';
+    disc.style.left = `${disc.getBoundingClientRect().left}px`;
+    disc.style.top = `${disc.getBoundingClientRect().top}px`;
+    disc.style.right = "auto";
+    disc.style.bottom = "auto";
+    disc.style.position = "fixed";
+    disc.style.cursor = "grabbing";
 
-            fetch('/save-photo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imageData })
-            })
-            .then(res => res.json())
-            .then(data => {
-                currentFilename = data.filename;
-            });
-        });
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      disc.style.left = `${e.clientX - offsetX}px`;
+      disc.style.top = `${e.clientY - offsetY}px`;
     }
+  });
 
-    // Share photo
-    if (shareBtn && modal) {
-        shareBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-            alert('Photo shared!');
-            currentFilename = null;
-        });
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      disc.style.cursor = "grab";
     }
+  });
+});
 
-    // Cancel photo
-    if (cancelBtn && modal) {
-        cancelBtn.addEventListener('click', () => {
-            if (currentFilename) {
-                fetch(`/delete-photo/${currentFilename}`, {
-                    method: 'DELETE'
-                }).then(() => {
-                    currentFilename = null;
-                    modal.style.display = 'none';
-                });
-            }
-        });
-    }
+// Save audio time on page unload
+window.addEventListener('beforeunload', () => {
+  const audio = document.getElementById("background-audio");
+  if (audio) {
+    localStorage.setItem('bgAudioTime', audio.currentTime);
+  }
 });
