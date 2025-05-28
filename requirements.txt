@@ -4,3 +4,7 @@ pandas==2.2.2
 gspread
 oauth2client
 python-dotenv
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib

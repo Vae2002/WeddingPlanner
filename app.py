@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+import io
+import uuid
+from flask import Flask, logging, render_template, request, jsonify, redirect, url_for, session
 from sqlalchemy import create_engine
 import pandas as pd
 from datetime import datetime
@@ -6,8 +8,13 @@ import os
 import base64
 from functools import wraps
 import gspread
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 from oauth2client.service_account import ServiceAccountCredentials
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from google.oauth2 import service_account
 load_dotenv()
 
 app = Flask(__name__)
@@ -23,28 +30,129 @@ def inject_year():
 csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxhbKO06Y36vTyEiFgxZXXVtWkNebIQ-3diUm5xpAtMT1uHJIGF4Jvkt3bm8dKYo-5C6PkdQwrAX21/pub?output=csv'
 df = pd.read_csv(csv_url)
 
-# Google Sheets setup
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
-print(f"Using credentials file: {SERVICE_ACCOUNT_FILE}")
-if not os.path.exists(SERVICE_ACCOUNT_FILE):
-    raise FileNotFoundError(f"Credentials file not found at: {SERVICE_ACCOUNT_FILE}")
+# Construct credentials dict from environment variables
+credentials_dict = {
+    "type": os.getenv("type"),
+    "project_id": os.getenv("project_id"),
+    "private_key_id": os.getenv("private_key_id"),
+    "private_key": os.getenv("private_key"),
+    "client_email": os.getenv("client_email"),
+    "client_id": os.getenv("client_id"),
+    "auth_uri": os.getenv("auth_uri"),
+    "token_uri": os.getenv("token_uri"),
+    "auth_provider_x509_cert_url": os.getenv("auth_provider_x509_cert_url"),
+    "client_x509_cert_url": os.getenv("client_x509_cert_url")
+}
 
 # Spreadsheet details
-SPREADSHEET_ID = '1a-BSIrk5GKDXY6WNGZbYX5WEMx2Ph6lLxV-SYkoA83k'  # or spreadsheet ID from the URL
-SHEET_NAME = 'Sheet1'  # replace with your actual sheet name
+SPREADSHEET_ID = '1a-BSIrk5GKDXY6WNGZbYX5WEMx2Ph6lLxV-SYkoA83k'
+SHEET_NAME = 'Sheet1'
 
 def get_sheet():
-    creds = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPES)
-    client = gspread.authorize(creds)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, SCOPES)
+    try:
+        client = gspread.authorize(creds)
+    except Exception as e:
+        print(f"Failed to authorize Google Sheets client: {e}")
+        client = None  # Optional: set client to None or handle accordingly
+
     return client.open_by_key(SPREADSHEET_ID).worksheet(SHEET_NAME)
 
 # Connect and save to SQLite
 engine = create_engine('sqlite:///guest.db')
 df.to_sql('guest_database', con=engine, if_exists='replace', index=False)
 
+#gdrive connection
+SCOPES_GDRIVE = ['https://www.googleapis.com/auth/drive']
 
+def get_credentials_gdrive():
+    private_key_stef = os.getenv("PRIVATE_KEY2")
+
+    # Properly format the private key
+    formatted_key = private_key_stef.replace('\\n', '\n')
+
+    gdrive_credentials_info = {
+        "type": "service_account",
+        "project_id": os.getenv("PROJECT_ID2"),
+        "private_key_id": os.getenv("PRIVATE_KEY_ID2"),
+        "private_key": formatted_key,
+        "client_email": os.getenv("CLIENT_EMAIL2"),
+        "client_id": os.getenv("CLIENT_ID2"),
+        "auth_uri": os.getenv("AUTH_URI2"),
+        "token_uri": os.getenv("TOKEN_URI2"),
+        "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL2"),
+        "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL2")
+    }
+    credentials = service_account.Credentials.from_service_account_info(gdrive_credentials_info, scopes=SCOPES_GDRIVE)
+    return credentials
+    
+# Config
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+DRIVE_FOLDER_ID = '149JwIKVXdm_zD_1WFS2S_c19VN9-X-Q7'  # Replace with your Drive folder ID
+
+def upload_to_drive(file_path, file_name, credentials):
+    drive_service = build('drive', 'v3', credentials=credentials)
+
+    file_metadata = {
+        'name': file_name,
+        'parents': [DRIVE_FOLDER_ID]
+    }
+
+    media = MediaFileUpload(file_path, mimetype='image/jpeg')  # Adjust MIME type as needed
+    file = drive_service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id'
+    ).execute()
+
+    return file.get('id')
+
+@app.route('/upload-to-drive/<filename>', methods=['POST'])
+def upload_to_drive_route(filename):
+        print("masuk upload file - Debug: filename =", filename, flush=True)
+        if not filename:
+            return jsonify({'error': 'Filename is required'}), 400
+        
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if not os.path.exists(file_path):
+            return jsonify({'error': 'File not found'}), 404
+
+        credentials = get_credentials_gdrive()
+        file_id = upload_to_drive(file_path, filename, credentials)
+        
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        
+        return jsonify({'message': 'File uploaded successfully', 'file_id': file_id})
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}), 500
+
+def download_images_from_drive(folder_id, destination_folder, credentials):
+    drive_service = build('drive', 'v3', credentials=credentials)
+    print("Debug: Downloading images from Google Drive...")
+    # List files in the Google Drive folder
+    results = drive_service.files().list(
+        q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
+        fields="files(id, name)"
+    ).execute()
+
+    files = results.get('files', [])
+
+    for file in files:
+        file_id = file['id']
+        file_name = file['name']
+        request = drive_service.files().get_media(fileId=file_id)
+        fh = io.FileIO(os.path.join(destination_folder, file_name), 'wb')
+        downloader = MediaIoBaseDownload(fh, request)
+
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+            print(f"Downloaded {file_name} {int(status.progress() * 100)}%")
+    
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -141,6 +249,12 @@ def home():
 @login_required
 def search():
     image_folder = os.path.join('static', 'images', 'explore')
+    os.makedirs(image_folder, exist_ok=True)
+
+    # Download from Google Drive
+    credentials = get_credentials_gdrive()  # Your existing credential function
+    download_images_from_drive(DRIVE_FOLDER_ID, image_folder, credentials)
+ 
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
@@ -174,14 +288,20 @@ def save_photo():
     header, encoded = image_data.split(',', 1)
     img_bytes = base64.b64decode(encoded)
 
-    filename = f"capture_{len(os.listdir(UPLOAD_FOLDER)) + 1}.jpg"
+    filename = f"capture_{uuid.uuid4().hex}.jpg"
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     
+    print("Debug: filename =", filename, flush=True)
+
     with open(file_path, 'wb') as f:
         f.write(img_bytes)
-    
-    return jsonify({"message": "Photo saved successfully!", "filename": filename})
 
+        return jsonify({
+            "message": "Photo saved successfully!",
+            "filename": filename
+        })
+
+   
 @app.route('/delete-photo/<filename>', methods=['DELETE'])
 @login_required
 def delete_photo(filename):
