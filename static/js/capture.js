@@ -84,11 +84,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Share photo
     if (shareBtn && modal) {
-        shareBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-            alert('Photo shared!');
-            currentFilename = null;
-        });
+    shareBtn.addEventListener('click', () => {
+        fetch(`/upload-to-drive/${currentFilename}`, {
+            method: 'POST'
+        }).then(() => {
+                    currentFilename = null;
+                    modal.style.display = 'none';
+                    alert('upload successful!');
+                });
+        })
     }
 
     // Cancel photo
