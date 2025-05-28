@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  if (document.referrer.endsWith('/') || document.referrer.includes('/login')) {
+    localStorage.removeItem('bgAudioTime');
+    console.log("bgAudioTime reset because referrer was landing page");
+  }
+  
   const disc = document.getElementById("audio-player");
   const audio = document.getElementById("background-audio");
 
