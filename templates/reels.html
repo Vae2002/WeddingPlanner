@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <video autoplay loop muted="false" controls id="background-video" playsinline>
+    <video autoplay loop controls id="background-video" playsinline>
         <source src="{{ url_for('static', filename='videos/reels.mp4') }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
+    <div id="video-click-overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; cursor:pointer;"></div>
 
 
     <a href="{{ url_for('home') }}" class="logo-link" title="Home">
@@ -69,9 +70,10 @@
 
         <!-- Round framed profile image -->
         <a href="#" class="profile-link vertical-profile-link" title="Profile">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Profile">
+            <img class="spinning-profile" src="{{ url_for('static', filename='images/logo.png') }}" alt="Profile">
         </a>
     </div>
 
+    <script src="{{ url_for('static', filename='js/reels.js') }}"></script>
 
 {% endblock %}

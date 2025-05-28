@@ -26,6 +26,11 @@
   100% { transform: rotate(360deg); }
 }
 
+.spinning-profile {
+  animation: spin 2s linear infinite;
+  display: inline-block;
+}
+
 #map {
   height: 100%;
 }

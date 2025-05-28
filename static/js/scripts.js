@@ -8,42 +8,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let offsetX = 0;
   let offsetY = 0;
 
-  // First-time autoplay logic with timeout reset
-    const lastVisit = localStorage.getItem('lastVisit');
-    const TEN_MINUTES = 10 * 60 * 1000;
-    const now = Date.now();
+  // Always treat as first visit on page load
+  localStorage.setItem('hasVisited', 'true');
 
-    if (!lastVisit || now - parseInt(lastVisit, 10) > TEN_MINUTES) {
-    // Treat as first visit
-    localStorage.setItem('hasVisited', 'true');
-    localStorage.setItem('lastVisit', now.toString());
-
-    audio.play().catch(() => {
-        console.warn("Autoplay blocked on first visit. User interaction required.");
-    });
-    } else {
-    // Not first visit recently, just try resuming
-    localStorage.setItem('lastVisit', now.toString()); // Update visit time
-    audio.play().catch(() => {});
-    }
+  // Try to autoplay on every visit (like first visit)
+  audio.play().catch(() => {
+    console.warn("Autoplay blocked. User interaction required.");
+  });
 
   // Resume from saved time if available
   const savedTime = localStorage.getItem('bgAudioTime');
   if (savedTime) {
     audio.currentTime = parseFloat(savedTime);
   }
-
-    // First-time autoplay logic
-    const hasVisited = localStorage.getItem('hasVisited');
-    if (!hasVisited) {
-    localStorage.setItem('hasVisited', 'true');
-    audio.play().catch(() => {
-        console.warn("Autoplay blocked on first visit. User interaction required.");
-    });
-    } else {
-    audio.play().catch(() => {});
-    }
-
 
   // Click to toggle play/pause if not a drag
   disc.addEventListener("click", (e) => {
