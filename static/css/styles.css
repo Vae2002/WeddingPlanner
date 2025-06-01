@@ -555,12 +555,16 @@ footer {
 
 .camera-wrapper {
     position: relative;
-    width: 90vw; /* or any width you prefer */
+    width: 90vw;
     top: -3rem;
     max-width: 450px;
     aspect-ratio: 9 / 16;
     z-index: 1;
     background: black;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* aligns button at bottom */
+    padding-bottom: 20px; /* spacing from bottom */
 }
 
 .camera-container {
@@ -725,8 +729,14 @@ position: absolute;
 }
 
 .modal-image-wrapper {
-    position: relative;
-    display: inline-block;
+    position: fixed;
+    width: 90vw;
+    max-width: 1000px;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001; /* make sure it's above the backdrop */
 }
 
 .modal-image-wrapper:hover .download-button,
