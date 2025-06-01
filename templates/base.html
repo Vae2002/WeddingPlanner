@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -27,7 +29,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('search') }}" title="Search" class="icon-link">
+                        <a href="{{ url_for('search_start') }}" title="Search" class="icon-link">
                             <!-- Magnifier Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" viewBox="0 0 24 24">
                                 <circle cx="11" cy="11" r="7"/>
@@ -65,6 +67,8 @@
     {% endif %}
 
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
+
     {% block scripts %}{% endblock %}
 </body>
 </html>

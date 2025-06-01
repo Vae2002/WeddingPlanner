@@ -1,10 +1,10 @@
-import io
+from concurrent.futures import ThreadPoolExecutor
+import io, os
 import uuid
 from flask import Flask, logging, render_template, request, jsonify, redirect, url_for, session
 from sqlalchemy import create_engine
 import pandas as pd
 from datetime import datetime
-import os
 import base64
 from functools import wraps
 import gspread
@@ -130,29 +130,68 @@ def upload_to_drive_route(filename):
     # except Exception as e:
     #     return jsonify({'error': str(e)}), 500
 
-def download_images_from_drive(folder_id, destination_folder, credentials):
-    drive_service = build('drive', 'v3', credentials=credentials)
-    print("Debug: Downloading images from Google Drive...")
-    # List files in the Google Drive folder
-    results = drive_service.files().list(
-        q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
-        fields="files(id, name)"
-    ).execute()
-
-    files = results.get('files', [])
-
-    for file in files:
+def download_single_image(file, destination_folder, credentials):
+    try:
+        drive_service = build('drive', 'v3', credentials=credentials)
         file_id = file['id']
+        created_time = file.get('createdTime', '')
         file_name = file['name']
+
+        if created_time:
+            timestamp = datetime.fromisoformat(created_time.replace('Z', '+00:00')).strftime('%Y%m%d_%H%M%S')
+            file_name = f"{timestamp}_{file_name}"
+
+        file_path = os.path.join(destination_folder, file_name)
+
+        if os.path.exists(file_path):
+            print(f"[{file_name}] Already exists, skipping.")
+            return
+
         request = drive_service.files().get_media(fileId=file_id)
-        fh = io.FileIO(os.path.join(destination_folder, file_name), 'wb')
+        fh = io.FileIO(file_path, 'wb')
         downloader = MediaIoBaseDownload(fh, request)
 
         done = False
         while not done:
             status, done = downloader.next_chunk()
-            print(f"Downloaded {file_name} {int(status.progress() * 100)}%")
-    
+            print(f"[{file_name}] {int(status.progress() * 100)}% downloaded")
+    except Exception as e:
+        print(f"Error downloading {file_name}: {e}")
+
+def download_images_from_drive(folder_id, destination_folder, credentials, max_workers=8):
+    drive_service = build('drive', 'v3', credentials=credentials)
+    results = drive_service.files().list(
+        q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
+       fields="files(id, name, createdTime)",
+        orderBy="createdTime desc",  # <-- New line for sorting newest first
+        pageSize=1000
+    ).execute()
+
+    files = results.get('files', [])
+    print(f"Found {len(files)} images.")
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        for file in files:
+            executor.submit(download_single_image, file, destination_folder, credentials)
+
+
+#pagination example===============================================================================
+# page_token = None
+# while True:
+#     response = drive_service.files().list(
+#         q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
+#         fields="nextPageToken, files(id, name)",
+#         pageSize=1000,
+#         pageToken=page_token
+#     ).execute()
+
+#     files = response.get('files', [])
+#     # download logic here...
+
+#     page_token = response.get('nextPageToken', None)
+#     if page_token is None:
+#         break
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -215,24 +254,37 @@ def home():
 
     return render_template('home.html', user=user_data, show_footer = True)
 
+# untuk trigger loading screen
+@app.route('/search-start')
+@login_required
+def search_start():
+    print("Debug: loadinggg....." , flush=True)
+
+    return render_template('loading_search.html',show_footer = True)  # Shows loader + JS to trigger real download
+
+@app.route('/fetch-images')
+@login_required
+def fetch_images():
+    image_folder = os.path.join('static', 'images', 'explore')
+    os.makedirs(image_folder, exist_ok=True)
+
+    credentials = get_credentials_gdrive()
+    download_images_from_drive(DRIVE_FOLDER_ID, image_folder, credentials)
+
+    return jsonify({'status': 'done'})
+
+
 @app.route('/search')
 @login_required
 def search():
     image_folder = os.path.join('static', 'images', 'explore')
-    os.makedirs(image_folder, exist_ok=True)
-
-    # Download from Google Drive
-    credentials = get_credentials_gdrive()  # Your existing credential function
-    download_images_from_drive(DRIVE_FOLDER_ID, image_folder, credentials)
- 
-    image_files = [
+    image_files = sorted([
         os.path.join(file)
         for file in os.listdir(image_folder)
         if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
-    ]
-      # Debugging output
-    print("Images sent to template:", image_files)
-    return render_template('search.html', images=image_files, show_footer=True)
+    ], key=lambda x: os.path.getmtime(os.path.join(image_folder, x)), reverse=True)
+
+    return render_template('search.html', images=image_files, show_footer = True)
 
 def map_view():
     latitude = 37.4219999

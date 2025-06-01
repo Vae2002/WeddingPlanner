@@ -82,19 +82,38 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+  
 
-    // Share photo
-    if (shareBtn && modal) {
+// Share photo
+if (shareBtn && modal) {
     shareBtn.addEventListener('click', () => {
+        Loader.open(); // ✅ Show loader
+
         fetch(`/upload-to-drive/${currentFilename}`, {
             method: 'POST'
-        }).then(() => {
-                    currentFilename = null;
-                    modal.style.display = 'none';
-                    alert('upload successful!');
-                });
         })
-    }
+        .then(response => response.json())
+        .then(data => {
+            Loader.close(); // ✅ Hide loader
+
+            currentFilename = null;
+            modal.style.display = 'none';
+
+            if (data.file_id) {
+                alert('Upload successful!');
+            } else {
+                alert('Upload failed: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            Loader.close(); // ✅ Hide loader on error
+            alert('Error during upload');
+            console.error(err);
+        });
+    });
+}
+
+
     // Cancel photo
     if (cancelBtn && modal) {
         cancelBtn.addEventListener('click', () => {
