@@ -557,7 +557,6 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden;
 }
 
 .camera-wrapper {
@@ -574,6 +573,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
+    overflow: hidden;
     padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); /* iOS safe area */
 }
 
