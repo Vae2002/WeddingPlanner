@@ -553,19 +553,45 @@ footer {
     object-fit: cover;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
 .camera-wrapper {
-    position: relative;
-    width: 90vw;
-    top: -3rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100svh; /* modern mobile browsers */
     max-width: 450px;
     aspect-ratio: 9 / 16;
     z-index: 1;
     background: black;
     display: flex;
     justify-content: center;
-    align-items: flex-end; /* aligns button at bottom */
-    padding-bottom: 20px; /* spacing from bottom */
+    align-items: flex-end;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); /* iOS safe area */
 }
+
+/* Desktop/laptop: center the camera-wrapper */
+@media (min-width: 768px) {
+    .camera-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+        aspect-ratio: 9 / 16;
+        padding-bottom: 20px;
+    }
+}
+
 
 .camera-container {
     position: fixed;
