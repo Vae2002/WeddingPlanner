@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="loader-area">
+    <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Loader.open();
+            fetch("/fetch-images")
+                .then(response => response.json())
+                .then(data => {
+                    Loader.close();
+                    window.location.href = "/search?reload=1";  // trigger reload with images
+                })
+                .catch(error => {
+                    Loader.close();
+                    alert("Error downloading images.");
+                });
+        });
+    </script>
+</div>
+
+{% endblock %}

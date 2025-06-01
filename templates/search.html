@@ -56,11 +56,16 @@
             </div>
             <div class="photo-grid">
                 {% for img in images %}
-
                 <div class="grid-item">
-                    <img src="{{ url_for('static', filename='images/explore/' ~ img) }}" 
-                    alt="Post"
-                    onclick="openModal(this.src)">
+                    <div class="image-wrapper">
+                        <img src="{{ url_for('static', filename='images/explore/' ~ img) }}" 
+                            alt="Post"
+                            onclick="openModal(this.src)">
+                        <a href="{{ url_for('static', filename='images/explore/' ~ img) }}" 
+                            class="download-hover-button" 
+                            data-src="{{ url_for('static', filename='images/explore/' ~ img) }}"
+                            onclick="downloadFromGrid(event)">⭳</a>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -69,7 +74,11 @@
         <!-- Modal -->
         <div id="imgModal" class="modal" onclick="closeModal()">
             <span class="modal-close" onclick="closeModal()">&times;</span>
-            <img class="modal-content" id="modalImage">
+            <!-- Download button -->
+            <div class="modal-image-wrapper" onclick="event.stopPropagation();">
+                <img class="modal-content" id="modalImage">
+                <a id="downloadBtn" href="#" download class="download-button">Download</a>
+            </div>
         </div>
     </div>
 </body>

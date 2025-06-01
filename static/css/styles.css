@@ -606,6 +606,59 @@ footer {
     cursor: pointer;
     z-index: 10;
 }
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.image-wrapper img {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Hidden by default */
+.download-hover-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  text-decoration: none;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+/* Show button only on hover */
+.image-wrapper:hover .download-hover-button {
+  opacity: 1;
+}
+
+.grid-item img {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+}
+
+
+.download-button {
+position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 
 .modal {
     display: none;
@@ -669,6 +722,16 @@ footer {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.modal-image-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.modal-image-wrapper:hover .download-button,
+.modal-image-wrapper:active .download-button {
+     opacity: 1;
 }
 
 #share-btn {
