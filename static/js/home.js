@@ -106,3 +106,37 @@ document.querySelectorAll('.image-carousel').forEach((carousel, index) => {
       document.getElementById('days-left-2').textContent = message;
   });
 });
+
+document.querySelectorAll('.post-wrapper').forEach(post => {
+  const likeButton = post.querySelector('.icon-button[title="Like"]');
+  const carousel = post.querySelector('.image-carousel');
+  if (!likeButton || !carousel) return;
+
+  const postId = carousel.id;  // e.g. 'carousel-1'
+
+  // Restore liked state from localStorage
+  if (localStorage.getItem(`liked-${postId}`) === 'true') {
+    likeButton.classList.add('liked');
+  }
+
+  likeButton.addEventListener('click', e => {
+    e.preventDefault();
+    likeButton.classList.toggle('liked');
+    // Save current like state
+    localStorage.setItem(`liked-${postId}`, likeButton.classList.contains('liked'));
+  });
+
+  // Also update like state on double click on carousel
+  carousel.addEventListener('dblclick', () => {
+    likeButton.classList.toggle('liked');
+    localStorage.setItem(`liked-${postId}`, likeButton.classList.contains('liked'));
+  });
+});
+
+
+document.querySelectorAll('.icon-button[title="Like"]').forEach(button => {
+  button.addEventListener('click', (e) => {
+    e.preventDefault(); // prevent page jump if href="#"
+    button.classList.toggle('liked');
+  });
+});
