@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentQuestion = 0;
   let stopAsking = false;
   let counter = 0;
-  let maxPerson = 0; // default max
+  let maxPerson = 1; // default max
   let isOnlineUser = false; // track if user is online
 
   const chatBox = document.getElementById('chat-box');
@@ -59,10 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
           if (data.max_person !== undefined) {
             maxPerson = data.max_person;
-            counter = 0;
+            counter = 1;
             counterDisplay.textContent = counter;
 
-            if (maxPerson <= 0) {
+            if (maxPerson <= 1) {
               counterControls.querySelector('.plus').disabled = true;
               counterControls.querySelector('.minus').disabled = true;
               submitCounterBtn.disabled = true;
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   counterControls.querySelector('.minus').addEventListener('click', () => {
-    if (counter > 0) {
+    if (counter > 1) {
       counter--;
       counterDisplay.textContent = counter;
     }
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   submitCounterBtn.addEventListener('click', () => {
     handleAnswerSubmit(`${counter}`);
-    counter = 0;
+    counter = 1;
     counterDisplay.textContent = counter;
   });
 
