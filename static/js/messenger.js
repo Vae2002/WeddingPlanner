@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "Are you sure with your wishes?"
   ];
 
-  const onlineAnswers = [ // Only these buttons for online users
+  const onlineAnswers = [ 
     "No",
     "Yes, I will be attending online",
     "I'm still not sure"
@@ -30,49 +30,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Fetch full user info first
   fetch('/get-user-info')
-  .then(response => response.json())
-  .then(data => {
-    isOnlineUser = data.is_online === 1;
+    .then(response => response.json())
+    .then(data => {
+      isOnlineUser = data.is_online === 1;
 
-    if (isOnlineUser) {
-      // Change first question for online users
-      questions[0] = "Will you be attending online?";
+      if (isOnlineUser) {
+        // Change first question for online users
+        questions[0] = "Will you be attending online?";
 
-      // Restrict buttons for question 0
-      buttonAnswers.innerHTML = ''; // Clear old buttons
-      onlineAnswers.forEach(ans => {
-        const btn = document.createElement('button');
-        btn.textContent = ans;
-        btn.setAttribute('data-answer', ans);
-        buttonAnswers.appendChild(btn);
+        // Restrict buttons for question 0
+        buttonAnswers.innerHTML = ''; // Clear old buttons
+        onlineAnswers.forEach(ans => {
+          const btn = document.createElement('button');
+          btn.textContent = ans;
+          btn.setAttribute('data-answer', ans);
+          buttonAnswers.appendChild(btn);
 
-        btn.addEventListener('click', () => {
-          handleAnswerSubmit(ans);
+          btn.addEventListener('click', () => {
+            handleAnswerSubmit(ans);
+          });
         });
-      });
-    } else {
-      // Not online - keep original question and fetch max person
-      questions[0] = "Are you coming?";
+      } else {
+        // Not online - keep original question and use max_person
+        questions[0] = "Are you coming?";
 
-      fetch('/get-max-person')
-        .then(resp => resp.json())
-        .then(data => {
-          if (data.max_person !== undefined) {
-            maxPerson = data.max_person;
-            counter = 1;
-            counterDisplay.textContent = counter;
+        if (data.max_person !== undefined) {
+          maxPerson = data.max_person;
+          counter = 1;
+          counterDisplay.textContent = counter;
 
-            if (maxPerson <= 1) {
-              counterControls.querySelector('.plus').disabled = true;
-              counterControls.querySelector('.minus').disabled = true;
-              submitCounterBtn.disabled = true;
-            }
+          if (maxPerson <= 1) {
+            counterControls.querySelector('.plus').disabled = true;
+            counterControls.querySelector('.minus').disabled = true;
+            submitCounterBtn.disabled = true;
           }
-        })
-        .catch(err => {
-          console.error('Error fetching max person:', err);
-        });
-    }
+        }
+      }
 
     askNextQuestion(); // Start chat after user info loaded
   })
@@ -228,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   noThanksBtn.addEventListener('click', () => {
+    stopAsking = true;
     handleAnswerSubmit("No");
   });
 

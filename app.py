@@ -235,9 +235,27 @@ def get_user_info():
                 is_vip = int(record.get('is_vip'))
                 n_vip = int(record.get('n_vip'))
 
-                return jsonify({"is_online": is_online, "is_pemberkatan": is_pemberkatan, "is_vip": is_vip, "n_vip": n_vip})
+                try:
+                    max_person = int(record.get('n_person'))
+                except (ValueError, TypeError):
+                    max_person = 1
 
-        return jsonify({"is_online": 1, "is_pemberkatan": 0, "is_vip": 0, "n_vip": 0})  
+                return jsonify({
+                    "is_online": is_online,
+                    "is_pemberkatan": is_pemberkatan,
+                    "is_vip": is_vip,
+                    "n_vip": n_vip,
+                    "max_person": max_person
+                })
+
+        # Default return if user not found
+        return jsonify({
+            "is_online": 1,
+            "is_pemberkatan": 0,
+            "is_vip": 0,
+            "n_vip": 0,
+            "max_person": 0
+        })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -364,30 +382,6 @@ def get_all_wishes():
 @login_required
 def messenger():
     return render_template('messenger.html', show_footer=False)
-    
-@app.route('/get-max-person', methods=['GET'])
-@login_required
-def get_max_person():
-    username = session['username']
-
-    try:
-        sheet = get_sheet()
-        records = sheet.get_all_records()
-
-        for record in records:
-            if str(record.get('username')).strip().lower() == username.lower():
-                n_person = record.get('n_person')
-                # Return it as int if possible or 0
-                try:
-                    max_person = int(n_person)
-                except (ValueError, TypeError):
-                    max_person = 0
-                return jsonify({"max_person": max_person})
-
-        return jsonify({"max_person": 0})  # default if not found
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 @app.route('/submit-answers', methods=['POST'])
 def submit_answers():
