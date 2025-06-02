@@ -1,3 +1,36 @@
+.draggable-disc {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  cursor: grab;
+  z-index: 999;
+}
+
+.draggable-disc img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: spin 3s linear infinite;
+  transition: opacity 0.3s;
+}
+
+.draggable-disc.paused img {
+  animation-play-state: paused;
+  opacity: 0.6;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinning-profile {
+  animation: spin 2s linear infinite;
+  display: inline-block;
+}
+
 #map {
   height: 100%;
 }
@@ -443,6 +476,11 @@ footer {
     background: #ddd;
 }
 
+.icon-button.liked svg path {
+  stroke: red;
+  fill: red;
+}
+
 .vertical-profile-link {
     width: 44px;  /* Slightly bigger */
     height: 44px;
@@ -557,7 +595,6 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden;
 }
 
 .camera-wrapper {
@@ -574,6 +611,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
+    overflow: hidden;
     padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); /* iOS safe area */
 }
 
@@ -982,5 +1020,15 @@ position: absolute;
   white-space: pre-wrap; /* preserves line breaks */
 }
 
+.redirect-button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  background-color: #fcd34d;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
 
