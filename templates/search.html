@@ -37,7 +37,7 @@
             .bindPopup('<a href="https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D' + lat + ',' + lng + '" target="_blank">Open in Google Maps</a>')
             .openPopup();
     </script>
-    
+
     <div class="container">
         <div class="profile-header">
             <a class="profile-link">
@@ -58,19 +58,19 @@
                 {% for img in images %}
                 <div class="grid-item">
                     <div class="image-wrapper">
-                        <img src="{{ url_for('static', filename='images/explore/' ~ img) }}" 
-                            alt="Post"
+                        <img src="{{ url_for('static', filename='images/explore/' ~ img) }}" alt="Post"
                             onclick="openModal(this.src)">
-                        <a href="{{ url_for('static', filename='images/explore/' ~ img) }}" 
-                            class="download-hover-button" 
+                        <a href="{{ url_for('static', filename='images/explore/' ~ img) }}"
+                            class="download-hover-button"
                             data-src="{{ url_for('static', filename='images/explore/' ~ img) }}"
                             onclick="downloadFromGrid(event)">⭳</a>
                     </div>
                 </div>
                 {% endfor %}
+                <div id="loading-trigger" style="height: 1px;"></div>
             </div>
         </section>
-        
+
         <!-- Modal -->
         <div id="imgModal" class="modal" onclick="closeModal()">
             <span class="modal-close" onclick="closeModal()">&times;</span>
@@ -83,7 +83,10 @@
     </div>
 </body>
 
+<script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
+<script>
+    const initialNextToken = "{{ next_token | safe }}";
+</script>
 </html>
-    <script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
 
 {% endblock %}

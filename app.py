@@ -158,39 +158,26 @@ def download_single_image(file, destination_folder, credentials):
     except Exception as e:
         print(f"Error downloading {file_name}: {e}")
 
-def download_images_from_drive(folder_id, destination_folder, credentials, max_workers=8):
+def download_images_from_drive(folder_id, destination_folder, credentials, page_token=None, max_files= 9):
     drive_service = build('drive', 'v3', credentials=credentials)
+
     results = drive_service.files().list(
         q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
-       fields="files(id, name, createdTime)",
-        orderBy="createdTime desc",  # <-- New line for sorting newest first
-        pageSize=1000
+        fields="nextPageToken, files(id, name, createdTime)",
+        orderBy="createdTime desc",
+        pageSize=max_files,
+        pageToken=page_token
     ).execute()
 
     files = results.get('files', [])
-    print(f"Found {len(files)} images.")
+    next_token = results.get('nextPageToken')
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        for file in files:
-            executor.submit(download_single_image, file, destination_folder, credentials)
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(download_single_image, file, destination_folder, credentials) for file in files]
+        for future in futures:
+            future.result()  # Wait for each to finish
 
-
-#pagination example===============================================================================
-# page_token = None
-# while True:
-#     response = drive_service.files().list(
-#         q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
-#         fields="nextPageToken, files(id, name)",
-#         pageSize=1000,
-#         pageToken=page_token
-#     ).execute()
-
-#     files = response.get('files', [])
-#     # download logic here...
-
-#     page_token = response.get('nextPageToken', None)
-#     if page_token is None:
-#         break
+    return next_token
 
 def login_required(f):
     @wraps(f)
@@ -309,14 +296,33 @@ def fetch_images():
 def search():
     image_folder = os.path.join('static', 'images', 'explore')
     image_files = sorted([
-        os.path.join(file)
-        for file in os.listdir(image_folder)
+        file for file in os.listdir(image_folder)
         if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
     ], key=lambda x: os.path.getmtime(os.path.join(image_folder, x)), reverse=True)
-    
-      # Debugging output
-    print("Images sent to template:", image_files)
-    return render_template('search.html', images=image_files, show_footer=True, play_audio = True)
+
+    return render_template('search.html', images=image_files[:9], show_footer = True, play_audio = True)  # Load first 6
+
+@app.route('/load-more-images')
+def load_more_images():
+    page_token = request.args.get('page_token')
+    print("Debug: load more images with token:", page_token)
+
+    image_folder = os.path.join('static', 'images', 'explore')
+    os.makedirs(image_folder, exist_ok=True)
+
+    # Download images and get the next token
+    credentials = get_credentials_gdrive()
+    next_token = download_images_from_drive(DRIVE_FOLDER_ID, image_folder, credentials, page_token)
+
+    # Sort and return the most recent 6 images
+    all_images = sorted([
+        f for f in os.listdir(image_folder)
+        if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))
+    ], key=lambda x: os.path.getmtime(os.path.join(image_folder, x)), reverse=True)
+
+    images = [{'url': url_for('static', filename=f'images/explore/{img}')} for img in all_images[:9]]
+
+    return jsonify(images=images, next_token=next_token)
 
 def map_view():
     latitude = 37.4219999

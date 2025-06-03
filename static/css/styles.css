@@ -42,7 +42,6 @@ html, body {
     padding: 0;
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow-x: hidden;
 }
 
@@ -560,9 +559,12 @@ footer {
 
 .photo-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 items per row */
+    grid-template-columns: repeat(3, minmax(150px, 1fr)); /* 3 items per row */
     gap: 5px;
     padding: 10px;
+    overflow-y: auto;
+    max-height: 600px;
+    height: 80vh;
 }
 
 .grid-item img {
@@ -570,6 +572,10 @@ footer {
     aspect-ratio: 1 / 1;
     object-fit: cover;
     background-color: #ccc;
+}
+
+.loading-trigger {
+    height: 1px; /* or some minimal height */
 }
 
 .vidcam-container {
@@ -591,11 +597,6 @@ footer {
     object-fit: cover;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
 
 .camera-wrapper {
     position: fixed;
