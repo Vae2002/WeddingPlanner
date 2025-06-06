@@ -42,8 +42,7 @@ const loadMoreImages = () => {
                     const div = document.createElement('div');
                     div.className = 'grid-item';
                     div.innerHTML = `
-                        <div class="image-wrapper aspect-ratio-box">
-                            <div class="aspect-ratio-content"></div>
+                        <div class="image-wrapper">
                         </div>
                     `;
                     grid.appendChild(div);
@@ -54,11 +53,9 @@ const loadMoreImages = () => {
 
                     img.onload = () => {
                         div.innerHTML = `
-                            <div class="image-wrapper aspect-ratio-box">
-                                <div class="aspect-ratio-content">
+                            <div class="image-wrapper">
                                     <img src="${src}" alt="Post" onclick="openModal('${src}')">
                                     <a href="${src}" class="download-hover-button" data-src="${src}" onclick="downloadFromGrid(event)">⭳</a>
-                                </div>
                             </div>`;
                         div.classList.remove('loading');
                         resolve();
@@ -116,18 +113,6 @@ const triggerEl = document.getElementById('grid-end-trigger');
 observer.observe(triggerEl);
 
 });
-
-function moveTriggerToEnd() {
-    const grid = document.querySelector('.photo-grid');
-    const trigger = document.getElementById('grid-end-trigger');
-
-    if (trigger && trigger.parentNode) {
-        observer.unobserve(trigger);
-        trigger.parentNode.removeChild(trigger);
-        grid.appendChild(trigger);
-        observer.observe(trigger);
-    }
-}
 
 
 function openModal(src) {
