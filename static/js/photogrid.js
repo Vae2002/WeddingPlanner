@@ -1,36 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM fully loaded and parsed");
 
-    // === Image loader that waits for images to fully load before adding to DOM ===
-   function appendImageWithLoadHandling(imgObj, container) {
-    const src = imgObj.url;
-
-    // Step 1: create and append placeholder grid item
-    const div = document.createElement('div');
-    div.className = 'grid-item loading'; // add loading class
-    container.appendChild(div);
-
-    // Step 2: wait for image to load
-    const img = new Image();
-    img.src = src;
-    img.alt = "Post";
-
-    img.onload = () => {
-        div.innerHTML = `
-            <div class="image-wrapper">
-                <img src="${src}" alt="Post" onclick="openModal('${src}')">
-                <a href="${src}" class="download-hover-button" data-src="${src}" onclick="downloadFromGrid(event)">⭳</a>
-            </div>`;
-        div.classList.remove('loading');
-    };
-
-    img.onerror = () => {
-        div.remove(); // or show error state
-        console.error("Image failed to load:", src);
-    };
-}
-
-
     // === Close Modal on Background Click or Close Button ===
     document.getElementById('imgModal').addEventListener('click', function (e) {
         if (e.target.id === 'imgModal' || e.target.classList.contains('modal-close')) {
@@ -48,23 +18,74 @@ const loadMoreImages = () => {
     if (loading) return;
     loading = true;
     console.log("Loading more images...");
-    const url = nextToken 
+
+    const url = nextToken
         ? `/load-more-images?page_token=${encodeURIComponent(nextToken)}`
         : `/load-more-images`;
+
+    const grid = document.querySelector('.photo-grid');
+    const trigger = document.getElementById('grid-end-trigger');
+
+    // Remove trigger before updating DOM
+    if (trigger && trigger.parentNode) {
+        observer.unobserve(trigger);
+        trigger.remove();
+    }
 
     fetch(url)
         .then(res => res.json())
         .then(data => {
-            const grid = document.querySelector('.photo-grid');
+            const loadPromises = data.images.map(imgObj => {
+                return new Promise(resolve => {
+                    const src = imgObj.url;
 
-            data.images.forEach(imgObj => {
-                appendImageWithLoadHandling(imgObj, grid);  
+                    const div = document.createElement('div');
+                    div.className = 'grid-item';
+                    div.innerHTML = `
+                        <div class="image-wrapper aspect-ratio-box">
+                            <div class="aspect-ratio-content"></div>
+                        </div>
+                    `;
+                    grid.appendChild(div);
+
+                    const img = new Image();
+                    img.src = src;
+                    img.alt = "Post";
+
+                    img.onload = () => {
+                        div.innerHTML = `
+                            <div class="image-wrapper aspect-ratio-box">
+                                <div class="aspect-ratio-content">
+                                    <img src="${src}" alt="Post" onclick="openModal('${src}')">
+                                    <a href="${src}" class="download-hover-button" data-src="${src}" onclick="downloadFromGrid(event)">⭳</a>
+                                </div>
+                            </div>`;
+                        div.classList.remove('loading');
+                        resolve();
+                    };
+
+                    img.onerror = () => {
+                        div.remove();
+                        console.error("Image failed to load:", src);
+                        resolve(); // Still resolve so all promises can complete
+                    };
+                });
             });
+
+            return Promise.all(loadPromises).then(() => data); // pass data forward
+        })
+        .then(data => {
+            // Re-append and observe trigger
+            const newTrigger = document.createElement('div');
+            newTrigger.id = 'grid-end-trigger';
+            newTrigger.className = 'grid-end-trigger';
+            grid.appendChild(newTrigger);
+            observer.observe(newTrigger);
 
             if (data.next_token) {
                 nextToken = data.next_token;
             } else {
-                observer.disconnect();  // Stop if no more images
+                observer.disconnect(); // No more images
             }
 
             loading = false;
@@ -75,17 +96,38 @@ const loadMoreImages = () => {
         });
 };
 
+
 const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        console.log("IntersectionObserver entry:", entry.target.id, "isIntersecting:", entry.isIntersecting);
+    });
+
     if (entries[0].isIntersecting) {
+        console.log("Trigger intersecting and user scrolled, loading more images...");
         loadMoreImages();
     }
 }, {
-    rootMargin: '200px',
+    root: document.querySelector('.photo-grid'),
+    // root: null, // Use viewport as root
+    rootMargin: '0px 0px 200px 0px',
 });
 
-observer.observe(document.getElementById('loading-trigger'));
+const triggerEl = document.getElementById('grid-end-trigger');
+observer.observe(triggerEl);
 
 });
+
+function moveTriggerToEnd() {
+    const grid = document.querySelector('.photo-grid');
+    const trigger = document.getElementById('grid-end-trigger');
+
+    if (trigger && trigger.parentNode) {
+        observer.unobserve(trigger);
+        trigger.parentNode.removeChild(trigger);
+        grid.appendChild(trigger);
+        observer.observe(trigger);
+    }
+}
 
 
 function openModal(src) {

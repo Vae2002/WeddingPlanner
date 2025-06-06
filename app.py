@@ -144,23 +144,30 @@ def download_single_image(file, destination_folder, credentials):
 
         file_path = os.path.join(destination_folder, file_name)
 
+        # ✅ Skip if already exists
         if os.path.exists(file_path):
             print(f"[{file_name}] Already exists, skipping.")
             return
 
+        # ✅ Download with safe file handle using 'with' block
         request = drive_service.files().get_media(fileId=file_id)
-        fh = io.FileIO(file_path, 'wb')
-        downloader = MediaIoBaseDownload(fh, request)
+        with open(file_path, 'wb') as f:
+            downloader = MediaIoBaseDownload(f, request)
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+                print(f"[{file_name}] {int(status.progress() * 100)}% downloaded")
 
-        done = False
-        while not done:
-            status, done = downloader.next_chunk()
-            print(f"[{file_name}] {int(status.progress() * 100)}% downloaded")
+        # ✅ Optionally double-check file was written
+        if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
+            print(f"[{file_name}] Download may have failed. File is empty.")
+            return
 
     except Exception as e:
         print(f"Error downloading {file_name}: {e}")
 
-def download_images_from_drive(folder_id, destination_folder, credentials, page_token=None, max_files=9):
+
+def download_images_from_drive(folder_id, destination_folder, credentials, page_token=None, max_files=10):
     drive_service = build('drive', 'v3', credentials=credentials)
 
     results = drive_service.files().list(
@@ -176,7 +183,7 @@ def download_images_from_drive(folder_id, destination_folder, credentials, page_
 
     downloaded_filenames = []
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=6) as executor:
         futures = []
         for file in files:
             future = executor.submit(download_single_image, file, destination_folder, credentials)
@@ -302,16 +309,13 @@ def fetch_images():
     try:
         credentials = get_credentials_gdrive()
 
-        # 📥 Download new images from Google Drive
         downloaded_files, next_token = download_images_from_drive(
             DRIVE_FOLDER_ID, image_folder, credentials
         )
-
-        # ✅ Sort filenames for consistent order (e.g. based on filename or timestamp)
         sorted_files = sorted(downloaded_files, reverse=True)
 
         # 💾 Store image list and next token in session
-        session['search_image_queue'] = sorted_files
+        session['image_queue'] = sorted_files
         session['next_page_token'] = next_token
 
         print("Debug: next_page_token =", next_token, flush=True)
@@ -327,13 +331,22 @@ def fetch_images():
 @app.route('/search')
 @login_required
 def search():
-    image_files = session.get('search_image_queue', [])
+    image_files = session.get('image_queue', [])
+
+    # Slice and assign index
+    images_with_index = [
+        {'url': f'images/explore/{img}', 'index': i}
+        for i, img in enumerate(image_files[:10])
+    ]
+
     return render_template(
         'search.html',
-        images=image_files[:9],
+        images=images_with_index,
         show_footer=True,
         play_audio=True
     )
+
+
 @app.route('/load-more-images')
 @login_required
 def load_more_images():
@@ -358,17 +371,24 @@ def load_more_images():
         session['image_queue'] = image_queue
         session['next_page_token'] = next_token
 
-        # Only return the newly added images
-        new_images = [
-            {'url': url_for('static', filename=f'images/explore/{img}')}
-            for img in downloaded_files if img in image_queue
-        ]
+        # Only return the newly added images (with index)
+        new_images = []
+        for img in downloaded_files:
+            if os.path.exists(os.path.join(image_folder, img)):
+                if img in image_queue:
+                    index = image_queue.index(img)
+                    new_images.append({
+                        'url': url_for('static', filename=f'images/explore/{img}'),
+                        'index': index
+                    })
+
 
         return jsonify(images=new_images, next_token=next_token)
 
     except Exception as e:
         print(f"Error in load_more_images: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
+    
 def map_view():
     latitude = 37.4219999
     longitude = -122.0840575

@@ -42,18 +42,19 @@
             </div>
             <div class="photo-grid">
                 {% for img in images %}
-                <div class="grid-item">
-                    <div class="image-wrapper">
-                        <img src="{{ url_for('static', filename='images/explore/' ~ img) }}" alt="Post"
-                            onclick="openModal(this.src)">
-                        <a href="{{ url_for('static', filename='images/explore/' ~ img) }}"
-                            class="download-hover-button"
-                            data-src="{{ url_for('static', filename='images/explore/' ~ img) }}"
-                            onclick="downloadFromGrid(event)">⭳</a>
+                <div class="grid-item" data-index="{{ loop.index0 }}">
+                    <div class="image-wrapper aspect-ratio-box">
+                        <div class="aspect-ratio-content">
+                            <img src="{{ url_for('static', filename=img.url) }}" alt="Post"
+                                onclick="openModal(this.src)">
+                            <a href="{{ url_for('static', filename=img.url) }}" class="download-hover-button"
+                                data-src="{{ url_for('static', filename=img.url) }}"
+                                onclick="downloadFromGrid(event)">⭳</a>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
-                <div id="loading-trigger" style="height: 1px;"></div>
+                <div id="grid-end-trigger" class="grid-end-trigger"></div>
             </div>
         </section>
 
@@ -70,9 +71,7 @@
 </body>
 
 <script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
-<script>
-    const initialNextToken = "{{ next_token | safe }}";
-</script>
+
 </html>
 
 {% endblock %}
