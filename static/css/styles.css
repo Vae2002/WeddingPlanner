@@ -587,10 +587,11 @@ footer {
 } */
 
 .grid-item img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    background-color: #100101;
+  width: 100%;
+  aspect-ratio: 1 / 1; 
+  height: auto;
+  display: block;
+  border-radius: 8px;
 }
 
 .grid-end-trigger {

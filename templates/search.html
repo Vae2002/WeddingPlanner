@@ -43,14 +43,12 @@
             <div class="photo-grid">
                 {% for img in images %}
                 <div class="grid-item" data-index="{{ loop.index0 }}">
-                    <div class="image-wrapper aspect-ratio-box">
-                        <div class="aspect-ratio-content">
+                    <div class="image-wrapper">
                             <img src="{{ url_for('static', filename=img.url) }}" alt="Post"
                                 onclick="openModal(this.src)">
                             <a href="{{ url_for('static', filename=img.url) }}" class="download-hover-button"
                                 data-src="{{ url_for('static', filename=img.url) }}"
                                 onclick="downloadFromGrid(event)">⭳</a>
-                        </div>
                     </div>
                 </div>
                 {% endfor %}
