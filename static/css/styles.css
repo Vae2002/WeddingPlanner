@@ -572,12 +572,6 @@ footer {
   }
 }
 
-@media (max-width: 600px) {
-  .photo-grid {
-    grid-template-columns: 1fr; /* 1 column on phones */
-  }
-}
-
 .grid-item img {
   width: 100%;
   aspect-ratio: 1 / 1; 
