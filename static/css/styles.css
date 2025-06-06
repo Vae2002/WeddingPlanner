@@ -566,12 +566,6 @@ footer {
   box-sizing: border-box;
 }
 
-@media (max-width: 900px) {
-  .photo-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
-  }
-}
-
 .grid-item img {
   width: 100%;
   aspect-ratio: 1 / 1; 
