@@ -574,6 +574,25 @@ footer {
     background-color: #ccc;
 }
 
+.grid-item.loading {
+    height: 200px; /* or match your image ratio */
+    background: #f0f0f0;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { background-color: #f0f0f0; }
+    50% { background-color: #e0e0e0; }
+    100% { background-color: #f0f0f0; }
+}
+
+.gallery-img {
+    width: 100%;
+    aspect-ratio: 3 / 2; /* Or whatever your typical image shape is */
+    object-fit: cover;
+    background-color: #f0f0f0; /* Placeholder */
+}
+
 .loading-trigger {
     height: 1px; /* or some minimal height */
 }

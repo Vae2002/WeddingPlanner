@@ -1,6 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor
 import io, os
 import uuid
+import ssl
+import time
 from flask import Flask, logging, render_template, request, jsonify, redirect, url_for, session
 from sqlalchemy import create_engine
 import pandas as pd
@@ -127,8 +129,7 @@ def upload_to_drive_route(filename):
             os.remove(file_path)
         
         return jsonify({'message': 'File uploaded successfully', 'file_id': file_id})
-    # except Exception as e:
-    #     return jsonify({'error': str(e)}), 500
+  
 
 def download_single_image(file, destination_folder, credentials):
     try:
@@ -155,10 +156,11 @@ def download_single_image(file, destination_folder, credentials):
         while not done:
             status, done = downloader.next_chunk()
             print(f"[{file_name}] {int(status.progress() * 100)}% downloaded")
+
     except Exception as e:
         print(f"Error downloading {file_name}: {e}")
 
-def download_images_from_drive(folder_id, destination_folder, credentials, page_token=None, max_files= 9):
+def download_images_from_drive(folder_id, destination_folder, credentials, page_token=None, max_files=9):
     drive_service = build('drive', 'v3', credentials=credentials)
 
     results = drive_service.files().list(
@@ -172,12 +174,24 @@ def download_images_from_drive(folder_id, destination_folder, credentials, page_
     files = results.get('files', [])
     next_token = results.get('nextPageToken')
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        futures = [executor.submit(download_single_image, file, destination_folder, credentials) for file in files]
-        for future in futures:
-            future.result()  # Wait for each to finish
+    downloaded_filenames = []
 
-    return next_token
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = []
+        for file in files:
+            future = executor.submit(download_single_image, file, destination_folder, credentials)
+            futures.append((future, file))
+
+        for future, file in futures:
+            future.result()
+            created_time = file.get('createdTime', '')
+            file_name = file['name']
+            if created_time:
+                timestamp = datetime.fromisoformat(created_time.replace('Z', '+00:00')).strftime('%Y%m%d_%H%M%S')
+                file_name = f"{timestamp}_{file_name}"
+            downloaded_filenames.append(file_name)
+
+    return downloaded_filenames, next_token
 
 def login_required(f):
     @wraps(f)
@@ -285,45 +299,76 @@ def fetch_images():
     image_folder = os.path.join('static', 'images', 'explore')
     os.makedirs(image_folder, exist_ok=True)
 
-    credentials = get_credentials_gdrive()
-    download_images_from_drive(DRIVE_FOLDER_ID, image_folder, credentials)
+    try:
+        credentials = get_credentials_gdrive()
 
-    return jsonify({'status': 'done'})
+        # 📥 Download new images from Google Drive
+        downloaded_files, next_token = download_images_from_drive(
+            DRIVE_FOLDER_ID, image_folder, credentials
+        )
+
+        # ✅ Sort filenames for consistent order (e.g. based on filename or timestamp)
+        sorted_files = sorted(downloaded_files, reverse=True)
+
+        # 💾 Store image list and next token in session
+        session['search_image_queue'] = sorted_files
+        session['next_page_token'] = next_token
+
+        print("Debug: next_page_token =", next_token, flush=True)
+        print("Downloaded files:", sorted_files)
+
+        return jsonify({'status': 'done'})
+
+    except Exception as e:
+        print(f"Error in fetch_images: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
 @app.route('/search')
 @login_required
 def search():
-    image_folder = os.path.join('static', 'images', 'explore')
-    image_files = sorted([
-        file for file in os.listdir(image_folder)
-        if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
-    ], key=lambda x: os.path.getmtime(os.path.join(image_folder, x)), reverse=True)
-
-    return render_template('search.html', images=image_files[:9], show_footer = True, play_audio = True)  # Load first 6
-
+    image_files = session.get('search_image_queue', [])
+    return render_template(
+        'search.html',
+        images=image_files[:9],
+        show_footer=True,
+        play_audio=True
+    )
 @app.route('/load-more-images')
+@login_required
 def load_more_images():
-    page_token = request.args.get('page_token')
-    print("Debug: load more images with token:", page_token)
-
+    page_token = session.get('next_page_token', None)
     image_folder = os.path.join('static', 'images', 'explore')
     os.makedirs(image_folder, exist_ok=True)
 
-    # Download images and get the next token
-    credentials = get_credentials_gdrive()
-    next_token = download_images_from_drive(DRIVE_FOLDER_ID, image_folder, credentials, page_token)
+    try:
+        credentials = get_credentials_gdrive()
+        downloaded_files, next_token = download_images_from_drive(
+            DRIVE_FOLDER_ID, image_folder, credentials, page_token
+        )
 
-    # Sort and return the most recent 6 images
-    all_images = sorted([
-        f for f in os.listdir(image_folder)
-        if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))
-    ], key=lambda x: os.path.getmtime(os.path.join(image_folder, x)), reverse=True)
+        # Get existing image queue
+        image_queue = session.get('image_queue', [])
 
-    images = [{'url': url_for('static', filename=f'images/explore/{img}')} for img in all_images[:9]]
+        # Append only new files (in order), avoiding duplicates
+        for img in downloaded_files:
+            if img not in image_queue:
+                image_queue.append(img)
 
-    return jsonify(images=images, next_token=next_token)
+        session['image_queue'] = image_queue
+        session['next_page_token'] = next_token
 
+        # Only return the newly added images
+        new_images = [
+            {'url': url_for('static', filename=f'images/explore/{img}')}
+            for img in downloaded_files if img in image_queue
+        ]
+
+        return jsonify(images=new_images, next_token=next_token)
+
+    except Exception as e:
+        print(f"Error in load_more_images: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 def map_view():
     latitude = 37.4219999
     longitude = -122.0840575

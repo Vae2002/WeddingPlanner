@@ -1,6 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM fully loaded and parsed");
 
+    // === Image loader that waits for images to fully load before adding to DOM ===
+   function appendImageWithLoadHandling(imgObj, container) {
+    const src = imgObj.url;
+
+    // Step 1: create and append placeholder grid item
+    const div = document.createElement('div');
+    div.className = 'grid-item loading'; // add loading class
+    container.appendChild(div);
+
+    // Step 2: wait for image to load
+    const img = new Image();
+    img.src = src;
+    img.alt = "Post";
+
+    img.onload = () => {
+        div.innerHTML = `
+            <div class="image-wrapper">
+                <img src="${src}" alt="Post" onclick="openModal('${src}')">
+                <a href="${src}" class="download-hover-button" data-src="${src}" onclick="downloadFromGrid(event)">⭳</a>
+            </div>`;
+        div.classList.remove('loading');
+    };
+
+    img.onerror = () => {
+        div.remove(); // or show error state
+        console.error("Image failed to load:", src);
+    };
+}
+
+
     // === Close Modal on Background Click or Close Button ===
     document.getElementById('imgModal').addEventListener('click', function (e) {
         if (e.target.id === 'imgModal' || e.target.classList.contains('modal-close')) {
@@ -12,66 +42,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let page = 1;
     let loading = false;
 
-    // scrollContainer.addEventListener('scroll', scrollHandler);
-
-    // function scrollHandler() {
-    //     console.log("Scroll event detected!");
-
-    //     const scrollTop = scrollContainer.scrollTop;
-    //     const scrollHeight = scrollContainer.scrollHeight;
-    //     const clientHeight = scrollContainer.clientHeight;
-
-    //     console.log("Scroll position:", scrollTop + clientHeight, "/", scrollHeight);
-
-    //     if (scrollTop + clientHeight >= scrollHeight - 100) {
-    //         console.log("Triggering loadMoreImages()");
-    //         loadMoreImages();
-    //     }
-    // }
-
-    // async function loadMoreImages() {
-    //     if (loading) return;
-    //     loading = true;
-
-    //     document.getElementById('loading').classList.remove('hidden');
-
-    //     try {
-    //         const res = await fetch(`/load-more-images?page=${page}`);
-    //         const data = await res.json();
-
-    //         const grid = document.getElementById('photo-grid');
-    //         data.images.forEach(img => {
-    //             const div = document.createElement('div');
-    //             div.className = 'grid-item';
-    //             div.innerHTML = `
-    //                 <div class="image-wrapper">
-    //                     <img src="${img.url}" alt="Post" onclick="openModal('${img.url}')">
-    //                     <a href="${img.url}" class="download-hover-button"
-    //                        data-src="${img.url}"
-    //                        onclick="downloadFromGrid(event)">⭳</a>
-    //                 </div>`;
-    //             grid.appendChild(div);
-    //         });
-
-    //         if (data.images.length > 0) {
-    //             page += 1;
-    //         } else {
-    //             scrollContainer.removeEventListener('scroll', scrollHandler);
-    //         }
-
-    //     } catch (err) {
-    //         console.error("Error loading images:", err);
-    //     }
-
-    //     document.getElementById('loading').classList.add('hidden');
-    //     loading = false;
-    // }
 let nextToken = null;
 
 const loadMoreImages = () => {
     if (loading) return;
     loading = true;
-
+    console.log("Loading more images...");
     const url = nextToken 
         ? `/load-more-images?page_token=${encodeURIComponent(nextToken)}`
         : `/load-more-images`;
@@ -82,15 +58,7 @@ const loadMoreImages = () => {
             const grid = document.querySelector('.photo-grid');
 
             data.images.forEach(imgObj => {
-                const src = imgObj.url;
-                const div = document.createElement('div');
-                div.className = 'grid-item';
-                div.innerHTML = `
-                    <div class="image-wrapper">
-                        <img src="${src}" alt="Post" onclick="openModal('${src}')">
-                        <a href="${src}" class="download-hover-button" data-src="${src}" onclick="downloadFromGrid(event)">⭳</a>
-                    </div>`;
-                grid.appendChild(div);
+                appendImageWithLoadHandling(imgObj, grid);  
             });
 
             if (data.next_token) {
@@ -116,7 +84,6 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 observer.observe(document.getElementById('loading-trigger'));
-
 
 });
 
