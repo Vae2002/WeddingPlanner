@@ -298,8 +298,8 @@ footer {
 
 /* Modifier: large version */
 .profile-large {
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
     border: 3px solid #bbb;
 }
 
@@ -418,6 +418,11 @@ footer {
 .text-info p{
     margin: 0;           /* Remove all margin */
     line-height: 1.2;    /* Adjust line spacing (you can tweak this) */
+}
+
+.profile-name{
+    font-size: 24px;    /* Adjust name size */
+    font-weight: bold;   /* Make name bold */
 }
 
 .text-info h4 {
