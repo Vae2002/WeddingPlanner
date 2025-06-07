@@ -954,7 +954,7 @@ position: absolute;
   .post-wrapper {
     max-width: 1000px;
     margin: 0 auto 3rem auto; /* center and space below */
-    padding: 0 16px;
+    /* padding: 0 0px; */
 }
 
 .feed-wrapper{
