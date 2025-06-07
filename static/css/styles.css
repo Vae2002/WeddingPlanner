@@ -179,7 +179,7 @@ footer {
     justify-content: space-between;
     margin-top: 10px;
     max-width: 300px;
-    gap: 45px;
+    gap: 5px;
 }
 
 .stat-group {
@@ -188,12 +188,12 @@ footer {
 }
 
 .stat-number {
-    font-size: 40px;
+    font-size: 25px;
     font-weight: bold;
 }
 
 .stat-label {
-   font-size: 22px;
+   font-size: 14px;
     color: gray;
 }
 
@@ -276,8 +276,8 @@ footer {
 /* Profile image with circle frame */
 .profile-link {
     display: inline-block;
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     min-width: 40px;  /* prevent shrinking */
     min-height: 40px; /* prevent shrinking */
     border-radius: 50%;
