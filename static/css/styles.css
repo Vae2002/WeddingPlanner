@@ -979,6 +979,7 @@ position: absolute;
   display: flex;
   height: 100%;
   transition: transform 0.5s ease-in-out;
+  will-change: transform;
 }
 
 .carousel-track video {
@@ -986,6 +987,7 @@ position: absolute;
     height: auto;
     flex: 0 0 100%;
     object-fit: contain;
+    flex-shrink: 0;
 }
 
 
