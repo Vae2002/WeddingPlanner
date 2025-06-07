@@ -1,62 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
-        <h2>laststeftoeunity</h2>
-    </a>
+<a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
+    <h2>laststeftoeunity</h2>
+</a>
 
-    <div class="post-wrapper">
-        <div class="profile-header">
-            <a class="profile-link profile-large">
-                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
-            </a>
-            <div class="text-info">
-                <h1>Stefanus & Eunice</h1>
+<div class="post-wrapper">
+    <div class="profile-header">
+        <a class="profile-link profile-large">
+            <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+        </a>
+        <div class="text-info">
+            <h1>Stefanus & Eunice</h1>
 
-                <!-- Stats wrapper -->
-                <div class="profile-stats">
-                    <div class="stat-group">
-                        <div class="stat-number">...</div>
-                        <div class="stat-label">Posts</div>
-                    </div>
-                    <div class="stat-group">
-                        <div class="stat-number">...</div>
-                        <div class="stat-label">Followers</div>
-                    </div>
-                    <div class="stat-group">
-                        <div class="stat-number">...</div>
-                        <div class="stat-label">Following</div>
-                    </div>
+            <!-- Stats wrapper -->
+            <div class="profile-stats">
+                <div class="stat-group">
+                    <div class="stat-number">55</div>
+                    <div class="stat-label">Posts</div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-number">348</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-number">334</div>
+                    <div class="stat-label">Following</div>
                 </div>
             </div>
-        </div>
-
-        <section class="recent-posts">
-            <div class="center-container">
-                <h1>Recent</h1>
-            </div>
-            <div class="photo-grid">
-                {% for img in images %}
-                <div class="grid-item">
-                    <img src="{{ url_for('static', filename='images/explore/' ~ img) }}"
-                        alt="Post"
-                        onclick="openModal(this.src)">
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-
-        <!-- Modal -->
-        <div id="imgModal" class="modal" onclick="closeModal()">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <img class="modal-content" id="modalImage">
         </div>
     </div>
 
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <section class="recent-posts">
+        <div class="center-container">
+            <h1>Recent</h1>
+        </div>
+        <div id="profile-grid" class="photo-grid"
+            data-masonry='{"itemSelector": ".grid-item", "columnWidth": ".grid-item", "gutter": 10, "percentPosition": true}'>
+            {% for img in images %}
+            <div class="grid-item">
+                <img src="{{ url_for('static', filename='images/galery/' ~ img) }}" alt="Post"
+                    onclick="openModal(this.src)">
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="imgModal" class="modal" onclick="closeModal()">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+</div>
 
 
-    <script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
-    
+<script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
+<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const grid = document.querySelector('#profile-grid');
+        imagesLoaded(grid, function () {
+            new Masonry(grid, {
+                itemSelector: '.grid-item',
+                columnWidth: '.grid-item',
+                gutter: 10,
+                percentPosition: true
+            });
+        });
+    });
+</script>
 
 {% endblock %}

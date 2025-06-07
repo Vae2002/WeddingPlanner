@@ -1,8 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 import io, os
 import uuid
-import ssl
-import time
 from flask import Flask, logging, render_template, request, jsonify, redirect, url_for, session
 from sqlalchemy import create_engine
 import pandas as pd
@@ -17,6 +15,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from google.oauth2 import service_account
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -549,14 +548,15 @@ def reels():
 @app.route('/profile')
 @login_required
 def profile():
-    image_folder = os.path.join('static', 'images', 'explore')
+    image_folder = os.path.join('static', 'images', 'galery')
+  
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
         if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
     ]
       # Debugging output
-    print("Images sent to template:", image_files)
+    print("Images galery sent to template:", image_files)
     return render_template('profile.html', images=image_files, show_footer=True, play_audio = True)
 
 if __name__ == '__main__':
