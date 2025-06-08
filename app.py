@@ -247,11 +247,15 @@ def get_user_info():
                 is_pemberkatan = safe_int(record.get('is_pemberkatan'), 0)
                 is_vip = safe_int(record.get('is_vip'), 0)
                 n_vip = safe_int(record.get('n_vip'), 0)
+                is_group = safe_int(record.get('is_group'), 0)              
                 max_person = safe_int(record.get('n_person'), 1)
                 is_coming = safe_int(record.get('is_coming'), None)
 
                 wishes_raw = record.get('wishes')
                 wishes = wishes_raw if wishes_raw and str(wishes_raw).strip() else None
+                member_name = record.get('member_name')
+
+                print("username: ", username, ", is_group: ", is_group, ", is_online: ", is_online, ", max_person: ", max_person, ", wishes: ", wishes)
 
                 return jsonify({
                     "username": username,
@@ -259,6 +263,8 @@ def get_user_info():
                     "is_pemberkatan": is_pemberkatan,
                     "is_vip": is_vip,
                     "n_vip": n_vip,
+                    "is_group": is_group,
+                    "member_name": member_name,
                     "max_person": max_person,
                     "is_coming": is_coming,
                     "wishes": wishes
