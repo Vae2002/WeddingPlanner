@@ -3,109 +3,110 @@ window.addEventListener("DOMContentLoaded", () => {
 
   carousels.forEach((carousel) => {
     const track = carousel.querySelector(".carousel-track");
-    const slides = Array.from(track.children);
+    let slides = Array.from(track.children);
     const nextBtn = carousel.querySelector(".next");
     const prevBtn = carousel.querySelector(".prev");
     const dotsContainer = carousel.querySelector(".carousel-dots");
 
-   let currentIndex = 0;
-let startX = 0;
-let isDragging = false;
+    let currentIndex = 0;
 
-const updateCarousel = () => {
-  const slideWidth = slides[0].offsetWidth;
-  track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
+    const updateCarousel = () => {
+      slides = Array.from(track.children); // Re-fetch slides
+      const slideWidth = slides[0].offsetWidth;
+      track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
+      track.style.transition = 'transform 0.3s ease-in-out';
 
-  if (dotsContainer) {
-    dotsContainer.innerHTML = "";
-    slides.forEach((_, i) => {
-      const dot = document.createElement("button");
-      dot.className = "dot" + (i === currentIndex ? " active" : "");
-      dot.addEventListener("click", () => {
-        currentIndex = i;
+      // Update dots
+      if (dotsContainer) {
+        dotsContainer.innerHTML = "";
+        slides.forEach((_, i) => {
+          const dot = document.createElement("button");
+          dot.className = "dot" + (i === currentIndex ? " active" : "");
+          dot.addEventListener("click", () => {
+            currentIndex = i;
+            updateCarousel();
+          });
+          dotsContainer.appendChild(dot);
+        });
+      }
+
+      carousel.dataset.currentIndex = currentIndex;
+    };
+
+    const goToNextSlide = () => {
+      if (currentIndex < slides.length - 1) {
+        currentIndex++;
         updateCarousel();
+      }
+    };
+
+    const goToPrevSlide = () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCarousel();
+      }
+    };
+
+    const addSwipeListeners = (element) => {
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      element.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
       });
-      dotsContainer.appendChild(dot);
-    });
-  }
 
-  carousel.dataset.currentIndex = currentIndex;
-};
+      element.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        handleSwipe(touchStartX, touchEndX);
+      });
 
-const goToNextSlide = () => {
-  if (currentIndex < slides.length - 1) {
-    currentIndex++;
-    updateCarousel();
-  }
-};
+      let mouseStartX = 0;
+      let mouseEndX = 0;
+      let isMouseDragging = false;
 
-const goToPrevSlide = () => {
-  if (currentIndex > 0) {
-    currentIndex--;
-    updateCarousel();
-  }
-};
-
-// Define addSwipeListeners AFTER goToNext/PrevSlide:
-const addSwipeListeners = (element) => {
-  let touchStartX = 0;
-  let touchEndX = 0;
-
-  // Touch events for mobile
-  element.addEventListener("touchstart", (e) => {
-    touchStartX = e.touches[0].clientX;
-  });
-
-  element.addEventListener("touchend", (e) => {
-    touchEndX = e.changedTouches[0].clientX;
-    handleSwipe();
-  });
-
-  // Mouse events for desktop
-  let mouseStartX = 0;
-  let mouseEndX = 0;
-  let isMouseDragging = false;
-
-  element.addEventListener("mousedown", (e) => {
+      element.addEventListener("mousedown", (e) => {
     isMouseDragging = true;
     mouseStartX = e.clientX;
+
+    // Start tracking mouse move
+    const onMouseMove = (moveEvent) => {
+      if (!isMouseDragging) return;
+      mouseCurrentX = moveEvent.clientX;
+    };
+
+    const onMouseUp = () => {
+      isMouseDragging = false;
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+
+      const diff = mouseStartX - mouseCurrentX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) goToNextSlide();
+        else goToPrevSlide();
+      }
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
   });
-
-  element.addEventListener("mouseup", (e) => {
-    if (!isMouseDragging) return;
-    isMouseDragging = false;
-    mouseEndX = e.clientX;
-    handleMouseSwipe();
-  });
-
-  element.addEventListener("mouseleave", () => {
-    isMouseDragging = false;
-  });
-
-  const handleSwipe = () => {
-    const diff = touchStartX - touchEndX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNextSlide();
-      else goToPrevSlide();
-    }
-  };
-
-  const handleMouseSwipe = () => {
-    const diff = mouseStartX - mouseEndX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNextSlide();
-      else goToPrevSlide();
-    }
-  };
 };
 
+    const handleSwipe = (startX, endX) => {
+      const diff = startX - endX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          goToNextSlide();
+        } else {
+          goToPrevSlide();
+        }
+      }
+    };
 
-addSwipeListeners(track); // now safe to call
-nextBtn?.addEventListener("click", goToNextSlide);
-prevBtn?.addEventListener("click", goToPrevSlide);
-window.addEventListener("resize", updateCarousel);
-updateCarousel();
-
+    addSwipeListeners(track);
+    nextBtn?.addEventListener("click", goToNextSlide);
+    prevBtn?.addEventListener("click", goToPrevSlide);
+    window.addEventListener("resize", updateCarousel);
+    updateCarousel();
   });
 
   // Days left logic
