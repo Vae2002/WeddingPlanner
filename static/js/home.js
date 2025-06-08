@@ -11,7 +11,6 @@ window.addEventListener("DOMContentLoaded", () => {
    let currentIndex = 0;
 let startX = 0;
 let isDragging = false;
-let hasSwiped = false;
 
 const updateCarousel = () => {
   const slideWidth = slides[0].offsetWidth;
@@ -49,64 +48,57 @@ const goToPrevSlide = () => {
 
 // Define addSwipeListeners AFTER goToNext/PrevSlide:
 const addSwipeListeners = (element) => {
-  let endX = 0;
+  let touchStartX = 0;
+  let touchEndX = 0;
 
+  // Touch events for mobile
   element.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
+    touchStartX = e.touches[0].clientX;
   });
 
-  element.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
-    endX = e.touches[0].clientX;
+  element.addEventListener("touchend", (e) => {
+    touchEndX = e.changedTouches[0].clientX;
+    handleSwipe();
   });
 
-  element.addEventListener("touchend", () => {
-    if (!isDragging) return;
-
-    const diff = startX - endX;
-
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNextSlide();
-      else goToPrevSlide();
-    }
-
-    isDragging = false;
-    startX = 0;
-    endX = 0;
-  });
+  // Mouse events for desktop
+  let mouseStartX = 0;
+  let mouseEndX = 0;
+  let isMouseDragging = false;
 
   element.addEventListener("mousedown", (e) => {
-    startX = e.clientX;
-    isDragging = true;
+    isMouseDragging = true;
+    mouseStartX = e.clientX;
   });
 
-  element.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-    endX = e.clientX;
-  });
-
-  element.addEventListener("mouseup", () => {
-    if (!isDragging) return;
-
-    const diff = startX - endX;
-
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNextSlide();
-      else goToPrevSlide();
-    }
-
-    isDragging = false;
-    startX = 0;
-    endX = 0;
+  element.addEventListener("mouseup", (e) => {
+    if (!isMouseDragging) return;
+    isMouseDragging = false;
+    mouseEndX = e.clientX;
+    handleMouseSwipe();
   });
 
   element.addEventListener("mouseleave", () => {
-    isDragging = false;
-    startX = 0;
-    endX = 0;
+    isMouseDragging = false;
   });
+
+  const handleSwipe = () => {
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToNextSlide();
+      else goToPrevSlide();
+    }
+  };
+
+  const handleMouseSwipe = () => {
+    const diff = mouseStartX - mouseEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToNextSlide();
+      else goToPrevSlide();
+    }
+  };
 };
+
 
 addSwipeListeners(track); // now safe to call
 nextBtn?.addEventListener("click", goToNextSlide);
