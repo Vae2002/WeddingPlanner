@@ -465,7 +465,7 @@ def get_all_wishes():
 @app.route('/messenger')
 @login_required
 def messenger():
-    return render_template('messenger.html', show_footer=False)
+    return render_template('messenger.html', show_footer=False, play_audio=True)
 
 @app.route('/submit-answers', methods=['POST'])
 def submit_answers():
@@ -529,7 +529,7 @@ def submit_answers():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
-
+    
 @app.route('/voice_call')
 @login_required
 def voice_call():
