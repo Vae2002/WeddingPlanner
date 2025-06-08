@@ -985,6 +985,15 @@ position: absolute;
   height: 100%;
   transition: transform 0.5s ease-in-out;
   will-change: transform;
+  touch-action: pan-y; /* Prevents horizontal scrolling on touch devices */
+  -webkit-overflow-scrolling: touch; /* smoother scroll on iOS */
+}
+
+@media (pointer: coarse) {
+  .carousel-track video,
+  .carousel-track img {
+    pointer-events: none;
+  }
 }
 
 .carousel-track video {
