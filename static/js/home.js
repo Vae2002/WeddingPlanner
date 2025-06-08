@@ -18,10 +18,14 @@ const carousels = document.querySelectorAll('.image-carousel');
         });
 
         track.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            const moveX = e.touches[0].clientX;
-            handleSwipe(moveX);
-        });
+          if (!isDragging) return;
+
+          // Prevent default to stop browser scrolling
+          e.preventDefault();
+
+          const moveX = e.touches[0].clientX;
+          handleSwipe(moveX);
+        }, { passive: false }); // <--- important!
 
         track.addEventListener('touchend', () => {
             isDragging = false;
@@ -62,7 +66,8 @@ const carousels = document.querySelectorAll('.image-carousel');
                 currentIndex++;
               } else if (diff < 0 && currentIndex > 0) {
                 currentIndex--;
-              }
+              }                  
+              currentIndex = Math.min(Math.max(currentIndex, 0), slides.length - 1);
               updateSlide();
               hasSwiped = true; // Prevent additional swipes during the same drag
             }
