@@ -66,11 +66,21 @@ window.addEventListener("DOMContentLoaded", () => {
       element.addEventListener("touchend", (e) => {
         if (!isTouching) return;
           isTouching = false;
-          const diff = touchStartX - touchCurrentX;
+          // Fallback to touchend X if touchmove never ran
+        if (touchCurrentX === 0) {
+          touchCurrentX = e.changedTouches[0].clientX;
+        }
+
+        const diff = touchStartX - touchCurrentX;
+
         if (Math.abs(diff) > 50) {
           if (diff > 0) goToNextSlide();
-          else goToPrevSlide();
+        else goToPrevSlide();
         }
+
+        // Reset
+        touchStartX = 0;
+        touchCurrentX = 0;
       });
 
       let mouseStartX = 0;
