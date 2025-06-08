@@ -49,19 +49,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const addSwipeListeners = (element) => {
       let touchStartX = 0;
-      let touchEndX = 0;
 
       element.addEventListener("touchstart", (e) => {
-        touchStartX = e.touches[0].clientX;
+         if (e.touches.length > 1) return; // ignore multi-touch
+          touchStartX = e.touches[0].clientX;
       });
 
       element.addEventListener("touchend", (e) => {
-        touchEndX = e.changedTouches[0].clientX;
-        handleSwipe(touchStartX, touchEndX);
+        if (e.changedTouches.length === 0) return;
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) goToNextSlide();
+        else goToPrevSlide();
+        }
       });
 
       let mouseStartX = 0;
-      let mouseEndX = 0;
+      let mouseCurrentX = 0;
       let isMouseDragging = false;
 
       element.addEventListener("mousedown", (e) => {
@@ -91,16 +96,16 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 };
 
-    const handleSwipe = (startX, endX) => {
-      const diff = startX - endX;
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) {
-          goToNextSlide();
-        } else {
-          goToPrevSlide();
-        }
-      }
-    };
+    // const handleSwipe = (startX, endX) => {
+    //   const diff = startX - endX;
+    //   if (Math.abs(diff) > 50) {
+    //     if (diff > 0) {
+    //       goToNextSlide();
+    //     } else {
+    //       goToPrevSlide();
+    //     }
+    //   }
+    // };
 
     addSwipeListeners(track);
     nextBtn?.addEventListener("click", goToNextSlide);
