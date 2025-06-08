@@ -59,7 +59,7 @@ window.addEventListener("DOMContentLoaded", () => {
         isDragging = true;
       });
 
-      element.addEventListener("touchend", () => {
+      element.addEventListener("touchend", (e) => {
         if (!isDragging) return;
           const endX = e.changedTouches[0].clientX;
           const diff = startX - endX;
@@ -69,8 +69,8 @@ window.addEventListener("DOMContentLoaded", () => {
           else goToPrevSlide();
         }
 
-  isDragging = false;
-  startX = 0;
+        isDragging = false;
+        startX = 0;
       });
 
       element.addEventListener("mousedown", (e) => {
