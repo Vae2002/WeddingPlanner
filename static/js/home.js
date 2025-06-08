@@ -8,15 +8,49 @@ window.addEventListener("DOMContentLoaded", () => {
     const prevBtn = carousel.querySelector(".prev");
     const dotsContainer = carousel.querySelector(".carousel-dots");
 
-    let currentIndex = 0;
-    let startX = 0;
-    let isDragging = false;
-    let hasSwiped = false;
+   let currentIndex = 0;
+let startX = 0;
+let isDragging = false;
+let hasSwiped = false;
 
-    const addSwipeListeners = (element) => {
+const updateCarousel = () => {
+  const slideWidth = slides[0].offsetWidth;
+  track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
+
+  if (dotsContainer) {
+    dotsContainer.innerHTML = "";
+    slides.forEach((_, i) => {
+      const dot = document.createElement("button");
+      dot.className = "dot" + (i === currentIndex ? " active" : "");
+      dot.addEventListener("click", () => {
+        currentIndex = i;
+        updateCarousel();
+      });
+      dotsContainer.appendChild(dot);
+    });
+  }
+
+  carousel.dataset.currentIndex = currentIndex;
+};
+
+const goToNextSlide = () => {
+  if (currentIndex < slides.length - 1) {
+    currentIndex++;
+    updateCarousel();
+  }
+};
+
+const goToPrevSlide = () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    updateCarousel();
+  }
+};
+
+// Define addSwipeListeners AFTER goToNext/PrevSlide:
+const addSwipeListeners = (element) => {
   let endX = 0;
 
-  // Touch events
   element.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
     isDragging = true;
@@ -42,7 +76,6 @@ window.addEventListener("DOMContentLoaded", () => {
     endX = 0;
   });
 
-  // Mouse events
   element.addEventListener("mousedown", (e) => {
     startX = e.clientX;
     isDragging = true;
@@ -75,13 +108,12 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 };
 
-    addSwipeListeners(track);
+addSwipeListeners(track); // now safe to call
+nextBtn?.addEventListener("click", goToNextSlide);
+prevBtn?.addEventListener("click", goToPrevSlide);
+window.addEventListener("resize", updateCarousel);
+updateCarousel();
 
-    nextBtn?.addEventListener("click", goToNextSlide);
-    prevBtn?.addEventListener("click", goToPrevSlide);
-    window.addEventListener("resize", updateCarousel);
-
-    updateCarousel(); // init
   });
 
   // Days left logic
