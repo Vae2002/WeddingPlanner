@@ -13,49 +13,10 @@ window.addEventListener("DOMContentLoaded", () => {
     let isDragging = false;
     let hasSwiped = false;
 
-    const updateCarousel = () => {
-      const slideWidth = slides[0].offsetWidth;
-      track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
-
-      if (dotsContainer) {
-        dotsContainer.innerHTML = "";
-        slides.forEach((_, i) => {
-          const dot = document.createElement("button");
-          dot.className = "dot" + (i === currentIndex ? " active" : "");
-          dot.addEventListener("click", () => {
-            currentIndex = i;
-            updateCarousel();
-          });
-          dotsContainer.appendChild(dot);
-        });
-      }
-
-      carousel.dataset.currentIndex = currentIndex;
-    };
-
-    const goToNextSlide = () => {
-      if (currentIndex < slides.length - 1) currentIndex++;
-      updateCarousel();
-    };
-
-    const goToPrevSlide = () => {
-      if (currentIndex > 0) currentIndex--;
-      updateCarousel();
-    };
-
-    // Touch + Mouse swipe support
-    const handleSwipe = (currentX) => {
-      const diff = startX - currentX;
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) goToNextSlide();
-        else goToPrevSlide();
-        hasSwiped = true;
-      }
-    };
-
     const addSwipeListeners = (element) => {
-      let endX = 0;
+  let endX = 0;
 
+  // Touch events
   element.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
     isDragging = true;
@@ -79,31 +40,40 @@ window.addEventListener("DOMContentLoaded", () => {
     isDragging = false;
     startX = 0;
     endX = 0;
-      });
+  });
 
-      element.addEventListener("mousedown", (e) => {
-        startX = e.clientX;
-        isDragging = true;
-        hasSwiped = false;
-      });
+  // Mouse events
+  element.addEventListener("mousedown", (e) => {
+    startX = e.clientX;
+    isDragging = true;
+  });
 
-      element.addEventListener("mousemove", (e) => {
-        if (!isDragging || hasSwiped) return;
-        handleSwipe(e.clientX);
-      });
+  element.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    endX = e.clientX;
+  });
 
-      element.addEventListener("mouseup", () => {
-        isDragging = false;
-        startX = 0;
-        hasSwiped = false;
-      });
+  element.addEventListener("mouseup", () => {
+    if (!isDragging) return;
 
-      element.addEventListener("mouseleave", () => {
-        isDragging = false;
-        startX = 0;
-        hasSwiped = false;
-      });
-    };
+    const diff = startX - endX;
+
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToNextSlide();
+      else goToPrevSlide();
+    }
+
+    isDragging = false;
+    startX = 0;
+    endX = 0;
+  });
+
+  element.addEventListener("mouseleave", () => {
+    isDragging = false;
+    startX = 0;
+    endX = 0;
+  });
+};
 
     addSwipeListeners(track);
 
