@@ -49,19 +49,27 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const addSwipeListeners = (element) => {
       let touchStartX = 0;
+      let touchCurrentX = 0;
+      let isTouching = false;
 
       element.addEventListener("touchstart", (e) => {
          if (e.touches.length > 1) return; // ignore multi-touch
+          isTouching = true;
           touchStartX = e.touches[0].clientX;
       });
 
+      element.addEventListener("touchmove", (e) => {
+        if (!isTouching) return;
+        touchCurrentX = e.touches[0].clientX;
+      });
+
       element.addEventListener("touchend", (e) => {
-        if (e.changedTouches.length === 0) return;
-        const touchEndX = e.changedTouches[0].clientX;
-        const diff = touchStartX - touchEndX;
+        if (!isTouching) return;
+          isTouching = false;
+          const diff = touchStartX - touchCurrentX;
         if (Math.abs(diff) > 50) {
           if (diff > 0) goToNextSlide();
-        else goToPrevSlide();
+          else goToPrevSlide();
         }
       });
 
@@ -70,8 +78,8 @@ window.addEventListener("DOMContentLoaded", () => {
       let isMouseDragging = false;
 
       element.addEventListener("mousedown", (e) => {
-    isMouseDragging = true;
-    mouseStartX = e.clientX;
+        isMouseDragging = true;
+        mouseStartX = e.clientX;
 
     // Start tracking mouse move
     const onMouseMove = (moveEvent) => {
@@ -95,17 +103,6 @@ window.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("mouseup", onMouseUp);
   });
 };
-
-    // const handleSwipe = (startX, endX) => {
-    //   const diff = startX - endX;
-    //   if (Math.abs(diff) > 50) {
-    //     if (diff > 0) {
-    //       goToNextSlide();
-    //     } else {
-    //       goToPrevSlide();
-    //     }
-    //   }
-    // };
 
     addSwipeListeners(track);
     nextBtn?.addEventListener("click", goToNextSlide);
