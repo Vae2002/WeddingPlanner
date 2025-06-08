@@ -1,3 +1,103 @@
+window.addEventListener("DOMContentLoaded", () => {
+const carousels = document.querySelectorAll('.image-carousel');
+
+    carousels.forEach(carousel => {
+        const track = carousel.querySelector('.carousel-track');
+        const slides = track.querySelectorAll('video'); // or '.slide' if using divs/images
+        let currentIndex = 0;
+
+        let startX = 0;
+        let isDragging = false;
+
+        // TOUCH SUPPORT
+        track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+
+        track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const moveX = e.touches[0].clientX;
+            handleSwipe(moveX);
+        });
+
+        track.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // MOUSE SUPPORT
+        track.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+            isDragging = true;
+        });
+
+        track.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const moveX = e.clientX;
+            handleSwipe(moveX);
+        });
+
+        track.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        track.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        function handleSwipe(currentX) {
+            const diff = startX - currentX;
+
+            if (Math.abs(diff) > 50) {
+                if (diff > 0 && currentIndex < slides.length - 1) {
+                    currentIndex++;
+                } else if (diff < 0 && currentIndex > 0) {
+                    currentIndex--;
+                }
+                updateSlide();
+                isDragging = false;
+            }
+        }
+
+        function updateSlide() {
+    const slideWidth = slides[0].offsetWidth;
+    const offset = -currentIndex * slideWidth;
+    track.style.transform = `translateX(${offset}px)`;
+
+    // Update dots
+    const dotsContainer = carousel.querySelector('.carousel-dots');
+    if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'dot' + (i === currentIndex ? ' active' : '');
+            dot.addEventListener('click', () => {
+                currentIndex = i;
+                updateSlide();
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+}
+
+
+        // Optional: Hook up buttons
+        carousel.querySelector('.next')?.addEventListener('click', () => {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlide();
+            }
+        });
+
+        carousel.querySelector('.prev')?.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlide();
+            }
+        });
+    });
+});
+
 document.querySelectorAll('.image-carousel').forEach((carousel, index) => {
     const track = carousel.querySelector('.carousel-track');
     const slides = Array.from(track.children);
@@ -104,6 +204,8 @@ document.querySelectorAll('.image-carousel').forEach((carousel, index) => {
       const message = diffDays > 0 ? `${diffDays} days left` : `The big day has arrived or passed! 🎉`;
       document.getElementById('days-left-1').textContent = message;
       document.getElementById('days-left-2').textContent = message;
+
+    
   });
 });
 
