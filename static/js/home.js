@@ -8,6 +8,7 @@ const carousels = document.querySelectorAll('.image-carousel');
 
         let startX = 0;
         let isDragging = false;
+        let hasSwiped = false; // Track if a swipe has occurred
 
         // TOUCH SUPPORT
         track.addEventListener('touchstart', (e) => {
