@@ -245,7 +245,7 @@ def get_user_info():
             if str(record.get('username')).strip().lower() == username.lower():
                 is_online = safe_int(record.get('is_online'), 0)
                 is_pemberkatan = safe_int(record.get('is_pemberkatan'), 0)
-                is_vip = safe_int(record.get('is_vip'), 0)
+                # is_vip = safe_int(record.get('is_vip'), 0)
                 n_vip = safe_int(record.get('n_vip'), 0)
                 is_group = safe_int(record.get('is_group'), 0)              
                 max_person = safe_int(record.get('n_person'), 1)
@@ -261,7 +261,7 @@ def get_user_info():
                     "username": username,
                     "is_online": is_online,
                     "is_pemberkatan": is_pemberkatan,
-                    "is_vip": is_vip,
+                    # "is_vip": is_vip,
                     "n_vip": n_vip,
                     "is_group": is_group,
                     "member_name": member_name,
@@ -275,7 +275,7 @@ def get_user_info():
             "username": username,
             "is_online": None,
             "is_pemberkatan": 0,
-            "is_vip": 0,
+            # "is_vip": 0,
             "n_vip": 0,
             "max_person": 1,
             "is_coming": None,

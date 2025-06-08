@@ -14,13 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const answers = [];
-  let currentQuestion = 1;
+  let currentQuestion;
   let stopAsking = false;
   let counter = 1;
   let maxPerson = 1;
   let isOnlineUser = false;
+  let isGroup = false;
 
   const chatBox = document.getElementById('chat-box');
+  const nameInput = document.getElementById('name-input');
   const answerInput = document.getElementById('answer-input');
   const submitBtn = document.getElementById('submit-answer');
   const submitCounterBtn = document.getElementById('submit-counter');
@@ -31,20 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function initChat() {
     try {
-      // Fetch user info (including max_person)
       const res = await fetch('/get-user-info');
       const data = await res.json();
+      isGroup = data.is_group === 1;
       isOnlineUser = data.is_online === 1;
-      // Set maxPerson from the same payload
       maxPerson = typeof data.max_person === 'number' ? data.max_person : 1;
-      counter = 1;
 
-      // Tweak the first question
-      questions[1] = isOnlineUser
-        ? "Will you be attending online?"
-        : "Are you coming?";
+      // Start at name entry if group, else attendance
+      currentQuestion = isGroup ? 0 : 1;
 
-      // Initialize UI state
+      questions[1] = isOnlineUser ? "Will you be attending online?" : "Are you coming?";
+
       counterDisplay.textContent = counter;
       if (maxPerson <= 1) {
         counterControls.querySelector('.plus').disabled = true;
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (isOnlineUser) {
-        // Pre-build online-only answers
         buttonAnswers.innerHTML = '';
         onlineAnswers.forEach(ans => {
           const btn = document.createElement('button');
@@ -64,7 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     } catch (err) {
-      console.error('Initialization error:', err);
+      console.error('Init error:', err);
+      currentQuestion = 1;
     }
     askNextQuestion();
   }
@@ -83,15 +82,32 @@ document.addEventListener('DOMContentLoaded', () => {
       disableInputs();
       return;
     }
+
     appendMessage(questions[currentQuestion], 'question');
-    // hide all inputs by default
+
+    // hide all inputs
+    nameInput.style.display = 'none';
     buttonAnswers.style.display = 'none';
     counterControls.style.display = 'none';
     answerInput.style.display = 'none';
     submitBtn.style.display = 'none';
     noThanksBtn.style.display = 'none';
 
-    if (currentQuestion === 1) {
+    if (currentQuestion === 0) {
+      // Name input
+      nameInput.style.display = 'inline-block';
+      submitBtn.style.display = 'inline-block';
+      submitBtn.onclick = () => {
+        const name = nameInput.value.trim();
+        if (!name) return;
+        appendMessage(name, 'answer');
+        answers.push({ question: questions[0], answer: name });
+        nameInput.value = '';
+        currentQuestion++;
+        setTimeout(askNextQuestion, 500);
+      };
+    } else if (currentQuestion === 1) {
+      // Attendance
       buttonAnswers.style.display = 'inline-block';
       if (!isOnlineUser) {
         buttonAnswers.innerHTML = `
@@ -101,23 +117,26 @@ document.addEventListener('DOMContentLoaded', () => {
           <button data-answer="I will be attending online">I will be attending online</button>
         `;
         buttonAnswers.querySelectorAll('button').forEach(btn => {
-          btn.addEventListener('click', () => handleAnswerSubmit(btn.getAttribute('data-answer')));
+          btn.onclick = () => handleAnswerSubmit(btn.getAttribute('data-answer'));
         });
       }
     } else if (currentQuestion === 2) {
+      // Guest count
       counterControls.style.display = 'flex';
     } else if (currentQuestion === 3) {
+      // Wishes input
       answerInput.style.display = 'inline-block';
       submitBtn.style.display = 'inline-block';
       noThanksBtn.style.display = 'inline-block';
     } else if (currentQuestion === 4) {
+      // Confirm wishes
       buttonAnswers.style.display = 'inline-block';
       buttonAnswers.innerHTML = `
         <button data-answer="Yes, share my wishes">Yes, share my wishes</button>
         <button data-answer="No, I'd like to edit my wishes">No, I'd like to edit my wishes</button>
       `;
       buttonAnswers.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => handleAnswerSubmit(btn.getAttribute('data-answer')));
+        btn.onclick = () => handleAnswerSubmit(btn.getAttribute('data-answer'));
       });
     }
   }
@@ -126,51 +145,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!answer) return;
     appendMessage(answer, 'answer');
     answers.push({ question: questions[currentQuestion], answer });
-    // handle branching logic as before...
     currentQuestion++;
     setTimeout(askNextQuestion, 500);
   }
 
   function disableInputs() {
-    answerInput.disabled = true;
-    submitBtn.disabled = true;
-    noThanksBtn.disabled = true;
+    [nameInput, answerInput, submitBtn, noThanksBtn].forEach(el => el.disabled = true);
     buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = true);
     submitCounterBtn.disabled = true;
   }
 
-  // Counter controls always attached
+  // Counter controls
   counterControls.querySelector('.plus').addEventListener('click', () => {
-    if (counter < maxPerson) {
-      counter++;
-      counterDisplay.textContent = counter;
-    }
+    if (counter < maxPerson) counterDisplay.textContent = ++counter;
   });
   counterControls.querySelector('.minus').addEventListener('click', () => {
-    if (counter > 1) {
-      counter--;
-      counterDisplay.textContent = counter;
-    }
+    if (counter > 1) counterDisplay.textContent = --counter;
   });
   submitCounterBtn.addEventListener('click', () => {
-    handleAnswerSubmit(`${counter}`);
+    handleAnswerSubmit(String(counter));
     counter = 1;
     counterDisplay.textContent = counter;
   });
 
-  // Text input event handlers
-  submitBtn.addEventListener('click', () => {
-    handleAnswerSubmit(answerInput.value.trim());
-    answerInput.value = '';
+  // Answer input handlers
+  submitBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitBtn.click();
   });
-  answerInput.addEventListener('keydown', event => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleAnswerSubmit(answerInput.value.trim());
-      answerInput.value = '';
-    }
+  answerInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleAnswerSubmit(answerInput.value.trim());
   });
   noThanksBtn.addEventListener('click', () => handleAnswerSubmit("No"));
+
+  // Name input enter key
+  nameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitBtn.click();
+  });
 
   initChat();
 });
