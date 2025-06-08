@@ -57,23 +57,20 @@ window.addEventListener("DOMContentLoaded", () => {
       element.addEventListener("touchstart", (e) => {
         startX = e.touches[0].clientX;
         isDragging = true;
-        hasSwiped = false;
       });
 
-      element.addEventListener(
-        "touchmove",
-        (e) => {
-          if (!isDragging) return;
-          e.preventDefault(); // prevent scroll
-          handleSwipe(e.touches[0].clientX);
-        },
-        { passive: false }
-      );
-
       element.addEventListener("touchend", () => {
-        isDragging = false;
-        startX = 0;
-        hasSwiped = false;
+        if (!isDragging) return;
+          const endX = e.changedTouches[0].clientX;
+          const diff = startX - endX;
+
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) goToNextSlide();
+          else goToPrevSlide();
+        }
+
+  isDragging = false;
+  startX = 0;
       });
 
       element.addEventListener("mousedown", (e) => {
