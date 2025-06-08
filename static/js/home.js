@@ -13,6 +13,7 @@ const carousels = document.querySelectorAll('.image-carousel');
         track.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
             isDragging = true;
+            hasSwiped = false; // Reset swipe state
         });
 
         track.addEventListener('touchmove', (e) => {
@@ -23,41 +24,48 @@ const carousels = document.querySelectorAll('.image-carousel');
 
         track.addEventListener('touchend', () => {
             isDragging = false;
+            startX = 0; // Reset startX after touch end
+            hasSwiped = false; // Reset swipe state
         });
 
         // MOUSE SUPPORT
         track.addEventListener('mousedown', (e) => {
             startX = e.clientX;
             isDragging = true;
+            hasSwiped = false; // Reset swipe state
         });
 
         track.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
+            if (!isDragging || hasSwiped) return;
             const moveX = e.clientX;
             handleSwipe(moveX);
         });
 
         track.addEventListener('mouseup', () => {
             isDragging = false;
+            startX = 0; // Reset startX after mouse up
+            hasSwiped = false; // Reset swipe state
         });
 
         track.addEventListener('mouseleave', () => {
             isDragging = false;
+            startX = 0; // Reset startX on mouse leave
+            hasSwiped = false; // Reset swipe state
         });
 
         function handleSwipe(currentX) {
-            const diff = startX - currentX;
+          const diff = startX - currentX;
 
-            if (Math.abs(diff) > 50) {
-                if (diff > 0 && currentIndex < slides.length - 1) {
-                    currentIndex++;
-                } else if (diff < 0 && currentIndex > 0) {
-                    currentIndex--;
-                }
-                updateSlide();
-                isDragging = false;
+          if (Math.abs(diff) > 50) {
+              if (diff > 0 && currentIndex < slides.length - 1) {
+                currentIndex++;
+              } else if (diff < 0 && currentIndex > 0) {
+                currentIndex--;
+              }
+              updateSlide();
+              hasSwiped = true; // Prevent additional swipes during the same drag
             }
-        }
+      }
 
         function updateSlide() {
     const slideWidth = slides[0].offsetWidth;
