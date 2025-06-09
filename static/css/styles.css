@@ -48,11 +48,13 @@ html, body {
 
 .countdown-timer {
   text-align: center;
-  background-image: url('../images/galery/1DSC02172.jpg'); /* Replace with your image path */
-  background-size: cover; /* Cover entire container */
+  background-image: url('../images/galery/1DSC02172.jpg');
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 2rem; /* Optional: gives space around the content */
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .countdown-timer h2 {
@@ -62,32 +64,25 @@ html, body {
 }
 
 .countdown ul {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  justify-content: center;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   gap: 1rem;
+  max-width: 100%;
 }
+
 .countdown li {
-  font-size: 1.5rem;
-  color : white;
-}
-
-
-.countdown ul{
-  display: flex;
-  justify-content: center;
-} 
-
-.countdown ul li {
-  list-style: none;
   font-size: 1rem;
   text-transform: uppercase;
   text-align: center;
+  color: white;
 }
 
 .countdown li span {
-  display:block;
+  display: block;
   font-size: 6rem;
   color: white;
 }
@@ -99,15 +94,25 @@ html, body {
   color: white;
 }
 
-.countdown li text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: white;
+/* Remove unnecessary or invalid selector */
+.countdown li:first-of-type {
+  margin-right: 0;
 }
 
-.countdown li:first-of-type {
-  margin-right: 5rem;
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .countdown li span {
+    font-size: 3rem;
+  }
+
+  .countdown .separator {
+    font-size: 3rem;
+    margin: 0 5px;
+  }
+
+  .countdown li {
+    font-size: 0.75rem;
+  }
 }
 
 header {
