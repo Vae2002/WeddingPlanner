@@ -47,17 +47,23 @@ html, body {
 }
 
 .countdown-timer {
-  text-align: center;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* Maintains shape on mobile */
   background-image: url('../images/galery/1DSC02172.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   padding: 2rem;
-  width: 100%;
   box-sizing: border-box;
 }
 
+.countdown {
+  overflow-x: auto;
+}
+
 .countdown-timer h2 {
+  text-align: center;
   color: white;
   font-size: 2rem;
   margin-bottom: 1rem;
@@ -65,7 +71,8 @@ html, body {
 
 .countdown ul {
   display: flex;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
+  flex-wrap: nowrap; /* Allow wrapping on small screens */
+  white-space: nowrap;
   justify-content: center;
   list-style: none;
   padding: 0;
