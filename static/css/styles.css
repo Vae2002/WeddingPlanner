@@ -49,13 +49,14 @@ html, body {
 .countdown-timer {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9; /* Maintains shape on mobile */
+  min-height: 300px; /* Maintains shape on mobile */
   background-image: url('../images/galery/1DSC02172.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   padding: 2rem;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 .countdown {
@@ -90,20 +91,20 @@ html, body {
 
 .countdown li span {
   display: block;
-  font-size: 6rem;
+  font-size: clamp(2rem, 6vw, 6rem); 
   color: white;
 }
 
 .countdown .separator {
   margin: 0 10px;
-  font-size: 6rem;
+  font-size: clamp(2rem, 6vw, 6rem); 
   line-height: 1;
   color: white;
 }
 
 /* Remove unnecessary or invalid selector */
 .countdown li:first-of-type {
-  margin-right: 0;
+  margin-right: 3rem; /* Add space after first item */
 }
 
 /* Responsive adjustments */
