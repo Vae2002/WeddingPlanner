@@ -119,16 +119,16 @@ html, body {
   }
 
   .countdown li span {
-    font-size: clamp(1.5rem, 5vw, 3rem);
+    font-size: clamp(1rem, 5vw, 3rem);
   }
 
   .countdown .separator {
-    font-size: clamp(1.5rem, 5vw, 3rem);
+    font-size: clamp(1rem, 5vw, 3rem);
     margin: 0 5px;
   }
 
   .countdown li {
-    font-size: 0.7rem;
+    font-size: 0.5rem;
   }
 }
 
