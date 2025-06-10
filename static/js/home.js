@@ -170,7 +170,7 @@ document.querySelectorAll('.icon-button[title="Like"]').forEach(button => {
 // COUNTDOWN TIMER
 const daysEl = document.getElementById('days');
 const hoursEl = document.getElementById('hours');
-const minutesEl = document.getElementById('minutes');
+const minutesEl = document.getElementById('mins');
 const secondsEl = document.getElementById('seconds');
 
 const targetDate = new Date("2025-09-06T00:00:00");

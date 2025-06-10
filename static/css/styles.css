@@ -49,87 +49,53 @@ html, body {
 .countdown-timer {
   position: relative;
   width: 100%;
-  /* min-height: 300px; */
-  aspect-ratio: 30 / 9; /* Maintains wide horizontal shape */
+  aspect-ratio: 30 / 9;
   background-image: url('../images/galery/1DSC02172.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 2rem 1rem; /* reduce side padding for mobile */
+  padding: clamp(1rem, 3vw, 2rem) clamp(0.5rem, 2vw, 1rem);
   box-sizing: border-box;
-  overflow: hidden; /* hides any overflowing bits */
+  overflow: hidden;
 }
 
 .countdown-timer h2 {
   text-align: center;
   color: white;
-  font-size: clamp(1.5rem, 4vw, 2.5rem); /* responsive title */
-  margin-bottom: 1rem;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  margin-bottom: clamp(0.5rem, 2vw, 1.5rem);
 }
 
 .countdown {
   display: flex;
   justify-content: center;
+  gap: clamp(1rem, 3vw, 3rem);
+  flex-wrap: wrap;
   width: 100%;
-  overflow-x: auto; /* allow horizontal scroll if needed */
+  color: white;
 }
 
-.countdown ul {
-  display: flex;
-  flex-wrap: wrap; /* ✅ wraps on small screens */
-  justify-content: center;
-  align-items: center;
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
-  gap: 1rem;
-  max-width: 100%;
-}
-
-.countdown li {
-  font-size: 1rem;
-  text-transform: uppercase;
+.countdown-el {
   text-align: center;
-  color: white;
-  flex: 1 0 auto; /* helps each item shrink gracefully */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.countdown li span {
-  display: block;
-  font-size: clamp(3rem, 6vw, 7rem); 
-  color: white;
-}
-
-.countdown .separator {
-  font-size: clamp(3rem, 6vw, 7rem);
+.big-text {
+  font-weight: bold;
+  font-size: clamp(2rem, 8vw, 6rem);
   line-height: 1;
-  margin: 0 10px;
-  color: white;
+  margin: 0;
 }
 
-/* Space after first item – optional */
-.countdown li:first-of-type {
-  margin-right: 1rem;
+.countdown-el span {
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  margin-top: 0.5rem;
 }
 
-/* Mobile Optimization */
-@media (max-width: 600px) {
-  .countdown-timer {
-    padding: 1.5rem 0.5rem;
-  }
-
-  .countdown li span {
-    font-size: clamp(0.5rem, 5vw, 3rem);
-  }
-
-  .countdown .separator {
-    font-size: clamp(0.5rem, 5vw, 3rem);
-    margin: 0 5px;
-  }
-
-  .countdown li {
-    font-size: 0.5rem;
-  }
+.countdown-el:first-of-type {
+  margin-right: clamp(1rem, 2vw, 2rem);
 }
 
 
