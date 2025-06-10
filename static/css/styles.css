@@ -101,14 +101,14 @@ html, body {
 .countdown-timer h2 {
   text-align: center;
   color: white;
-  font-size: clamp(0.5rem, 3vw, 6rem);
+  font-size: clamp(0.5rem, 4vw, 10rem);
   margin-bottom: clamp(0.25rem, 2vw, 2rem);
 }
 
 .countdown {
   display: flex;
   justify-content: center;
-  gap: clamp(0.5rem, 3vw, 6rem);
+  gap: clamp(0.5rem, 4vw, 10rem);
   flex-wrap: wrap;
   width: 100%;
   color: white;
@@ -145,18 +145,18 @@ html, body {
 
 .big-text {
   font-weight: bold;
-  font-size: clamp(0.25rem, 3vw, 6rem);
+  font-size: clamp(0.5rem, 4vw, 10rem);
   line-height: 1;
   margin: 0;
 }
 s
 .countdown-el span {
-  font-size: clamp(0.25rem, 3vw, 6rem);
+  font-size: clamp(0.5rem, 4vw, 10rem);
   margin-top: 0.5rem;
 }
 
 .countdown-el:first-of-type {
-  margin-right: clamp(0.25rem, 3vw, 6rem);
+  margin-right: clamp(0.5rem, 4vw, 10rem);
 }
 
 @media (max-width: 480px) {
@@ -166,16 +166,16 @@ s
   }
 
   .big-text {
-    font-size: 0.5rem;
+    font-size: 0.3rem;
   }
 
   .countdown-el span {
-    font-size: 0.5rem;
+    font-size: 0.3rem;
   }
 
   .countdown-el-time {
-    padding: 0.5rem;
-    border-radius: 0.5rem;
+    padding: 0.3rem;
+    border-radius: 0.3rem;
   }
 }
 
