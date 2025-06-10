@@ -15,6 +15,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from google.oauth2 import service_account
+import json
 
 load_dotenv()
 
@@ -485,7 +486,16 @@ def submit_answers():
         return jsonify({"status": "error", "message": "Not logged in"}), 401
 
     username = session['username']
-    data = request.json
+    data = request.json  # this is a list
+
+    member_name_raw = request.args.get("memberName")
+
+    try:
+        member_name_val = json.loads(member_name_raw) if member_name_raw else None
+    except Exception as e:
+        print("Error decoding member_name_raw:", e)
+        member_name_val = None
+
 
     is_coming_val = None
     n_person_val = None
@@ -522,7 +532,6 @@ def submit_answers():
         records = sheet.get_all_records()
 
         # Find the row number
-        # Find the row number
         for idx, record in enumerate(records, start=2):
             if str(record.get('username')).strip().lower() == username.lower():
                 # Get column indices
@@ -531,6 +540,7 @@ def submit_answers():
                 n_person_col    = keys.index('n_person_confirm') + 1
                 wishes_col      = keys.index('wishes') + 1
                 is_filled_col   = keys.index('is_filled') + 1
+                member_name_col = keys.index('member_name') + 1
 
                 # Update each relevant cell
                 sheet.update_cell(idx, is_coming_col, is_coming_val)
@@ -538,6 +548,27 @@ def submit_answers():
                 sheet.update_cell(idx, wishes_col,
                     '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
                 sheet.update_cell(idx, is_filled_col, 1)
+                existing_member_name = record.get('member_name', '')
+                print("Existing member:", existing_member_name)
+
+                # Convert to list
+                try:
+                    current_names = eval(existing_member_name) if existing_member_name else []
+                    if not isinstance(current_names, list):
+                        current_names = [str(current_names)]
+                except Exception:
+                    current_names = [str(existing_member_name)] if existing_member_name else []
+
+
+                # Append new names
+                if member_name_val:
+                    if isinstance(member_name_val, list):
+                        current_names.extend([name for name in member_name_val if name and name not in current_names])
+                    elif isinstance(member_name_val, str) and member_name_val not in current_names:
+                        current_names.append(member_name_val)
+        
+                sheet.update_cell(idx, member_name_col, str(current_names))
+
 
                 return jsonify({"status": "success", "message": f"Updated RSVP for {username}."})
 

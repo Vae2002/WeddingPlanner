@@ -252,8 +252,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function sendAnswers() {
-    console.log("Sending answers:", answers); // add this
-    fetch('/submit-answers', {
+    console.log("Sending answers:", answers);
+
+    let memberName = null;
+    if (isGroup) {
+      const name = answers.find(a => a.question === "Please enter your name")?.answer;
+      if (name) {
+        memberName = [name]; // send as array
+      }
+    }
+
+    const query = memberName ? '?memberName=' + encodeURIComponent(JSON.stringify(memberName)) : '';
+    console.log("Encoded query string:", query); 
+
+    fetch(`/submit-answers${query}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(answers)
