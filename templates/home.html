@@ -183,6 +183,39 @@
 
 </div>
 
+<br><br>
+<!-- COUNTDOWN TIMER WEDDING -->
+<div id="countdown-timer" class="countdown-timer">
+    <h2>Countdown to the Wedding</h2>
+    <div id="countdown" class="countdown">
+            <div class="countdown-el">
+                <p class="big-text" id="days">0</p>
+                <span>days</span>
+            </div>
+            <div class="countdown-el">
+                <p class="big-text" id="hours">0</p>
+                <span>hours</span>
+            </div>
+             <div class="countdown-el">
+                <p class="big-text" id="separator">:</p>
+            </div>
+            <div class="countdown-el">
+                <p class="big-text" id="mins">0</p>
+                <span>mins</span>
+            </div>
+            <div class="countdown-el">
+                <p class="big-text" id="separator">:</p>
+            </div>
+            <div class="countdown-el">
+                <p class="big-text" id="seconds">0</p>
+                <span>seconds</span>
+            </div>
+    </div>
+</div>
+
+
+<br><br><br><br><br><br>
+
 <!-- ==== POST 3 ==== -->
 <div class="post-wrapper">
     <div class="feed-wrapper">
@@ -254,39 +287,34 @@
     </a>
 </div>
 
+ <div class="text-info">
+                <h2>Reception Address:</h2>
+                <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South
+                    Tangerang City, Banten 15311, Indonesia</h4>
+            </div>
+<br>
 
-<br><br>
+ <div id="map" style="height: 250px; width: 100%;"></div>
 
-<div id="countdown-timer" class="countdown-timer">
-    <h2>Countdown to the Wedding</h2>
-    <div id="countdown" class="countdown">
-            <div class="countdown-el">
-                <p class="big-text" id="days">0</p>
-                <span>days</span>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="hours">0</p>
-                <span>hours</span>
-            </div>
-             <div class="countdown-el">
-                <p class="big-text" id="separator">:</p>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="mins">0</p>
-                <span>mins</span>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="separator">:</p>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="seconds">0</p>
-                <span>seconds</span>
-            </div>
-    </div>
-</div>
+    <!-- Load Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <script>
+        var lng = 106.6683;
+        var lat = -6.2943;
+        var map = L.map('map').setView([lat, lng], 15);
 
-<br><br><br><br><br><br>
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup('<a href="https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D' + lat + ',' + lng + '" target="_blank">Open in Google Maps</a>')
+            .openPopup();
+    </script>
+
 
 <!-- ==== POST 4 ==== -->
 <div class="post-wrapper">
@@ -306,6 +334,81 @@
         </div>
 
         <div class="image-carousel" id="carousel-4">
+            <div class="carousel-window">
+                <div class="carousel-track">
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home7.mp4') }}" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <div class="horizontal-icon-wrapper">
+            <div class="horizontal-icon-wrapper">
+                <!-- Heart icon -->
+                <a href="#" class="icon-button" title="Like">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path
+                            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
+                        </path>
+                    </svg>
+                </a>
+
+                <!-- Paper plane icon -->
+                <a href="#" class="icon-button" title="Send">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </a>
+
+                <!-- Bookmark icon -->
+                <a href="#" class="icon-button" title="Bookmark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="liked-by-wrapper">
+        <!-- Small profile images... -->
+        <h4 class="extra-info liked-by-text">
+            Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
+        </h4>
+    </div>
+
+    <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+        <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
+    </a>
+</div>
+
+
+
+
+
+<!-- ==== POST 5 ==== -->
+<div class="post-wrapper">
+    <div class="feed-wrapper">
+        <div class="profile-header">
+            <a class="profile-link" href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                    <h2>laststeftoeunity</h2>
+                </a>
+                <a href="{{ url_for('search_start') }}" style="color: inherit; text-decoration: none;">
+                    Trembesi Hotel BSD
+                </a>
+            </div>
+        </div>
+
+        <div class="image-carousel" id="carousel-5">
             <div class="carousel-window">
                 <div class="carousel-track">
                     <video autoplay loop muted playsinline>
@@ -360,15 +463,82 @@
 
 </div>
 
-<!-- <div class="social_links">
-        <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
-        <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
-        <a href="#"><ion-icon name="copy-outline"></ion-icon></a>
-    </div>-->
+<!-- ==== POST 6 ==== -->
+<div class="post-wrapper">
+    <div class="feed-wrapper">
+        <div class="profile-header">
+            <a class="profile-link" href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+            </a>
+            <div class="text-info">
+                <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                    <h2>laststeftoeunity</h2>
+                </a>
+                <a href="{{ url_for('search_start') }}" style="color: inherit; text-decoration: none;">
+                    Trembesi Hotel BSD
+                </a>
+            </div>
+        </div>
+
+        <div class="image-carousel" id="carousel-6">
+            <div class="carousel-window">
+                <div class="carousel-track">
+                    <video autoplay loop muted playsinline>
+                        <source src="{{ url_for('static', filename='videos/home8.mp4') }}" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <div class="horizontal-icon-wrapper">
+            <div class="horizontal-icon-wrapper">
+                <!-- Heart icon -->
+                <a href="#" class="icon-button" title="Like">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path
+                            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
+                        </path>
+                    </svg>
+                </a>
+
+                <!-- Paper plane icon -->
+                <a href="#" class="icon-button" title="Send">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </a>
+
+                <!-- Bookmark icon -->
+                <a href="#" class="icon-button" title="Bookmark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="liked-by-wrapper">
+        <!-- Small profile images... -->
+        <h4 class="extra-info liked-by-text">
+            Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
+        </h4>
+    </div>
+
+    <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+        <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
+    </a>
+
+</div>
+
+
 </div>
 
 <script src="{{ url_for('static', filename='js/home.js') }}"></script>
-<!-- <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script> -->
+
 
 {% endblock %}
