@@ -33,7 +33,45 @@
 
 #map {
   height: 100%;
+  border-radius: 1.5rem;
 }
+
+.calendar-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+  margin-top: 2rem;
+}
+
+.calendar-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.calendar-btn:active {
+  transform: scale(0.98);
+}
+
+.calendar-btn.google {
+  background: linear-gradient(135deg, #4285f4, #34a853);
+}
+
 
 /* Make page fill the whole viewport height */
 html, body {
@@ -57,6 +95,7 @@ html, body {
   padding: clamp(1rem, 3vw, 2rem) clamp(0.5rem, 2vw, 1rem);
   box-sizing: border-box;
   overflow: hidden;
+  border-radius: 1.5rem;
 }
 
 .countdown-timer h2 {
@@ -75,11 +114,38 @@ html, body {
   color: white;
 }
 
-.countdown-el {
+.countdown-timer h2,
+.countdown-el,
+.big-text,
+.countdown-el span {
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8); /* shadow behind text */
+}
+
+.countdown-el-separator {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 1rem;
+}
+.countdown-el-time {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(148, 148, 148, 0.5); 
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3); 
+  backdrop-filter: blur(4px); 
+}
+
+.countdown-wrapper {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(3px);
 }
 
 .big-text {
