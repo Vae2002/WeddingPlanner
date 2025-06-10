@@ -69,7 +69,8 @@ window.addEventListener("DOMContentLoaded", () => {
         if (e.touches.length > 1) return;
         isTouching = true;
         touchStartX = e.touches[0].clientX;
-      });
+      }, { passive: false });
+
 
       element.addEventListener("touchend", (e) => {
         if (!isTouching || e.changedTouches.length === 0) return;
@@ -104,7 +105,8 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     };
 
-    addSwipeListeners(carousel);
+    const swipeArea = carousel.querySelector(".carousel-window") || carousel;
+    addSwipeListeners(swipeArea);
     nextBtn?.addEventListener("click", goToNextSlide);
     prevBtn?.addEventListener("click", goToPrevSlide);
 

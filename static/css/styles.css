@@ -1112,6 +1112,7 @@ position: absolute;
   width: 100%;
   height: auto;
   position: relative; /* Optional */
+  touch-action: pan-y;
 }
 
 .carousel-track {
