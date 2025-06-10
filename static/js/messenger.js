@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Start at name entry if group, else attendance
       currentQuestion = isGroup ? 0 : 1;
-
       questions[1] = isOnlineUser ? "Will you be attending online?" : "Are you coming?";
 
       counterDisplay.textContent = counter;
@@ -77,24 +76,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function askNextQuestion() {
+    // Skip guest count for online attendees
+    if (currentQuestion === 2 && isOnlineUser) currentQuestion++;
+
+    // If we're done, show thank-you and hide/disable everything
     if (stopAsking || currentQuestion >= questions.length) {
       appendMessage("Thank you for your responses! ❤️", 'question');
+      hideAllInputs();
       disableInputs();
       return;
     }
 
     appendMessage(questions[currentQuestion], 'question');
-
-    // hide all inputs
-    nameInput.style.display = 'none';
-    buttonAnswers.style.display = 'none';
-    counterControls.style.display = 'none';
-    answerInput.style.display = 'none';
-    submitBtn.style.display = 'none';
-    noThanksBtn.style.display = 'none';
+    hideAllInputs();
 
     if (currentQuestion === 0) {
-      // Name input
       nameInput.style.display = 'inline-block';
       submitBtn.style.display = 'inline-block';
       submitBtn.onclick = () => {
@@ -107,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(askNextQuestion, 500);
       };
     } else if (currentQuestion === 1) {
-      // Attendance
       buttonAnswers.style.display = 'inline-block';
       if (!isOnlineUser) {
         buttonAnswers.innerHTML = `
@@ -116,28 +111,21 @@ document.addEventListener('DOMContentLoaded', () => {
           <button data-answer="I'm still not sure">I'm still not sure</button>
           <button data-answer="I will be attending online">I will be attending online</button>
         `;
-        buttonAnswers.querySelectorAll('button').forEach(btn => {
-          btn.onclick = () => handleAnswerSubmit(btn.getAttribute('data-answer'));
-        });
+        buttonAnswers.querySelectorAll('button').forEach(btn => btn.onclick = () => handleAnswerSubmit(btn.dataset.answer));
       }
     } else if (currentQuestion === 2) {
-      // Guest count
       counterControls.style.display = 'flex';
     } else if (currentQuestion === 3) {
-      // Wishes input
       answerInput.style.display = 'inline-block';
       submitBtn.style.display = 'inline-block';
       noThanksBtn.style.display = 'inline-block';
     } else if (currentQuestion === 4) {
-      // Confirm wishes
       buttonAnswers.style.display = 'inline-block';
       buttonAnswers.innerHTML = `
         <button data-answer="Yes, share my wishes">Yes, share my wishes</button>
         <button data-answer="No, I'd like to edit my wishes">No, I'd like to edit my wishes</button>
       `;
-      buttonAnswers.querySelectorAll('button').forEach(btn => {
-        btn.onclick = () => handleAnswerSubmit(btn.getAttribute('data-answer'));
-      });
+      buttonAnswers.querySelectorAll('button').forEach(btn => btn.onclick = () => handleAnswerSubmit(btn.dataset.answer));
     }
   }
 
@@ -145,14 +133,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!answer) return;
     appendMessage(answer, 'answer');
     answers.push({ question: questions[currentQuestion], answer });
+
+    if (currentQuestion === 3 && answer === "No, thank you.") {
+      stopAsking = true;
+      setTimeout(askNextQuestion, 500);
+      return;
+    }
+    if (currentQuestion === 4 && answer === "No, I'd like to edit my wishes") {
+      currentQuestion = 3;
+      setTimeout(askNextQuestion, 500);
+      return;
+    }
     currentQuestion++;
     setTimeout(askNextQuestion, 500);
   }
 
+  function hideAllInputs() {
+    [nameInput, answerInput, submitBtn, noThanksBtn, buttonAnswers, counterControls].forEach(el => el.style.display = 'none');
+  }
+
   function disableInputs() {
-    [nameInput, answerInput, submitBtn, noThanksBtn].forEach(el => el.disabled = true);
+    [nameInput, answerInput, submitBtn, noThanksBtn, submitCounterBtn].forEach(el => el.disabled = true);
     buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = true);
-    submitCounterBtn.disabled = true;
+    counterControls.querySelectorAll('button').forEach(btn => btn.disabled = true);
   }
 
   // Counter controls
@@ -168,19 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
     counterDisplay.textContent = counter;
   });
 
-  // Answer input handlers
-  submitBtn.addEventListener('keydown', e => {
-    if (e.key === 'Enter') submitBtn.click();
-  });
-  answerInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleAnswerSubmit(answerInput.value.trim());
-  });
-  noThanksBtn.addEventListener('click', () => handleAnswerSubmit("No"));
-
-  // Name input enter key
-  nameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') submitBtn.click();
-  });
+  // Input handlers
+  submitBtn.addEventListener('keydown', e => e.key === 'Enter' && submitBtn.click());
+  answerInput.addEventListener('keydown', e => e.key === 'Enter' && handleAnswerSubmit(answerInput.value.trim()));
+  noThanksBtn.addEventListener('click', () => handleAnswerSubmit("No, thank you."));
+  nameInput.addEventListener('keydown', e => e.key === 'Enter' && submitBtn.click());
 
   initChat();
 });
