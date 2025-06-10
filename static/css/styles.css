@@ -50,7 +50,7 @@ html, body {
   position: relative;
   width: 100%;
   /* min-height: 300px; */
-  aspect-ratio: 27 / 9; /* Maintains wide horizontal shape */
+  aspect-ratio: 30 / 9; /* Maintains wide horizontal shape */
   background-image: url('../images/galery/1DSC02172.jpg');
   background-size: cover;
   background-position: center;
@@ -87,7 +87,7 @@ html, body {
 }
 
 .countdown li {
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-transform: uppercase;
   text-align: center;
   color: white;
@@ -96,12 +96,12 @@ html, body {
 
 .countdown li span {
   display: block;
-  font-size: clamp(2rem, 6vw, 6rem); 
+  font-size: clamp(3rem, 6vw, 7rem); 
   color: white;
 }
 
 .countdown .separator {
-  font-size: clamp(2rem, 6vw, 6rem);
+  font-size: clamp(3rem, 6vw, 7rem);
   line-height: 1;
   margin: 0 10px;
   color: white;
@@ -119,11 +119,11 @@ html, body {
   }
 
   .countdown li span {
-    font-size: clamp(1rem, 5vw, 3rem);
+    font-size: clamp(0.5rem, 5vw, 3rem);
   }
 
   .countdown .separator {
-    font-size: clamp(1rem, 5vw, 3rem);
+    font-size: clamp(0.5rem, 5vw, 3rem);
     margin: 0 5px;
   }
 
