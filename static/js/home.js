@@ -61,25 +61,45 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    const addSwipeListeners = (element) => {
-      let touchStartX = 0;
-      let isTouching = false;
+ const addSwipeListeners = (element) => {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let isTouching = false;
+  let hasMoved = false;
 
-      element.addEventListener("touchstart", (e) => {
-        if (e.touches.length > 1) return;
-        isTouching = true;
-        touchStartX = e.touches[0].clientX;
-      }, { passive: false });
+  element.addEventListener("touchstart", (e) => {
+    if (e.touches.length > 1) return;
+    isTouching = true;
+    hasMoved = false;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: false });
 
+  element.addEventListener("touchmove", (e) => {
+    if (!isTouching || e.touches.length > 1) return;
 
-      element.addEventListener("touchend", (e) => {
-        if (!isTouching || e.changedTouches.length === 0) return;
-        const diff = touchStartX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) {
-          diff > 0 ? goToNextSlide() : goToPrevSlide();
-        }
-        isTouching = false;
-      });
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+
+    // If horizontal movement is dominant, prevent vertical scroll
+    if (Math.abs(dx) > Math.abs(dy)) {
+      e.preventDefault();  // 👈 disables vertical scroll
+      hasMoved = true;
+    }
+  }, { passive: false });
+
+  element.addEventListener("touchend", (e) => {
+    if (!isTouching) return;
+
+    const dx = e.changedTouches[0].clientX - touchStartX;
+
+    if (hasMoved && Math.abs(dx) > 50) {
+      dx > 0 ? goToPrevSlide() : goToNextSlide();
+    }
+
+    isTouching = false;
+    hasMoved = false;
+  });
 
       let mouseStartX = 0;
       let isMouseDragging = false;
