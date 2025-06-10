@@ -188,33 +188,45 @@
 <div id="countdown-timer" class="countdown-timer">
     <h2>Countdown to the Wedding</h2>
     <div id="countdown" class="countdown">
-            <div class="countdown-el">
-                <p class="big-text" id="days">0</p>
-                <span>days</span>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="hours">0</p>
-                <span>hours</span>
-            </div>
-             <div class="countdown-el">
-                <p class="big-text" id="separator">:</p>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="mins">0</p>
-                <span>mins</span>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="separator">:</p>
-            </div>
-            <div class="countdown-el">
-                <p class="big-text" id="seconds">0</p>
-                <span>seconds</span>
-            </div>
+        <div class="countdown-el-time">
+            <p class="big-text" id="days">0</p>
+            <span>days</span>
+        </div>
+        <div class="countdown-el-time">
+            <p class="big-text" id="hours">0</p>
+            <span>hours</span>
+        </div>
+        <div class="countdown-el-separator">
+            <p class="big-text" id="separator">:</p>
+        </div>
+        <div class="countdown-el-time">
+            <p class="big-text" id="mins">0</p>
+            <span>mins</span>
+        </div>
+        <div class="countdown-el-separator">
+            <p class="big-text" id="separator">:</p>
+        </div>
+        <div class="countdown-el-time">
+            <p class="big-text" id="seconds">0</p>
+            <span>seconds</span>
+        </div>
+
     </div>
 </div>
 
+<div class="calendar-buttons">
+  <a href="static/wedding-event.ics" download="Wedding.ics" class="calendar-btn">
+    Add to Device Calendar
+  </a>
+  <a 
+    href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Stefanus+%26+Eunice+Wedding+%23LastSteftoEunity&dates=20250906T110000Z/20250906T130000Z&details=Join+us+for+the+wedding+on+6th+September+2025+at+Trembesi+Hotel+BSD%2C+Tangerang+Selatan%2C+Indonesia!&location=Trembesi+Hotel+BSD%2C+Tangerang+Selatan%2C+Indonesia" 
+    target="_blank" 
+    class="calendar-btn google">
+    Add via Google Calendar
+  </a>
+</div>
 
-<br><br><br><br><br><br>
+<br>
 
 <!-- ==== POST 3 ==== -->
 <div class="post-wrapper">
@@ -287,33 +299,33 @@
     </a>
 </div>
 
- <div class="text-info">
-                <h2>Reception Address:</h2>
-                <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South
-                    Tangerang City, Banten 15311, Indonesia</h4>
-            </div>
+<div class="text-info">
+    <h2>Reception Address:</h2>
+    <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South
+        Tangerang City, Banten 15311, Indonesia</h4>
+</div>
 <br>
 
- <div id="map" style="height: 250px; width: 100%;"></div>
+<div id="map" style="height: 250px; width: 100%;"></div>
 
-    <!-- Load Leaflet.js -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Load Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <script>
-        var lng = 106.6683;
-        var lat = -6.2943;
-        var map = L.map('map').setView([lat, lng], 15);
+<script>
+    var lng = 106.6683;
+    var lat = -6.2943;
+    var map = L.map('map').setView([lat, lng], 15);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-        L.marker([lat, lng])
-            .addTo(map)
-            .bindPopup('<a href="https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D' + lat + ',' + lng + '" target="_blank">Open in Google Maps</a>')
-            .openPopup();
-    </script>
+    L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup('<a href="https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D' + lat + ',' + lng + '" target="_blank">Open in Google Maps</a>')
+        .openPopup();
+</script>
 
 
 <!-- ==== POST 4 ==== -->
