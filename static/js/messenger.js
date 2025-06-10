@@ -214,10 +214,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleAnswerSubmit(answer) {
     if (!answer) return;
 
-    if (currentQuestion === 1 && answer === "I'm still not sure") {
+    if (currentQuestion === 1 && answer === "Yes") {
+      appendMessage(answer, 'answer');
+      answers.push({ question: questions[1], answer });
+      currentQuestion = 2;
+      setTimeout(askNextQuestion, 500);
+      return;
+    } else if (currentQuestion === 1 && answer === "I'm still not sure") {
       appendMessage(answer, 'answer');
       appendMessage("We kindly ask you to confirm your attendance by 22 August 2025 at the latest. 💌", 'question');
       stopAsking = true;
+      return;
     } else if (currentQuestion === 1 && answer === "I will be attending online") {
       appendMessage(answer, 'answer');
       answers.push({ question: questions[1], answer }); 
@@ -245,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function sendAnswers() {
+    console.log("Sending answers:", answers); // add this
     fetch('/submit-answers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -279,6 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
     buttonAnswers.querySelectorAll('button').forEach(btn => btn.disabled = true);
     counterControls.querySelectorAll('button').forEach(btn => btn.disabled = true);
   }
+
+
 
   noThanksBtn.addEventListener('click', () => {
     handleAnswerSubmit("No, thank you.");
