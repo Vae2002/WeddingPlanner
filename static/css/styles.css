@@ -108,7 +108,7 @@ html, body {
 .countdown {
   display: flex;
   justify-content: center;
-  gap: clamp(1rem, 3vw, 3rem);
+  gap: clamp(0.5rem, 3vw, 3rem);
   flex-wrap: wrap;
   width: 100%;
   color: white;
@@ -145,37 +145,37 @@ html, body {
 
 .big-text {
   font-weight: bold;
-  font-size: clamp(1rem, 3vw, 3rem);
+  font-size: clamp(0.5rem, 3vw, 3rem);
   line-height: 1;
   margin: 0;
 }
 s
 .countdown-el span {
-  font-size: clamp(1rem, 3vw, 3rem);
+  font-size: clamp(0.5rem, 3vw, 3rem);
   margin-top: 0.5rem;
 }
 
 .countdown-el:first-of-type {
-  margin-right: clamp(1rem, 3vw, 3rem);
+  margin-right: clamp(0.5rem, 3vw, 3rem);
 }
 
 @media (max-width: 480px) {
   .countdown {
-    gap: 0.5rem;
+    gap: 0.3rem;
     justify-content: space-around;
   }
 
   .big-text {
-    font-size: 1.5rem;
+    font-size: 0.5rem;
   }
 
   .countdown-el span {
-    font-size: 0.9rem;
+    font-size: 0.5rem;
   }
 
   .countdown-el-time {
     padding: 0.5rem;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
   }
 }
 
