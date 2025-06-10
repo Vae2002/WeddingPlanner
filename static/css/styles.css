@@ -50,7 +50,7 @@ html, body {
   position: relative;
   width: 100%;
   /* min-height: 300px; */
-  aspect-ratio: 35 / 9; /* Maintains wide horizontal shape */
+  aspect-ratio: 25 / 9; /* Maintains wide horizontal shape */
   background-image: url('../images/galery/1DSC02172.jpg');
   background-size: cover;
   background-position: center;
