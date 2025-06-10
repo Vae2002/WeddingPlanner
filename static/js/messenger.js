@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
       isOnlineUser = data.is_online === 1;
       maxPerson = typeof data.max_person === 'number' ? data.max_person : 1;
 
-      // Start at name entry if group, else attendance
       currentQuestion = isGroup ? 0 : 1;
       questions[1] = isOnlineUser ? "Will you be attending online?" : "Are you coming?";
 
@@ -76,19 +75,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function askNextQuestion() {
-    // Skip guest count for online attendees
     if (currentQuestion === 2 && isOnlineUser) currentQuestion++;
 
-    // If we're done, show thank-you and hide/disable everything
+    hideAllInputs();
     if (stopAsking || currentQuestion >= questions.length) {
       appendMessage("Thank you for your responses! ❤️", 'question');
-      hideAllInputs();
       disableInputs();
+
+      // Button to navigate to the Wishes tab
+      const wishesBtn = document.createElement('button');
+      wishesBtn.textContent = "Click here to see everyone's wishes";
+      wishesBtn.className = 'wishes-btn';
+      wishesBtn.onclick = () => { window.location.href = '/wishes'; };
+      chatBox.appendChild(wishesBtn);
+      chatBox.scrollTop = chatBox.scrollHeight;
       return;
     }
 
     appendMessage(questions[currentQuestion], 'question');
-    hideAllInputs();
 
     if (currentQuestion === 0) {
       nameInput.style.display = 'inline-block';

@@ -156,6 +156,26 @@ footer {
     background: #ddd;
 }
 
+.wishes-btn {
+  background-color: #ff97babd;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.wishes-btn:hover {
+  background-color: #fa75a133;
+  transform: translateY(-2px);
+}
+.wishes-btn:active {
+  transform: translateY(0);
+}
+
 .message-icon {
     position: absolute;
     top: 1.5rem;
