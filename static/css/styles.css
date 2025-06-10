@@ -133,36 +133,52 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* flex: 1 1 80px;
+  max-width: 120px; */
   background-color: rgba(148, 148, 148, 0.5); 
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 1rem;
   border: 2px solid rgba(255, 255, 255, 0.3); 
-  backdrop-filter: blur(4px); 
+  backdrop-filter: blur(3px); 
 }
 
-.countdown-wrapper {
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 1rem;
-  border-radius: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(3px);
-}
 
 .big-text {
   font-weight: bold;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1rem, 3vw, 3rem);
   line-height: 1;
   margin: 0;
 }
-
+s
 .countdown-el span {
-  font-size: clamp(1rem, 2.5vw, 2rem);
+  font-size: clamp(1rem, 3vw, 3rem);
   margin-top: 0.5rem;
 }
 
 .countdown-el:first-of-type {
-  margin-right: clamp(1rem, 2vw, 2rem);
+  margin-right: clamp(1rem, 3vw, 3rem);
 }
+
+@media (max-width: 480px) {
+  .countdown {
+    gap: 0.5rem;
+    justify-content: space-around;
+  }
+
+  .big-text {
+    font-size: 1.5rem;
+  }
+
+  .countdown-el span {
+    font-size: 0.9rem;
+  }
+
+  .countdown-el-time {
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+  }
+}
+
 
 
 header {
