@@ -245,11 +245,13 @@ def get_user_info():
             if str(record.get('username')).strip().lower() == username.lower():
                 is_online = safe_int(record.get('is_online'), 0)
                 is_pemberkatan = safe_int(record.get('is_pemberkatan'), 0)
-                # is_vip = safe_int(record.get('is_vip'), 0)
                 n_vip = safe_int(record.get('n_vip'), 0)
                 is_group = safe_int(record.get('is_group'), 0)              
                 max_person = safe_int(record.get('n_person'), 1)
                 is_coming = safe_int(record.get('is_coming'), None)
+                n_person_confirm = safe_int(record.get('n_person_confirm'), 0)
+                is_filled = safe_int(record.get('is_filled'), 0)
+                is_scanned = safe_int(record.get('is_scanned'), 0)
 
                 wishes_raw = record.get('wishes')
                 wishes = wishes_raw if wishes_raw and str(wishes_raw).strip() else None
@@ -261,13 +263,15 @@ def get_user_info():
                     "username": username,
                     "is_online": is_online,
                     "is_pemberkatan": is_pemberkatan,
-                    # "is_vip": is_vip,
                     "n_vip": n_vip,
                     "is_group": is_group,
                     "member_name": member_name,
                     "max_person": max_person,
                     "is_coming": is_coming,
-                    "wishes": wishes
+                    "n_person_confirm": n_person_confirm,
+                    "wishes": wishes,
+                    "is_filled": is_filled,
+                    "is_scanned":is_scanned
                 })
 
         # User not found
@@ -275,11 +279,13 @@ def get_user_info():
             "username": username,
             "is_online": None,
             "is_pemberkatan": 0,
-            # "is_vip": 0,
             "n_vip": 0,
             "max_person": 1,
             "is_coming": None,
-            "wishes": None
+            "n_person_confirm": 0,
+            "wishes": None,
+            "is_filled": 0,
+            "is_scanned": 0
         })
 
     except Exception as e:
@@ -516,18 +522,22 @@ def submit_answers():
         records = sheet.get_all_records()
 
         # Find the row number
+        # Find the row number
         for idx, record in enumerate(records, start=2):
             if str(record.get('username')).strip().lower() == username.lower():
                 # Get column indices
                 keys = list(record.keys())
-                is_coming_col = keys.index('is_coming') + 1
-                n_person_col = keys.index('n_person_confirm') + 1
-                wishes_col = keys.index('wishes') + 1
+                is_coming_col   = keys.index('is_coming') + 1
+                n_person_col    = keys.index('n_person_confirm') + 1
+                wishes_col      = keys.index('wishes') + 1
+                is_filled_col   = keys.index('is_filled') + 1
 
                 # Update each relevant cell
                 sheet.update_cell(idx, is_coming_col, is_coming_val)
                 sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
-                sheet.update_cell(idx, wishes_col, wishes_val)
+                sheet.update_cell(idx, wishes_col,
+                    '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
+                sheet.update_cell(idx, is_filled_col, 1)
 
                 return jsonify({"status": "success", "message": f"Updated RSVP for {username}."})
 
