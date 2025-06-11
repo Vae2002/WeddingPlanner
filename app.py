@@ -211,15 +211,23 @@ def login_required(f):
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        if username:
-            # Check if user exists
-            user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
-            if not user_df.empty:
-                session['username'] = username
+        # Normalize input: strip, lowercase, and remove internal spaces
+        input_username = request.form.get('username', '').strip().lower().replace(' ', '')
+
+        if input_username:
+            # Fetch and normalize usernames in DB the same way
+            user_df = pd.read_sql("SELECT * FROM guest_database", con=engine)
+            user_df['normalized_username'] = user_df['username'].astype(str).str.strip().str.lower().str.replace(' ', '')
+
+            match = user_df[user_df['normalized_username'] == input_username]
+
+            if not match.empty:
+                session['username'] = match.iloc[0]['username']  # original
+                session['normalized_username'] = input_username  # normalized
                 return redirect(url_for('home'))
             else:
                 return render_template('login.html', error="Username not found.")
+
     return render_template('login.html')
 
 @app.route('/reset-session')
@@ -243,7 +251,7 @@ def get_user_info():
         records = sheet.get_all_records()
 
         for record in records:
-            if str(record.get('username')).strip().lower() == username.lower():
+            if str(record.get('username')).lower() == username.lower():
                 is_online = safe_int(record.get('is_online'), 0)
                 is_pemberkatan = safe_int(record.get('is_pemberkatan'), 0)
                 n_vip = safe_int(record.get('n_vip'), 0)
@@ -255,8 +263,8 @@ def get_user_info():
                 wishes_raw = record.get('wishes')
                 wishes = wishes_raw if wishes_raw and str(wishes_raw).strip() else None
                 member_name = record.get('member_name')
+                member_name_list = [] 
 
-                # Compute n_person_confirm
                 if is_group == 1:
                     try:
                         member_name_raw = record.get('member_name', '')
@@ -290,8 +298,8 @@ def get_user_info():
                     "is_group": is_group,
                     "member_name": member_name,
                     "member_name_list": member_name_list,
-                    "max_person": max_person,
-                    "max_available_person": max_available_person,
+                    "max_person": int(max_person), 
+                    "max_available_person": int(max_available_person),
                     "is_coming": is_coming,
                     "n_person_confirm": n_person_confirm,
                     "wishes": wishes,
@@ -487,21 +495,26 @@ def get_all_wishes():
 
         wishes_list = []
 
+        def normalize_username(name):
+            return name.strip().lower().replace(' ', '_')
+
         for record in records:
             is_group = str(record.get('is_group')).strip()
-            username = str(record.get('username', 'Anonymous')).strip()
+            username = normalize_username(str(record.get('username', 'Anonymous')))
 
             if is_group == '1':
                 try:
                     member_names = eval(record.get('member_name', '[]'))
                     wishes = eval(record.get('wishes', '[]'))
+
                     if isinstance(member_names, list) and isinstance(wishes, list):
                         for w in wishes:
                             if isinstance(w, list) and len(w) > 1:
                                 index, wish_text = w
                                 if isinstance(index, int) and 0 <= index < len(member_names):
+                                    normalized_member = normalize_username(member_names[index])
                                     wishes_list.append({
-                                        "username": member_names[index].strip(),
+                                        "username": normalized_member,
                                         "wish": wish_text.strip()
                                     })
                 except Exception as e:
@@ -584,7 +597,10 @@ def submit_answers():
 
         # Find the row number
         for idx, record in enumerate(records, start=2):
-            if str(record.get('username')).strip().lower() == username.lower():
+            def normalize_name(name):
+                return str(name).strip().lower().replace(' ', '')
+
+            if normalize_name(record.get('username')) == normalize_name(username):
                 # Get column indices
                 keys = list(record.keys())
                 is_coming_col   = keys.index('is_coming') + 1
