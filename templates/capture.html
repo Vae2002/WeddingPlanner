@@ -14,13 +14,15 @@
             </svg>
         </button>
 
-
+        
         <video id="camera-stream" autoplay playsinline></video>
         <button id="capture-btn" class="capture-button" title="Take Photo">
         </button>
 
 
         <canvas id="capture-canvas" style="display: none;"></canvas>
+   </div>
+</div>
 
         <!-- Modal for captured photo -->
         <div id="photo-modal" class="photo-modal">
@@ -32,12 +34,10 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
+        
 {% endblock %}
 
-
-<script src="{{ url_for('static', filename='js/capture.js') }}"></script>
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/capture.js') }}"></script>
+
 {% endblock %}
