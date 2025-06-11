@@ -259,6 +259,16 @@ def get_user_info():
                 # Compute n_person_confirm
                 if is_group == 1:
                     try:
+                        member_name_raw = record.get('member_name', '')
+                        member_name_list = eval(member_name_raw) if member_name_raw else []
+                        if not isinstance(member_name_list, list):
+                            member_name_list = [str(member_name_list)]
+                        member_name_list = [name.strip().lower() for name in member_name_list if name]
+                        print(member_name_list)
+                    except Exception:
+                        member_name_list = []
+
+                    try:
                         group_confirm_list = eval(record.get('n_person_confirm', '[]'))
                         n_person_confirm = sum(int(pair[1]) for pair in group_confirm_list if isinstance(pair, list) and len(pair) > 1 and str(pair[1]).isdigit())
                     except Exception as e:
@@ -279,6 +289,7 @@ def get_user_info():
                     "n_vip": n_vip,
                     "is_group": is_group,
                     "member_name": member_name,
+                    "member_name_list": member_name_list,
                     "max_person": max_person,
                     "max_available_person": max_available_person,
                     "is_coming": is_coming,

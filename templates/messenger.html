@@ -4,6 +4,13 @@
 <header>
   <a href="{{ url_for('home') }}" class="close-button">&lt;</a>
 
+  <div id="top-alert" class="top-alert" style="display: none;">
+    <div class="alert-content">
+      <p>Name already taken. Please enter another name.</p>
+      <button id="alert-ok-btn">OK</button>
+    </div>
+  </div>
+
   <div class="profile-header heading">
     <a class="profile-link">
         <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
@@ -31,53 +38,99 @@
 </header>
 
 <body>
-    <br><br><br>
-    <div class="center-container">
-        <a class="profile-link profile-large">
-            <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
-        </a>
-        <div class="text-info">
-          <h1>Stefanus & Eunice</h1>
-          <h3>laststeftoeunity</h3>
-          <h3>...K followers ...posts</h3>
-          <h3>You follow each other on their wedding</h3>
-        </div>
-        <a href="{{ url_for('profile') }}">
-            <button>View profile</button>
-        </a>
+  <br><br><br>
+  <div class="center-container">
+      <a class="profile-link profile-large">
+          <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+      </a>
+      <div class="text-info">
+        <h1>Stefanus & Eunice</h1>
+        <h3>laststeftoeunity</h3>
+        <h3>...K followers ...posts</h3>
+        <h3>You follow each other on their wedding</h3>
+      </div>
+      <a href="{{ url_for('profile') }}">
+          <button>View profile</button>
+      </a>
+  </div>
+
+  <div class="questionnaire-container">
+    <div id="question-box" class="question-box hidden">
+      <p id="question-text"></p>
     </div>
 
-    <div class="questionnaire-container">
-      <div id="question-box" class="question-box hidden">
-        <p id="question-text"></p>
+    <div id="chat-box" class="chat-box"></div>
+
+    <div class="input-area" style="display: flex; align-items: center; gap: 8px;">
+      <!-- Name input for question[0] -->
+      <input type="text" id="name-input" placeholder="Please enter your name" style="display: none;" />
+      <div id="name-warning" class="warning" style="color: red; display: none;"></div>
+
+      <button id="no-thanks-btn" style="display: none;">No, thank you.</button>
+      <input type="text" id="answer-input" placeholder="Type your answer..." style="display: none;" />
+      <button id="submit-answer" style="display: none;">Send</button>
+
+      <div id="counter-controls" style="display: none; flex-direction: row; align-items: center; gap: 8px; margin-left: 10px;">
+        <button class="minus">-</button>
+        <span class="num">0</span>
+        <button class="plus">+</button>
+        <button id="submit-counter">Send</button>
       </div>
 
-      <div id="chat-box" class="chat-box"></div>
-
-      <div class="input-area" style="display: flex; align-items: center; gap: 8px;">
-        <!-- Name input for question[0] -->
-        <input type="text" id="name-input" placeholder="Please enter your name" style="display: none;" />
-
-        <button id="no-thanks-btn" style="display: none;">No, thank you.</button>
-        <input type="text" id="answer-input" placeholder="Type your answer..." style="display: none;" />
-        <button id="submit-answer" style="display: none;">Send</button>
-
-        <div id="counter-controls" style="display: none; flex-direction: row; align-items: center; gap: 8px; margin-left: 10px;">
-          <button class="minus">-</button>
-          <span class="num">0</span>
-          <button class="plus">+</button>
-          <button id="submit-counter">Send</button>
-        </div>
-
-        <div id="button-answers" style="display: none; margin-left: 10px;">
-          <button class="btn-answer" data-answer="Yes">Yes</button>
-          <button class="btn-answer" data-answer="No">No</button>
-          <button class="btn-answer" data-answer="I will be attending online">I will be attending online</button>
-          <button class="btn-answer" data-answer="I'm still not sure">I'm still not sure</button>
-        </div>
+      <div id="button-answers" style="display: none; margin-left: 10px;">
+        <button class="btn-answer" data-answer="Yes">Yes</button>
+        <button class="btn-answer" data-answer="No">No</button>
+        <button class="btn-answer" data-answer="I will be attending online">I will be attending online</button>
+        <button class="btn-answer" data-answer="I'm still not sure">I'm still not sure</button>
       </div>
-
     </div>
+  </div>
+  
+  <script>
+    let existingNames = [];
+
+    async function fetchGroupNames() {
+      try {
+        const res = await fetch('/get-user-info');
+        const data = await res.json();
+        existingNames = Array.isArray(data.member_name_list)
+          ? data.member_name_list.map(n => n.toLowerCase())
+          : [];
+      } catch (e) {
+        console.warn("Could not fetch existing names");
+        existingNames = [];
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchGroupNames();
+
+      const nameInput = document.getElementById('name-input');
+      const alertBox = document.getElementById('top-alert');
+      const alertOkBtn = document.getElementById('alert-ok-btn');
+      const submitBtn = document.getElementById('submit-answer');
+
+      nameInput.addEventListener('input', () => {
+        const value = nameInput.value.trim().toLowerCase();
+        const isDuplicate = existingNames.includes(value);
+
+        if (isDuplicate) {
+          submitBtn.disabled = true;
+          alertBox.style.display = 'block';
+        } else {
+          submitBtn.disabled = false;
+          alertBox.style.display = 'none';
+        }
+      });
+
+      alertOkBtn.addEventListener('click', () => {
+        alertBox.style.display = 'none';
+        nameInput.focus();
+      });
+    });
+  </script>
+
+
 
 </body>
 
