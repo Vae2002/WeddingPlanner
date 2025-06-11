@@ -15,6 +15,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from google.oauth2 import service_account
+import json
 
 load_dotenv()
 
@@ -210,15 +211,23 @@ def login_required(f):
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        if username:
-            # Check if user exists
-            user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
-            if not user_df.empty:
-                session['username'] = username
+        # Normalize input: strip, lowercase, and remove internal spaces
+        input_username = request.form.get('username', '').strip().lower().replace(' ', '')
+
+        if input_username:
+            # Fetch and normalize usernames in DB the same way
+            user_df = pd.read_sql("SELECT * FROM guest_database", con=engine)
+            user_df['normalized_username'] = user_df['username'].astype(str).str.strip().str.lower().str.replace(' ', '')
+
+            match = user_df[user_df['normalized_username'] == input_username]
+
+            if not match.empty:
+                session['username'] = match.iloc[0]['username']  # original
+                session['normalized_username'] = input_username  # normalized
                 return redirect(url_for('home'))
             else:
                 return render_template('login.html', error="Username not found.")
+
     return render_template('login.html')
 
 @app.route('/reset-session')
@@ -242,26 +251,60 @@ def get_user_info():
         records = sheet.get_all_records()
 
         for record in records:
-            if str(record.get('username')).strip().lower() == username.lower():
+            if str(record.get('username')).lower() == username.lower():
                 is_online = safe_int(record.get('is_online'), 0)
                 is_pemberkatan = safe_int(record.get('is_pemberkatan'), 0)
-                is_vip = safe_int(record.get('is_vip'), 0)
                 n_vip = safe_int(record.get('n_vip'), 0)
+                is_group = safe_int(record.get('is_group'), 0)
                 max_person = safe_int(record.get('n_person'), 1)
                 is_coming = safe_int(record.get('is_coming'), None)
-
+                is_filled = safe_int(record.get('is_filled'), 0)
+                is_scanned = safe_int(record.get('is_scanned'), 0)
                 wishes_raw = record.get('wishes')
                 wishes = wishes_raw if wishes_raw and str(wishes_raw).strip() else None
+                member_name = record.get('member_name')
+                member_name_list = [] 
+
+                if is_group == 1:
+                    try:
+                        member_name_raw = record.get('member_name', '')
+                        member_name_list = eval(member_name_raw) if member_name_raw else []
+                        if not isinstance(member_name_list, list):
+                            member_name_list = [str(member_name_list)]
+                        member_name_list = [name.strip().lower() for name in member_name_list if name]
+                        print(member_name_list)
+                    except Exception:
+                        member_name_list = []
+
+                    try:
+                        group_confirm_list = eval(record.get('n_person_confirm', '[]'))
+                        n_person_confirm = sum(int(pair[1]) for pair in group_confirm_list if isinstance(pair, list) and len(pair) > 1 and str(pair[1]).isdigit())
+                    except Exception as e:
+                        print(f"Error parsing group confirm list: {e}")
+                        n_person_confirm = 0
+                else:
+                    n_person_confirm = safe_int(record.get('n_person_confirm'), 0)
+
+                max_available_person = max_person - n_person_confirm
+
+                print("username:", username, ", is_group:", is_group, ", is_online:", is_online,
+                      ", max_person:", max_person, ", n_person_confirm:", n_person_confirm, ", wishes:", wishes)
 
                 return jsonify({
                     "username": username,
                     "is_online": is_online,
                     "is_pemberkatan": is_pemberkatan,
-                    "is_vip": is_vip,
                     "n_vip": n_vip,
-                    "max_person": max_person,
+                    "is_group": is_group,
+                    "member_name": member_name,
+                    "member_name_list": member_name_list,
+                    "max_person": int(max_person), 
+                    "max_available_person": int(max_available_person),
                     "is_coming": is_coming,
-                    "wishes": wishes
+                    "n_person_confirm": n_person_confirm,
+                    "wishes": wishes,
+                    "is_filled": is_filled,
+                    "is_scanned": is_scanned
                 })
 
         # User not found
@@ -269,11 +312,13 @@ def get_user_info():
             "username": username,
             "is_online": None,
             "is_pemberkatan": 0,
-            "is_vip": 0,
             "n_vip": 0,
             "max_person": 1,
             "is_coming": None,
-            "wishes": None
+            "n_person_confirm": 0,
+            "wishes": None,
+            "is_filled": 0,
+            "is_scanned": 0
         })
 
     except Exception as e:
@@ -448,14 +493,39 @@ def get_all_wishes():
         sheet = get_sheet()
         records = sheet.get_all_records()
 
-        # Extract username and wishes, only if wish text exists
-        wishes_list = [
-            {
-                "username": record.get('username', 'Anonymous').strip(),
-                "wish": record.get('wishes', '').strip()
-            }
-            for record in records if record.get('wishes', '').strip()
-        ]
+        wishes_list = []
+
+        def normalize_username(name):
+            return name.strip().lower().replace(' ', '_')
+
+        for record in records:
+            is_group = str(record.get('is_group')).strip()
+            username = normalize_username(str(record.get('username', 'Anonymous')))
+
+            if is_group == '1':
+                try:
+                    member_names = eval(record.get('member_name', '[]'))
+                    wishes = eval(record.get('wishes', '[]'))
+
+                    if isinstance(member_names, list) and isinstance(wishes, list):
+                        for w in wishes:
+                            if isinstance(w, list) and len(w) > 1:
+                                index, wish_text = w
+                                if isinstance(index, int) and 0 <= index < len(member_names):
+                                    normalized_member = normalize_username(member_names[index])
+                                    wishes_list.append({
+                                        "username": normalized_member,
+                                        "wish": wish_text.strip()
+                                    })
+                except Exception as e:
+                    print(f"Error processing group wishes: {e}")
+            else:
+                wish_text = str(record.get('wishes', '')).strip()
+                if wish_text:
+                    wishes_list.append({
+                        "username": username,
+                        "wish": wish_text
+                    })
 
         return jsonify({"wishes": wishes_list})
 
@@ -465,7 +535,7 @@ def get_all_wishes():
 @app.route('/messenger')
 @login_required
 def messenger():
-    return render_template('messenger.html', show_footer=False)
+    return render_template('messenger.html', show_footer=False, play_audio=True)
 
 @app.route('/submit-answers', methods=['POST'])
 def submit_answers():
@@ -473,7 +543,23 @@ def submit_answers():
         return jsonify({"status": "error", "message": "Not logged in"}), 401
 
     username = session['username']
-    data = request.json
+    data = request.json  # this is a list
+
+    member_name_raw = request.args.get("memberName")
+
+    rsvp_tuple_raw = request.args.get("rsvpTuple")
+    try:
+        rsvp_tuple_val = json.loads(rsvp_tuple_raw) if rsvp_tuple_raw else None
+    except Exception as e:
+        print("Error decoding rsvp_tuple_raw:", e)
+        rsvp_tuple_val = None
+
+    try:
+        member_name_val = json.loads(member_name_raw) if member_name_raw else None
+    except Exception as e:
+        print("Error decoding member_name_raw:", e)
+        member_name_val = None
+
 
     is_coming_val = None
     n_person_val = None
@@ -511,17 +597,117 @@ def submit_answers():
 
         # Find the row number
         for idx, record in enumerate(records, start=2):
-            if str(record.get('username')).strip().lower() == username.lower():
+            def normalize_name(name):
+                return str(name).strip().lower().replace(' ', '')
+
+            if normalize_name(record.get('username')) == normalize_name(username):
                 # Get column indices
                 keys = list(record.keys())
-                is_coming_col = keys.index('is_coming') + 1
-                n_person_col = keys.index('n_person_confirm') + 1
-                wishes_col = keys.index('wishes') + 1
+                is_coming_col   = keys.index('is_coming') + 1
+                n_person_col    = keys.index('n_person_confirm') + 1
+                wishes_col      = keys.index('wishes') + 1
+                is_filled_col   = keys.index('is_filled') + 1
+                member_name_col = keys.index('member_name') + 1
 
-                # Update each relevant cell
-                sheet.update_cell(idx, is_coming_col, is_coming_val)
-                sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
-                sheet.update_cell(idx, wishes_col, wishes_val)
+                # Handle member name
+                existing_member_name = record.get('member_name', '')
+                print("Existing member:", existing_member_name)
+
+                try:
+                    current_names = eval(existing_member_name) if existing_member_name else []
+                    if not isinstance(current_names, list):
+                        current_names = [str(current_names)]
+                except Exception:
+                    current_names = [str(existing_member_name)] if existing_member_name else []
+
+                # Determine if user is a group
+                import math
+
+                raw_group_val = record.get('is_group', 0)
+                is_group_val = 0
+
+                try:
+                    if raw_group_val is not None and not (isinstance(raw_group_val, float) and math.isnan(raw_group_val)):
+                        is_group_val = int(raw_group_val)
+                except (ValueError, TypeError):
+                    is_group_val = 0
+
+                
+                print(is_group_val)
+
+                if is_group_val == 0:
+                    sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
+                    sheet.update_cell(idx, wishes_col, '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
+                    sheet.update_cell(idx, is_coming_col, is_coming_val)
+                    sheet.update_cell(idx, is_filled_col, 1)
+                    print("✅ Stored in non group values.")
+                elif is_group_val == 1 and member_name_val:
+                    try:
+                        existing_val = record.get('n_person_confirm', '')
+                        current_tuple = eval(existing_val) if existing_val else []
+                        if not isinstance(current_tuple, list):
+                            current_tuple = []
+                    except Exception as e:
+                        print("Error parsing existing tuple:", e)
+                        current_tuple = []
+
+                    # Get current names
+                    existing_member_name = record.get('member_name', '')
+                    try:
+                        current_names = eval(existing_member_name) if existing_member_name else []
+                        if not isinstance(current_names, list):
+                            current_names = [str(current_names)]
+                    except Exception:
+                        current_names = [str(existing_member_name)] if existing_member_name else []
+
+                    # ✅ FIRST: update the current_names list
+                    if isinstance(member_name_val, list):
+                        current_names.extend([name for name in member_name_val if name and name not in current_names])
+                    elif isinstance(member_name_val, str) and member_name_val not in current_names:
+                        current_names.append(member_name_val)
+
+                    sheet.update_cell(idx, member_name_col, str(current_names))
+
+                    # ✅ THEN: calculate the correct index
+                    new_index = len(current_names) - 1  # subtract 1 since we just added a new one
+
+                    # Extract headcount
+                    headcount = None
+                    for item in data:
+                        if item['question'].strip().lower() == "how many people are attending?":
+                            if item['answer'].strip().isdigit():
+                                headcount = item['answer'].strip()
+
+                    if headcount is not None:
+                        new_tuple = [new_index, headcount]
+                        if new_tuple not in current_tuple:
+                            current_tuple.append(new_tuple)
+
+                        sheet.update_cell(idx, n_person_col, str(current_tuple))
+                        print("✅ Appended tuple RSVP for group:", current_tuple)
+
+                    # Handle wishes as a tuple list for group
+                    try:
+                        existing_wishes = record.get('wishes', '')
+                        current_wishes = eval(existing_wishes) if existing_wishes else []
+                        if not isinstance(current_wishes, list):
+                            current_wishes = []
+                    except Exception as e:
+                        print("Error parsing existing wishes tuple:", e)
+                        current_wishes = []
+
+                    # Add new tuple if valid
+                    if wishes_val and wishes_val.lower() != 'no, thank you.':
+                        wish_tuple = [new_index, wishes_val]
+                        if wish_tuple not in current_wishes:
+                            current_wishes.append(wish_tuple)
+                        sheet.update_cell(idx, wishes_col, str(current_wishes))
+                        print("✅ Stored wishes as tuple:", current_wishes)
+                    else:
+                        print("No wishes added.")
+
+                else:
+                    print ("Error on storing confirmed attendance.")
 
                 return jsonify({"status": "success", "message": f"Updated RSVP for {username}."})
 
@@ -529,7 +715,7 @@ def submit_answers():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
-
+    
 @app.route('/voice_call')
 @login_required
 def voice_call():
