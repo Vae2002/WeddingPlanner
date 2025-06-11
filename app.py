@@ -490,6 +490,13 @@ def submit_answers():
 
     member_name_raw = request.args.get("memberName")
 
+    rsvp_tuple_raw = request.args.get("rsvpTuple")
+    try:
+        rsvp_tuple_val = json.loads(rsvp_tuple_raw) if rsvp_tuple_raw else None
+    except Exception as e:
+        print("Error decoding rsvp_tuple_raw:", e)
+        rsvp_tuple_val = None
+
     try:
         member_name_val = json.loads(member_name_raw) if member_name_raw else None
     except Exception as e:
@@ -542,16 +549,15 @@ def submit_answers():
                 is_filled_col   = keys.index('is_filled') + 1
                 member_name_col = keys.index('member_name') + 1
 
-                # Update each relevant cell
+                # Other updates
                 sheet.update_cell(idx, is_coming_col, is_coming_val)
-                sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
-                sheet.update_cell(idx, wishes_col,
-                    '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
+                sheet.update_cell(idx, wishes_col, '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
                 sheet.update_cell(idx, is_filled_col, 1)
+
+                # Handle member name
                 existing_member_name = record.get('member_name', '')
                 print("Existing member:", existing_member_name)
 
-                # Convert to list
                 try:
                     current_names = eval(existing_member_name) if existing_member_name else []
                     if not isinstance(current_names, list):
@@ -559,16 +565,70 @@ def submit_answers():
                 except Exception:
                     current_names = [str(existing_member_name)] if existing_member_name else []
 
+                # Determine if user is a group
+                import math
 
-                # Append new names
-                if member_name_val:
+                raw_group_val = record.get('is_group', 0)
+                is_group_val = 0
+
+                try:
+                    if raw_group_val is not None and not (isinstance(raw_group_val, float) and math.isnan(raw_group_val)):
+                        is_group_val = int(raw_group_val)
+                except (ValueError, TypeError):
+                    is_group_val = 0
+
+                
+                print(is_group_val)
+
+                if is_group_val == 0:
+                    sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
+                    print("✅ Stored normal n_person_confirm.")
+                elif is_group_val == 1 and member_name_val:
+                    try:
+                        existing_val = record.get('n_person_confirm', '')
+                        current_tuple = eval(existing_val) if existing_val else []
+                        if not isinstance(current_tuple, list):
+                            current_tuple = []
+                    except Exception as e:
+                        print("Error parsing existing tuple:", e)
+                        current_tuple = []
+
+                    # Get current names
+                    existing_member_name = record.get('member_name', '')
+                    try:
+                        current_names = eval(existing_member_name) if existing_member_name else []
+                        if not isinstance(current_names, list):
+                            current_names = [str(current_names)]
+                    except Exception:
+                        current_names = [str(existing_member_name)] if existing_member_name else []
+
+                    # ✅ FIRST: update the current_names list
                     if isinstance(member_name_val, list):
                         current_names.extend([name for name in member_name_val if name and name not in current_names])
                     elif isinstance(member_name_val, str) and member_name_val not in current_names:
                         current_names.append(member_name_val)
-        
-                sheet.update_cell(idx, member_name_col, str(current_names))
 
+                    sheet.update_cell(idx, member_name_col, str(current_names))
+
+                    # ✅ THEN: calculate the correct index
+                    new_index = len(current_names) - 1  # subtract 1 since we just added a new one
+
+                    # Extract headcount
+                    headcount = None
+                    for item in data:
+                        if item['question'].strip().lower() == "how many people are attending?":
+                            if item['answer'].strip().isdigit():
+                                headcount = item['answer'].strip()
+
+                    if headcount is not None:
+                        new_tuple = [new_index, headcount]
+                        if new_tuple not in current_tuple:
+                            current_tuple.append(new_tuple)
+
+                        sheet.update_cell(idx, n_person_col, str(current_tuple))
+                        print("✅ Appended tuple RSVP for group:", current_tuple)
+                else:
+                    print ("Error on storing confirmed attendance.")
 
                 return jsonify({"status": "success", "message": f"Updated RSVP for {username}."})
 
