@@ -12,45 +12,48 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentStream = null;
     let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
 
-    // Show the switch button only on mobile
+    // Show the switch button only on mobile devices
     if (switchBtn && /Mobi|Android/i.test(navigator.userAgent)) {
         switchBtn.style.display = 'block';
     }
 
-    // Start the camera
-    async function startCamera(facingMode = 'user') {
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-        }
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: facingMode } },
-                audio: false
-            });
-
-            stream.getVideoTracks()[0].addEventListener('ended', () => {
-                console.log('Camera stream ended.');
-                window.location.href = "/messenger";
-            });
-
-            currentStream = stream;
-            if (video) {
-                video.srcObject = stream;
-            }
-        } catch (err) {
-            console.error('Error starting camera:', err);
-            alert('Camera access denied or not available.');
-        }
+  async function startCamera(facingMode = 'user') {
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
     }
 
-    // Initial camera start
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: facingMode } },
+            audio: false,
+        });
+
+        currentStream = stream;
+        video.srcObject = stream;
+
+        video.onloadedmetadata = () => {
+    video.play();
+    if (currentFacingMode === 'user') {
+        video.style.transform = 'scaleX(-1)';
+        video.style.webkitTransform = 'scaleX(-1)';
+    } else {
+        video.style.transform = 'none';
+        video.style.webkitTransform = 'none';
+    }
+};
+
+    } catch (err) {
+        console.error('Error starting camera:', err);
+        alert('Camera access denied or not available.');
+    }
+}
+
+    // Start initial camera
     if (video) {
-        startCamera();
+        startCamera(currentFacingMode);
     }
 
-
-    // Flip camera
+    // Switch camera button handler
     if (switchBtn) {
         switchBtn.addEventListener('click', () => {
             currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
@@ -58,54 +61,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Capture photo
+    // Capture photo handler
     if (captureBtn && canvas && video && modal && capturedImg) {
         captureBtn.addEventListener('click', () => {
             const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
+
+            if (currentFacingMode === 'user') {
+                // Mirror the image on canvas
+                context.translate(canvas.width, 0);
+                context.scale(-1, 1);
+            }
+
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Reset transform matrix
+            context.setTransform(1, 0, 0, 1, 0, 0);
 
             const imageData = canvas.toDataURL('image/jpeg');
             capturedImg.src = imageData;
             modal.style.display = 'flex';
 
+            // Save photo to server
             fetch('/save-photo', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imageData })
+                body: JSON.stringify({ image: imageData }),
             })
-            .then(res => res.json())
-            .then(data => {
-                currentFilename = data.filename;
+                .then(res => res.json())
+                .then(data => {
+                    currentFilename = data.filename;
+                });
+        });
+    }
+
+    // Share photo handler
+    if (shareBtn && modal) {
+        shareBtn.addEventListener('click', () => {
+            if (!currentFilename) return;
+
+            fetch(`/upload-to-drive/${currentFilename}`, { method: 'POST' }).then(() => {
+                currentFilename = null;
+                modal.style.display = 'none';
+                alert('Upload successful! \n Check Explore tab for the uploaded photo.');
             });
         });
     }
 
-    // Share photo
-    if (shareBtn && modal) {
-    shareBtn.addEventListener('click', () => {
-        fetch(`/upload-to-drive/${currentFilename}`, {
-            method: 'POST'
-        }).then(() => {
-                    currentFilename = null;
-                    modal.style.display = 'none';
-                    alert('upload successful!');
-                });
-        })
-    }
-
-    // Cancel photo
+    // Cancel photo handler
     if (cancelBtn && modal) {
         cancelBtn.addEventListener('click', () => {
-            if (currentFilename) {
-                fetch(`/delete-photo/${currentFilename}`, {
-                    method: 'DELETE'
-                }).then(() => {
-                    currentFilename = null;
-                    modal.style.display = 'none';
-                });
+            if (!currentFilename) {
+                modal.style.display = 'none';
+                return;
             }
+
+            fetch(`/delete-photo/${currentFilename}`, { method: 'DELETE' }).then(() => {
+                currentFilename = null;
+                modal.style.display = 'none';
+            });
         });
     }
 });

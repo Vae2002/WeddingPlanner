@@ -3,85 +3,140 @@ window.addEventListener("DOMContentLoaded", () => {
 
   carousels.forEach((carousel) => {
     const track = carousel.querySelector(".carousel-track");
-    const slides = Array.from(track.children);
     const nextBtn = carousel.querySelector(".next");
     const prevBtn = carousel.querySelector(".prev");
     const dotsContainer = carousel.querySelector(".carousel-dots");
 
+    let slides = Array.from(track.children);
     let currentIndex = 0;
-    let startX = 0;
-    let isDragging = false;
-    let hasSwiped = false;
+    let isTransitioning = false;
 
-    const addSwipeListeners = (element) => {
-  let endX = 0;
+    const updateDots = () => {
+      if (!dotsContainer) return;
+      dotsContainer.innerHTML = "";
+      slides.forEach((_, i) => {
+        const dot = document.createElement("button");
+        dot.className = "dot" + (i === currentIndex ? " active" : "");
+        dot.addEventListener("click", () => {
+          if (isTransitioning) return;
+          currentIndex = i;
+          updateCarousel();
+        });
+        dotsContainer.appendChild(dot);
+      });
+    };
 
-  // Touch events
+    const updateCarousel = () => {
+      const slideWidth = slides[0]?.offsetWidth || 0;
+      if (slideWidth === 0) {
+        console.warn("Slide width is zero. Skipping carousel update.");
+        return;
+      }
+
+      isTransitioning = true;
+      track.style.transition = 'transform 0.3s ease-in-out';
+      track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
+
+      track.addEventListener('transitionend', () => {
+        isTransitioning = false;
+      }, { once: true });
+
+      updateDots();
+      carousel.dataset.currentIndex = currentIndex;
+    };
+
+    const goToNextSlide = () => {
+      if (isTransitioning) return;
+      if (currentIndex < slides.length - 1) {
+        currentIndex++;
+        updateCarousel();
+      }
+    };
+
+    const goToPrevSlide = () => {
+      if (isTransitioning) return;
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCarousel();
+      }
+    };
+
+ const addSwipeListeners = (element) => {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let isTouching = false;
+  let hasMoved = false;
+
   element.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
-  });
+    if (e.touches.length > 1) return;
+    isTouching = true;
+    hasMoved = false;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: false });
 
   element.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
-    endX = e.touches[0].clientX;
-  });
+    if (!isTouching || e.touches.length > 1) return;
 
-  element.addEventListener("touchend", () => {
-    if (!isDragging) return;
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
 
-    const diff = startX - endX;
+    // If horizontal movement is dominant, prevent vertical scroll
+    if (Math.abs(dx) > Math.abs(dy)) {
+      e.preventDefault();  // 👈 disables vertical scroll
+      hasMoved = true;
+    }
+  }, { passive: false });
 
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNextSlide();
-      else goToPrevSlide();
+  element.addEventListener("touchend", (e) => {
+    if (!isTouching) return;
+
+    const dx = e.changedTouches[0].clientX - touchStartX;
+
+    if (hasMoved && Math.abs(dx) > 50) {
+      dx > 0 ? goToPrevSlide() : goToNextSlide();
     }
 
-    isDragging = false;
-    startX = 0;
-    endX = 0;
+    isTouching = false;
+    hasMoved = false;
   });
 
-  // Mouse events
-  element.addEventListener("mousedown", (e) => {
-    startX = e.clientX;
-    isDragging = true;
-  });
+      let mouseStartX = 0;
+      let isMouseDragging = false;
 
-  element.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-    endX = e.clientX;
-  });
+      element.addEventListener("mousedown", (e) => {
+        isMouseDragging = true;
+        mouseStartX = e.clientX;
 
-  element.addEventListener("mouseup", () => {
-    if (!isDragging) return;
+        const onMouseMove = () => {};
 
-    const diff = startX - endX;
+        const onMouseUp = (upEvent) => {
+          const diff = mouseStartX - upEvent.clientX;
+          if (Math.abs(diff) > 50) {
+            diff > 0 ? goToNextSlide() : goToPrevSlide();
+          }
+          isMouseDragging = false;
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("mouseup", onMouseUp);
+        };
 
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNextSlide();
-      else goToPrevSlide();
-    }
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+      });
+    };
 
-    isDragging = false;
-    startX = 0;
-    endX = 0;
-  });
-
-  element.addEventListener("mouseleave", () => {
-    isDragging = false;
-    startX = 0;
-    endX = 0;
-  });
-};
-
-    addSwipeListeners(track);
-
+    const swipeArea = carousel.querySelector(".carousel-window") || carousel;
+    addSwipeListeners(swipeArea);
     nextBtn?.addEventListener("click", goToNextSlide);
     prevBtn?.addEventListener("click", goToPrevSlide);
-    window.addEventListener("resize", updateCarousel);
 
-    updateCarousel(); // init
+    window.addEventListener("resize", () => {
+      slides = Array.from(track.children);
+      updateCarousel();
+    });
+
+    // Initial setup
+    updateCarousel();
   });
 
   // Days left logic
@@ -98,6 +153,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("days-left-1").textContent = message;
   document.getElementById("days-left-2").textContent = message;
 });
+
 
 document.querySelectorAll('.post-wrapper').forEach(post => {
   const likeButton = post.querySelector('.icon-button[title="Like"]');
@@ -132,3 +188,40 @@ document.querySelectorAll('.icon-button[title="Like"]').forEach(button => {
     button.classList.toggle('liked');
   });
 });
+
+// COUNTDOWN TIMER
+const daysEl = document.getElementById('days');
+const hoursEl = document.getElementById('hours');
+const minutesEl = document.getElementById('mins');
+const secondsEl = document.getElementById('seconds');
+
+const targetDate = new Date("2025-09-06T00:00:00");
+
+function updateCountdown() {
+  const now = new Date();
+  const diff = targetDate - now;
+
+  if (diff <= 0) {
+    daysEl.textContent = "00";
+    hoursEl.textContent = "00";
+    minutesEl.textContent = "00";
+    secondsEl.textContent = "00";
+    clearInterval(countdownInterval);
+    document.getElementById("countdown").innerHTML = "The big day has arrived or passed! 🎉";
+    return;
+  }
+
+  const seconds = Math.floor((diff / 1000) % 60);
+  const minutes = Math.floor((diff / 1000 / 60) % 60);
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  daysEl.textContent = days.toString().padStart(2, '0');
+  hoursEl.textContent = hours.toString().padStart(2, '0');
+  minutesEl.textContent = minutes.toString().padStart(2, '0');
+  secondsEl.textContent = seconds.toString().padStart(2, '0');
+}
+
+// Update every second
+const countdownInterval = setInterval(updateCountdown, 1000);
+updateCountdown(); // Initial call
