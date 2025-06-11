@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
     const imageData = canvas.toDataURL('image/jpeg');
     capturedImg.src = imageData;
