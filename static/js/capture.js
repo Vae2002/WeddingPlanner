@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial camera start
     if (video) {
-        startCamera();
+        startCamera(currentFacingMode);
     }
 
 
