@@ -551,7 +551,6 @@ def submit_answers():
 
                 # Other updates
                 sheet.update_cell(idx, is_coming_col, is_coming_val)
-                sheet.update_cell(idx, wishes_col, '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
                 sheet.update_cell(idx, is_filled_col, 1)
 
                 # Handle member name
@@ -582,6 +581,7 @@ def submit_answers():
 
                 if is_group_val == 0:
                     sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
+                    sheet.update_cell(idx, wishes_col, '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
                     print("✅ Stored normal n_person_confirm.")
                 elif is_group_val == 1 and member_name_val:
                     try:
@@ -627,6 +627,27 @@ def submit_answers():
 
                         sheet.update_cell(idx, n_person_col, str(current_tuple))
                         print("✅ Appended tuple RSVP for group:", current_tuple)
+
+                    # Handle wishes as a tuple list for group
+                    try:
+                        existing_wishes = record.get('wishes', '')
+                        current_wishes = eval(existing_wishes) if existing_wishes else []
+                        if not isinstance(current_wishes, list):
+                            current_wishes = []
+                    except Exception as e:
+                        print("Error parsing existing wishes tuple:", e)
+                        current_wishes = []
+
+                    # Add new tuple if valid
+                    if wishes_val and wishes_val.lower() != 'no, thank you.':
+                        wish_tuple = [new_index, wishes_val]
+                        if wish_tuple not in current_wishes:
+                            current_wishes.append(wish_tuple)
+                        sheet.update_cell(idx, wishes_col, str(current_wishes))
+                        print("✅ Stored wishes as tuple:", current_wishes)
+                    else:
+                        print("No wishes added.")
+
                 else:
                     print ("Error on storing confirmed attendance.")
 
