@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const minusBtn = counterControls.querySelector('.minus');
 
   plusBtn.addEventListener('click', () => {
-    if (counter < maxPerson) {
+    if (counter < (isGroup ? maxAvailablePerson || maxPerson : maxPerson)) {
       counter++;
       counterDisplay.textContent = counter;
     }
@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
       isGroup = data.is_group === 1;
       isOnlineUser = data.is_online === 1;
       maxPerson = typeof data.max_person === 'number' ? data.max_person : 1;
+      maxAvailablePerson  = typeof data.max_available_person === 'number' ? data.max_available_person : 1;
 
       if (isFilled && !isGroup && !isOnlineUser) {
         hideAllInputs();

@@ -247,18 +247,30 @@ def get_user_info():
                 is_online = safe_int(record.get('is_online'), 0)
                 is_pemberkatan = safe_int(record.get('is_pemberkatan'), 0)
                 n_vip = safe_int(record.get('n_vip'), 0)
-                is_group = safe_int(record.get('is_group'), 0)              
+                is_group = safe_int(record.get('is_group'), 0)
                 max_person = safe_int(record.get('n_person'), 1)
                 is_coming = safe_int(record.get('is_coming'), None)
-                n_person_confirm = safe_int(record.get('n_person_confirm'), 0)
                 is_filled = safe_int(record.get('is_filled'), 0)
                 is_scanned = safe_int(record.get('is_scanned'), 0)
-
                 wishes_raw = record.get('wishes')
                 wishes = wishes_raw if wishes_raw and str(wishes_raw).strip() else None
                 member_name = record.get('member_name')
 
-                print("username: ", username, ", is_group: ", is_group, ", is_online: ", is_online, ", max_person: ", max_person, ", wishes: ", wishes)
+                # Compute n_person_confirm
+                if is_group == 1:
+                    try:
+                        group_confirm_list = eval(record.get('n_person_confirm', '[]'))
+                        n_person_confirm = sum(int(pair[1]) for pair in group_confirm_list if isinstance(pair, list) and len(pair) > 1 and str(pair[1]).isdigit())
+                    except Exception as e:
+                        print(f"Error parsing group confirm list: {e}")
+                        n_person_confirm = 0
+                else:
+                    n_person_confirm = safe_int(record.get('n_person_confirm'), 0)
+
+                max_available_person = max_person - n_person_confirm
+
+                print("username:", username, ", is_group:", is_group, ", is_online:", is_online,
+                      ", max_person:", max_person, ", n_person_confirm:", n_person_confirm, ", wishes:", wishes)
 
                 return jsonify({
                     "username": username,
@@ -268,11 +280,12 @@ def get_user_info():
                     "is_group": is_group,
                     "member_name": member_name,
                     "max_person": max_person,
+                    "max_available_person": max_available_person,
                     "is_coming": is_coming,
                     "n_person_confirm": n_person_confirm,
                     "wishes": wishes,
                     "is_filled": is_filled,
-                    "is_scanned":is_scanned
+                    "is_scanned": is_scanned
                 })
 
         # User not found
@@ -549,10 +562,6 @@ def submit_answers():
                 is_filled_col   = keys.index('is_filled') + 1
                 member_name_col = keys.index('member_name') + 1
 
-                # Other updates
-                sheet.update_cell(idx, is_coming_col, is_coming_val)
-                sheet.update_cell(idx, is_filled_col, 1)
-
                 # Handle member name
                 existing_member_name = record.get('member_name', '')
                 print("Existing member:", existing_member_name)
@@ -582,7 +591,9 @@ def submit_answers():
                 if is_group_val == 0:
                     sheet.update_cell(idx, n_person_col, n_person_val if n_person_val is not None else '')
                     sheet.update_cell(idx, wishes_col, '' if wishes_val.lower() == 'no, thank you.' else wishes_val)
-                    print("✅ Stored normal n_person_confirm.")
+                    sheet.update_cell(idx, is_coming_col, is_coming_val)
+                    sheet.update_cell(idx, is_filled_col, 1)
+                    print("✅ Stored in non group values.")
                 elif is_group_val == 1 and member_name_val:
                     try:
                         existing_val = record.get('n_person_confirm', '')
