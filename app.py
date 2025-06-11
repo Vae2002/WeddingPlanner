@@ -485,14 +485,34 @@ def get_all_wishes():
         sheet = get_sheet()
         records = sheet.get_all_records()
 
-        # Extract username and wishes, only if wish text exists
-        wishes_list = [
-            {
-                "username": record.get('username', 'Anonymous').strip(),
-                "wish": record.get('wishes', '').strip()
-            }
-            for record in records if record.get('wishes', '').strip()
-        ]
+        wishes_list = []
+
+        for record in records:
+            is_group = str(record.get('is_group')).strip()
+            username = str(record.get('username', 'Anonymous')).strip()
+
+            if is_group == '1':
+                try:
+                    member_names = eval(record.get('member_name', '[]'))
+                    wishes = eval(record.get('wishes', '[]'))
+                    if isinstance(member_names, list) and isinstance(wishes, list):
+                        for w in wishes:
+                            if isinstance(w, list) and len(w) > 1:
+                                index, wish_text = w
+                                if isinstance(index, int) and 0 <= index < len(member_names):
+                                    wishes_list.append({
+                                        "username": member_names[index].strip(),
+                                        "wish": wish_text.strip()
+                                    })
+                except Exception as e:
+                    print(f"Error processing group wishes: {e}")
+            else:
+                wish_text = str(record.get('wishes', '')).strip()
+                if wish_text:
+                    wishes_list.append({
+                        "username": username,
+                        "wish": wish_text
+                    })
 
         return jsonify({"wishes": wishes_list})
 
