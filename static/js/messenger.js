@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 2:
         counterControls.style.display = 'flex';
+        counterDisplay.textContent = counter;
         break;
       case 3:
         answerInput.style.display = 'inline-block';
