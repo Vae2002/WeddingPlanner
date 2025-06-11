@@ -821,11 +821,6 @@ footer {
     padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); /* iOS safe area */
 }
 
-/* Fallback for older browsers without 100svh support */
-.camera-wrapper {
-    height: 100vh;
-}
-
 /* Center camera-wrapper on desktop/laptop */
 @media (min-width: 768px) {
     .camera-wrapper {
