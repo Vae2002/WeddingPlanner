@@ -42,14 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 };
 
-
     } catch (err) {
         console.error('Error starting camera:', err);
         alert('Camera access denied or not available.');
     }
 }
-
-
 
     // Start initial camera
     if (video) {
@@ -107,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(`/upload-to-drive/${currentFilename}`, { method: 'POST' }).then(() => {
                 currentFilename = null;
                 modal.style.display = 'none';
-                alert('Upload successful!');
+                alert('Upload successful! \n Check Explore tab for the uploaded photo.');
             });
         });
     }
