@@ -19,30 +19,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Start the camera
     async function startCamera(facingMode = 'user') {
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-        }
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: facingMode } },
-                audio: false
-            });
-
-            stream.getVideoTracks()[0].addEventListener('ended', () => {
-                console.log('Camera stream ended.');
-                window.location.href = "/messenger";
-            });
-
-            currentStream = stream;
-            if (video) {
-                video.srcObject = stream;
-            }
-        } catch (err) {
-            console.error('Error starting camera:', err);
-            alert('Camera access denied or not available.');
-        }
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
     }
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: facingMode } },
+            audio: false
+        });
+
+        stream.getVideoTracks()[0].addEventListener('ended', () => {
+            console.log('Camera stream ended.');
+            window.location.href = "/messenger";
+        });
+
+        currentStream = stream;
+
+        if (video) {
+            video.srcObject = stream;
+
+            // Mirror only if using front camera
+            if (facingMode === 'user') {
+                video.classList.add('mirrored');
+            } else {
+                video.classList.remove('mirrored');
+            }
+        }
+    } catch (err) {
+        console.error('Error starting camera:', err);
+        alert('Camera access denied or not available.');
+    }
+}
+
 
     // Initial camera start
     if (video) {
@@ -60,26 +69,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Capture photo
     if (captureBtn && canvas && video && modal && capturedImg) {
-        captureBtn.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+       captureBtn.addEventListener('click', () => {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-            const imageData = canvas.toDataURL('image/jpeg');
-            capturedImg.src = imageData;
-            modal.style.display = 'flex';
+    if (currentFacingMode === 'user') {
+        // Mirror the image
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1);
+    }
 
-            fetch('/save-photo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imageData })
-            })
-            .then(res => res.json())
-            .then(data => {
-                currentFilename = data.filename;
-            });
-        });
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL('image/jpeg');
+    capturedImg.src = imageData;
+    modal.style.display = 'flex';
+
+    fetch('/save-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageData })
+    })
+    .then(res => res.json())
+    .then(data => {
+        currentFilename = data.filename;
+    });
+});
+
     }
 
     // Share photo

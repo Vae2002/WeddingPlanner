@@ -865,6 +865,11 @@ footer {
     transform: scaleX(-1); /* Mirror the video */
 }
 
+.mirrored {
+  transform: scaleX(-1);
+}
+
+
 .capture-button {
     position: absolute;
     bottom: 40px;
