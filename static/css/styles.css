@@ -50,18 +50,19 @@
   font-size: 1rem;
   font-weight: bold;
   color: white;
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  background: linear-gradient(135deg, #c8a2c8, #f5c6ec); /* lavender to blush pink */
   border: none;
   border-radius: 999px;
   text-decoration: none;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(200, 162, 200, 0.3);
 }
 
 .calendar-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 16px rgba(200, 162, 200, 0.5);
+  background: linear-gradient(135deg, #b292c2, #f1a6d3); /* darker on hover */
 }
 
 .calendar-btn:active {
@@ -69,9 +70,15 @@
 }
 
 .calendar-btn.google {
-  background: linear-gradient(135deg, #4285f4, #34a853);
+  background: linear-gradient(135deg, #c8ddee, #e3f0fa); /* light pastel blue gradient */
+  color: #333;
+  box-shadow: 0 4px 12px rgba(180, 200, 220, 0.3);
 }
 
+.calendar-btn.google:hover {
+  background: linear-gradient(135deg, #b3d2eb, #d8eaf7);
+  box-shadow: 0 6px 16px rgba(160, 190, 210, 0.5);
+}
 
 /* Make page fill the whole viewport height */
 html, body {
@@ -252,24 +259,6 @@ footer {
     padding: 0;
     margin: 0;
     height: 5px;          /* set fixed height bigger than before */
-}
-
-.close-button {
-    position: absolute;
-    top: 1.5rem;
-    left: 1.5rem;
-    z-index: 20; /* Higher than video/canvas */
-    background-color: rgba(255,255,255,0.7);
-    padding: 8px 12px;
-    border-radius: 50%;
-    text-decoration: none;
-    color: black;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.close-button:hover {
-    background: #ddd;
 }
 
 .wishes-icon {
@@ -781,6 +770,36 @@ footer {
     object-fit: cover;
 }
 
+.close-button,
+.switch-camera-button {
+    position: absolute;
+    top: max(1rem, env(safe-area-inset-top));
+    z-index: 20;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 50%;
+    border: none;
+    color: black;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button {
+    left: max(1rem, env(safe-area-inset-left));
+}
+
+.switch-camera-button {
+    right: max(1rem, env(safe-area-inset-right));
+    display: none; /* hidden by default */
+}
+
+
+.close-button:hover {
+    background: #ddd;
+}
 
 .camera-wrapper {
     position: fixed;
@@ -1003,7 +1022,7 @@ position: absolute;
     color: white;
 }
 
-.switch-camera-button {
+/* .switch-camera-button {
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -1014,7 +1033,7 @@ position: absolute;
     font-size: 1.2rem;
     z-index: 10;
     display: none; /* hidden by default */
-}
+/* } */
 
   .questionnaire-container {
     flex-grow: 1;
