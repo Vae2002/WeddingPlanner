@@ -3,35 +3,36 @@
 
 
 <div class="camera-container">
-    <a href="{{ url_for('home') }}" class="close-button">✕</a>
-    <button id="switch-camera-btn" class="switch-camera-button" title="Switch Camera">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <polyline points="23 4 23 10 17 10" />
-            <polyline points="1 20 1 14 7 14" />
-            <path d="M3.51 9a9 9 0 0114.13-3.36L23 10M1 14l5.36 5.36A9 9 0 0020.49 15" />
-        </svg>
-    </button>
-
     <div class="camera-wrapper">
+        <a href="{{ url_for('home') }}" class="close-button">✕</a>
+        <button id="switch-camera-btn" class="switch-camera-button" title="Switch Camera">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0114.13-3.36L23 10M1 14l5.36 5.36A9 9 0 0020.49 15" />
+            </svg>
+        </button>
+
+
         <video id="camera-stream" autoplay playsinline></video>
         <button id="capture-btn" class="capture-button" title="Take Photo">
-        </button> 
-    </div>
+        </button>
 
-    <canvas id="capture-canvas" style="display: none;"></canvas>
 
-    <!-- Modal for captured photo -->
-    <div id="photo-modal" class="photo-modal">
-        <div class="modal-content">
-            <img id="captured-image-preview" src="" alt="Captured Image">
-            <div class="modal-buttons">
-                <button id="share-btn">Share</button>
-                <button id="cancel-btn">Cancel</button>
+        <canvas id="capture-canvas" style="display: none;"></canvas>
+
+        <!-- Modal for captured photo -->
+        <div id="photo-modal" class="photo-modal">
+            <div class="modal-content">
+                <img id="captured-image-preview" src="" alt="Captured Image">
+                <div class="modal-buttons">
+                    <button id="share-btn">Share</button>
+                    <button id="cancel-btn">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
 
 {% endblock %}
