@@ -116,7 +116,7 @@ if (shareBtn && modal) {
             modal.style.display = 'none';
 
             if (data.file_id) {
-                alert('Upload successful! \nPlease check explore tab to download your photo');
+                alert('Upload successful!\n\nPlease check explore tab to download your photo');
             } else {
                 alert('Upload failed: ' + (data.error || 'Unknown error'));
             }
