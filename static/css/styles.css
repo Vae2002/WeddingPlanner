@@ -132,6 +132,20 @@
   font-size: clamp(0.7rem, 1.2vw, 2rem);
 }
 
+@media (min-width: 600px) {
+  .gift-content h2 {
+    font-size: clamp(1.3rem, 2vw, 3rem);
+  }
+
+  .gift-content .label,
+  .gift-content .value,
+  .gift-content a,
+  .gift-content button {
+    font-size: clamp(1.3rem, 2vw, 3rem);  
+  } 
+
+}
+
 
 .gift-card h1 {
     text-align: center;
