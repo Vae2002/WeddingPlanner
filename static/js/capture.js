@@ -63,7 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Capture photo handler
     if (captureBtn && canvas && video && modal && capturedImg) {
+        if (!captureBtn.dataset.listenerAttached) {
         captureBtn.addEventListener('click', () => {
+            console.log('Capture clicked')
             const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -94,20 +96,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentFilename = data.filename;
                 });
         });
+        captureBtn.dataset.listenerAttached = true;
+        }
     }
 
-    // Share photo handler
-    if (shareBtn && modal) {
-        shareBtn.addEventListener('click', () => {
-            if (!currentFilename) return;
+    // Share photo
+if (shareBtn && modal) {
+    shareBtn.addEventListener('click', () => {
+        Loader.open(); // ✅ Show loader
 
-            fetch(`/upload-to-drive/${currentFilename}`, { method: 'POST' }).then(() => {
-                currentFilename = null;
-                modal.style.display = 'none';
-                alert('Upload successful! \n Check Explore tab for the uploaded photo.');
-            });
+        fetch(`/upload-to-drive/${currentFilename}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            Loader.close(); // ✅ Hide loader
+
+            currentFilename = null;
+            modal.style.display = 'none';
+
+            if (data.file_id) {
+                alert('Upload successful! \nPlease check explore tab to download your photo');
+            } else {
+                alert('Upload failed: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            Loader.close(); // ✅ Hide loader on error
+            alert('Error during upload');
+            console.error(err);
         });
-    }
+    });
+}
 
     // Cancel photo handler
     if (cancelBtn && modal) {
