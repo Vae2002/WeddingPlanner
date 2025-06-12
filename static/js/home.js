@@ -225,3 +225,39 @@ function updateCountdown() {
 // Update every second
 const countdownInterval = setInterval(updateCountdown, 1000);
 updateCountdown(); // Initial call
+
+ document.querySelectorAll('.copy-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const valueToCopy = button.getAttribute('data-copy');
+
+      navigator.clipboard.writeText(valueToCopy).then(() => {
+    // ✅ Alert user
+      alert(`Copied: ${valueToCopy}`);
+
+      // Optional visual feedback with icon
+      button.innerHTML = '<ion-icon name="checkmark-outline"></ion-icon>';
+      setTimeout(() => {
+        button.innerHTML = '<ion-icon name="copy-outline"></ion-icon>';
+      }, 1500);
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+      alert('Failed to copy. Please try again.');
+    });
+  });
+});
+
+  function openQRModal() {
+    document.getElementById('qrModal').style.display = 'block';
+  }
+
+  function closeQRModal() {
+    document.getElementById('qrModal').style.display = 'none';
+  }
+
+  // Optional: Close modal on outside click
+  window.onclick = function(event) {
+    const modal = document.getElementById('qrModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  };
