@@ -206,7 +206,7 @@ p, h1, h2, h3 {
   font-size: 0.3rem;
   font-weight: bold;
   color: white;
-  background: linear-gradient(135deg, #c8a2c8, #f5c6ec);
+  background: linear-gradient(135deg, #ddc6dd, #f3b9c7);
   border: none;
   border-radius: 999px;
   text-decoration: none;
@@ -289,24 +289,39 @@ p, h1, h2, h3 {
 .RSVP-buttons {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: clamp(7rem, 10vw, 10rem);
   flex-wrap: wrap; /* Allows wrapping on smaller screens */
-  margin-top: 2rem;
+  margin-top: 0rem;
 }
 
 .RSVP-Segment {
-  text-align: center;
   position: relative;
   width: 100%;
-  aspect-ratio: 21 / 9;
-  background-image: url('../images/galery/1DSC02172.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding: clamp(1rem, 3vw, 2rem) clamp(0.5rem, 2vw, 1rem);
-  box-sizing: border-box;
+  aspect-ratio: 40 / 22; /* Optional: keeps it proportional */
   overflow: hidden;
   border-radius: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.RSVP-content {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .RSVP-btn,
+  .WISHES-btn {
+    padding: 6rem 12rem;
+    font-size: 5rem;
+  }
+  
+  .RSVP-buttons {
+    gap: clamp(15rem, 10vw, 30rem);
+  }
 }
 
 .RSVP-btn {
@@ -331,6 +346,31 @@ p, h1, h2, h3 {
 }
 
 .RSVP-btn:active {
+  transform: scale(0.98);
+}
+
+.WISHES-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgb(110, 110, 110);
+  background: linear-gradient(135deg, #c8ddee, #e3f0fa); 
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(200, 162, 200, 0.3);
+}
+
+.WISHES-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(200, 162, 200, 0.5);
+  background: linear-gradient(135deg, #b3d2eb, #d8eaf7); /* darker on hover */
+}
+
+.WISHES-btn:active {
   transform: scale(0.98);
 }
 

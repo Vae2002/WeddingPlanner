@@ -317,18 +317,17 @@
 </div>
 
 <div id="RSVP-Segment" class="RSVP-Segment">
-    <h2>RSVP</h2>
-    <div class="RSVP-buttons">
-        <a href="{{ url_for('messenger') }}" class="RSVP-btn">
-            RSVP
-        </a>
-    </div>
-    <br>
-    <h2>Wishes</h2>
-    <div class="RSVP-buttons">
-        <a href="{{ url_for('wishes') }}" class="RSVP-btn">
-            Wishes
-        </a>
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="static/videos/BG-RSVP.mp4" type="video/mp4" />
+    </video>
+
+    <!-- <div class="bg-overlay"></div> -->
+
+    <div class="RSVP-content">
+        <div class="RSVP-buttons">
+            <a href="{{ url_for('messenger') }}" class="RSVP-btn">RSVP</a>
+            <a href="{{ url_for('wishes') }}" class="WISHES-btn">Wishes</a>
+        </div>
     </div>
 </div>
 
@@ -379,13 +378,13 @@
     </div>
 </div>
 
- <!-- Modal -->
-                <div id="qrModal" class="qr-modal">
-                    <div class="qr-modal-content">
-                        <span class="qr-close" onclick="closeQRModal()">&times;</span>
-                        <img src="static/images/wise.jpeg" alt="WISE QR" class="qr-wise" />
-                    </div>
-                </div>
+<!-- Modal -->
+<div id="qrModal" class="qr-modal">
+    <div class="qr-modal-content">
+        <span class="qr-close" onclick="closeQRModal()">&times;</span>
+        <img src="static/images/wise.jpeg" alt="WISE QR" class="qr-wise" />
+    </div>
+</div>
 
 
 <!-- ==== POST online zoom ==== -->
