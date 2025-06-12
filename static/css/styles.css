@@ -31,7 +31,7 @@
   display: inline-block;
 }
 
-#map {
+#map, #map1, #map2 {
   height: 100%;
   border-radius: 1.5rem;
 }
@@ -78,6 +78,184 @@
 .calendar-btn.google:hover {
   background: linear-gradient(135deg, #b3d2eb, #d8eaf7);
   box-shadow: 0 6px 16px rgba(160, 190, 210, 0.5);
+}
+
+.gift-card {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  aspect-ratio: 50 / 35;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+}
+
+.bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+ } 
+
+.gift-content {
+  position: relative;
+  z-index: 1;
+  padding: 1.2em 0.8em; /* reduced padding */
+  gap: 0.4em; /* optional: add if using gap in flex */
+  font-size: 0.9rem; /* slightly smaller text */  height: 100%; /* Makes sure content fills card height */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.gift-card h1 {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 0.6rem;
+}
+
+.gift-card .label {
+    font-weight: bold;
+    margin-top: 0.8rem;
+}
+
+.gift-card a.link {
+    color: #007BFF;
+    text-decoration: underline;
+}
+
+.bank-info {
+  font-size: 0.85rem;
+  line-height: 1.3;
+  gap: 0.3em;
+}
+
+.account-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
+  text-align: left;
+}
+
+.account {
+  min-width: 180px; /* Optional: adjust as needed */
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1.1em;
+}
+
+.qr-modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+
+.qr-modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 1em;
+  border-radius: 0.75em;
+  width: 90%;
+  max-width: 300px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.qr-close {
+  position: absolute;
+  top: 0.3em;
+  right: 0.7em;
+  font-size: 1.5em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.qr-wise {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5em;
+}
+
+.RSVP-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+  margin-top: 2rem;
+}
+
+.RSVP-Segment {
+  text-align: center;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  background-image: url('../images/galery/1DSC02172.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: clamp(1rem, 3vw, 2rem) clamp(0.5rem, 2vw, 1rem);
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 1.5rem;
+}
+
+.RSVP-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #c8a2c8, #f5c6ec); /* lavender to blush pink */
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(200, 162, 200, 0.3);
+}
+
+.RSVP-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(200, 162, 200, 0.5);
+  background: linear-gradient(135deg, #b292c2, #f1a6d3); /* darker on hover */
+}
+
+.RSVP-btn:active {
+  transform: scale(0.98);
 }
 
 /* Make page fill the whole viewport height */
