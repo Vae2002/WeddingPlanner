@@ -183,3 +183,41 @@ function downloadFromGrid(event) {
         });
 }
 
+let imageList = Array.from(document.querySelectorAll('#profile-grid .grid-item img'));
+    let currentIndex = -1;
+
+    function openModal(src) {
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("modalImage");
+
+        modal.style.display = "block";
+        modalImg.src = src;
+
+        currentIndex = imageList.findIndex(img => img.src === src);
+    }
+
+    function closeModal() {
+        document.getElementById("imgModal").style.display = "none";
+    }
+
+    function showImage(index) {
+        if (index >= 0 && index < imageList.length) {
+            currentIndex = index;
+            document.getElementById("modalImage").src = imageList[currentIndex].src;
+        }
+    }
+
+    function nextImage(event) {
+        event.stopPropagation();
+        if (currentIndex < imageList.length - 1) {
+            showImage(currentIndex + 1);
+        }
+    }
+
+    function prevImage(event) {
+        event.stopPropagation();
+        if (currentIndex > 0) {
+            showImage(currentIndex - 1);
+        }
+    }
+
