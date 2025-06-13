@@ -44,11 +44,9 @@
                 {% for img in images %}
                 <div class="grid-item" data-index="{{ loop.index0 }}">
                     <div class="image-wrapper">
-                            <img src="{{ url_for('static', filename=img.url) }}" alt="Post"
-                                onclick="openModal(this.src)">
-                            <a href="{{ url_for('static', filename=img.url) }}" class="download-hover-button"
-                                data-src="{{ url_for('static', filename=img.url) }}"
-                                onclick="downloadFromGrid(event)">⭳</a>
+                        <img src="{{ url_for('static', filename=img.url) }}" alt="Post" onclick="openModal(this.src)">
+                        <a href="{{ url_for('static', filename=img.url) }}" class="download-hover-button"
+                            data-src="{{ url_for('static', filename=img.url) }}" onclick="downloadFromGrid(event)">⭳</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -57,14 +55,20 @@
         </section>
 
         <!-- Modal -->
+        <!-- Modal -->
         <div id="imgModal" class="modal" onclick="closeModal()">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <!-- Download button -->
             <div class="modal-image-wrapper" onclick="event.stopPropagation();">
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+
+                <!-- Prev and Next buttons -->
+                <span class="modal-prev" onclick="prevImage(event)">&#10094;</span>
+                <span class="modal-next" onclick="nextImage(event)">&#10095;</span>
+
                 <img class="modal-content" id="modalImage">
                 <a id="downloadBtn" href="#" download class="download-button">Download</a>
             </div>
         </div>
+
     </div>
 </body>
 

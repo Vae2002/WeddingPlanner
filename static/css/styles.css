@@ -21,6 +21,31 @@
   opacity: 0.6;
 }
 
+.modal-prev,
+.modal-next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    font-size: 2rem;
+    color: white;
+    padding: 10px;
+    user-select: none;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.modal-prev {
+    left: 10px;
+    transform: translateY(-50%);
+}
+
+.modal-next {
+    right: 10px;
+    transform: translateY(-50%);
+}
+
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

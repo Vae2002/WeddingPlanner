@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="post-wrapper">
-<a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
-    <h2>laststeftoeunity</h2>
-</a>
+    <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
+        <h2>laststeftoeunity</h2>
+    </a>
 
 
     <div class="profile-header">
@@ -47,10 +47,20 @@
     </section>
 
     <!-- Modal -->
+    <!-- Modal with Prev/Next Controls -->
     <div id="imgModal" class="modal" onclick="closeModal()">
         <span class="modal-close" onclick="closeModal()">&times;</span>
+
+        <!-- Previous Button -->
+        <span class="modal-nav modal-prev" onclick="prevImage(event)">&#10094;</span>
+
+        <!-- Image Display -->
         <img class="modal-content" id="modalImage">
+
+        <!-- Next Button -->
+        <span class="modal-nav modal-next" onclick="nextImage(event)">&#10095;</span>
     </div>
+
 </div>
 
 
