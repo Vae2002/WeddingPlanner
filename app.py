@@ -334,7 +334,17 @@ def home():
     user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
     user_data = user_df.iloc[0].to_dict() if not user_df.empty else {}
 
-    return render_template('home.html', user=user_data, show_footer = True, play_audio = True)
+    image_folder = os.path.join('static', 'images', 'galery')
+  
+    image_files = [
+    os.path.join(file)
+    for file in os.listdir(image_folder)
+    if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
+    ][:4]  # <-- only take the first 6
+      # Debugging output
+    print("Images galery sent to template:", image_files)
+
+    return render_template('home.html',user=user_data ,images=image_files ,show_footer = True, play_audio = True)
 
 # untuk trigger loading screen
 @app.route('/search-start')
