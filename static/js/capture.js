@@ -76,33 +76,67 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Capture clicked');
     photoSaved = false;
 
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    // Match BG1 aspect ratio (9:16)
+    const frameAspectRatio = 9 / 16;
+    const streamWidth = video.videoWidth;
+    const streamHeight = video.videoHeight;
+    const actualAspectRatio = streamWidth / streamHeight;
 
+    let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
+
+    if (actualAspectRatio > frameAspectRatio) {
+        drawHeight = streamHeight;
+        drawWidth = streamHeight * frameAspectRatio;
+        offsetX = (streamWidth - drawWidth) / 2;
+    } else {
+        drawWidth = streamWidth;
+        drawHeight = streamWidth / frameAspectRatio;
+        offsetY = (streamHeight - drawHeight) / 2;
+    }
+
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    const context = canvas.getContext('2d');
+
+    // Mirror context if front camera
     if (currentFacingMode === 'user') {
         context.translate(canvas.width, 0);
         context.scale(-1, 1);
     }
 
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.drawImage(
+        video,
+        offsetX, offsetY, drawWidth, drawHeight,
+        0, 0, canvas.width, canvas.height
+    );
 
-    const imageData = canvas.toDataURL('image/jpeg');
-    capturedImg.src = imageData;
-    modal.style.display = 'flex';
+    context.setTransform(1, 0, 0, 1, 0, 0); // reset transform
 
-    fetch('/save-photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageData }),
-    })
-    .then(res => res.json())
-    .then(data => {
-        currentFilename = data.filename;
-        photoSaved = true;
-    });
+    // Overlay
+    const overlay = new Image();
+    overlay.src = 'static/images/BG1.png'; // ✅ Set this to the correct public path
+
+    overlay.onload = () => {
+        context.drawImage(overlay, 0, 0, canvas.width, canvas.height);
+
+        const imageData = canvas.toDataURL('image/jpeg');
+        capturedImg.src = imageData;
+        modal.style.display = 'flex';
+
+        fetch('/save-photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: imageData }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            currentFilename = data.filename;
+            photoSaved = true;
+        });
+    };
 });
+
 
         captureBtn.dataset.listenerAttached = true;
         }
