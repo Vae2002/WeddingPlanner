@@ -1295,6 +1295,14 @@ position: absolute;
     z-index: 1001;
 }
 
+#captured-image-preview {
+  max-width: 100%;
+  max-height: 70vh; /* Or however much space you want to leave for buttons */
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
 .photo-modal {
     position: fixed;
     top: 0;
