@@ -24,7 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { ideal: facingMode } },
+            video: {
+                facingMode: { ideal: facingMode },
+                width: { ideal: 3840 },  // 4K width
+                height: { ideal: 2160 }, // 4K height
+                resizeMode: "none",      // Don't scale if not necessary (optional, not widely supported)
+                frameRate: { ideal: 30, max: 60 } // High frame rate if supported
+            },
             audio: false,
         });
 
@@ -32,21 +38,22 @@ document.addEventListener('DOMContentLoaded', () => {
         video.srcObject = stream;
 
         video.onloadedmetadata = () => {
-    video.play();
-    if (currentFacingMode === 'user') {
-        video.style.transform = 'scaleX(-1)';
-        video.style.webkitTransform = 'scaleX(-1)';
-    } else {
-        video.style.transform = 'none';
-        video.style.webkitTransform = 'none';
-    }
-};
+            video.play();
+            if (currentFacingMode === 'user') {
+                video.style.transform = 'scaleX(-1)';
+                video.style.webkitTransform = 'scaleX(-1)';
+            } else {
+                video.style.transform = 'none';
+                video.style.webkitTransform = 'none';
+            }
+        };
 
     } catch (err) {
         console.error('Error starting camera:', err);
         alert('Camera access denied or not available.');
     }
 }
+
 
     // Start initial camera
     if (video) {
