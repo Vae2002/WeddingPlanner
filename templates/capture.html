@@ -14,27 +14,30 @@
             </svg>
         </button>
 
-        
-        <video id="camera-stream" autoplay playsinline></video>
+        <div class="camera-frame-container">
+            <video id="camera-stream" autoplay playsinline></video>
+            <img id="frame-overlay" src="{{ url_for('static', filename='images/BG1.png') }}" alt="Frame Overlay">
+        </div>
+
         <button id="capture-btn" class="capture-button" title="Take Photo">
         </button>
 
 
         <canvas id="capture-canvas" style="display: none;"></canvas>
-   </div>
+    </div>
 </div>
 
-        <!-- Modal for captured photo -->
-        <div id="photo-modal" class="photo-modal">
-            <div class="modal-content">
-                <img id="captured-image-preview" src="" alt="Captured Image">
-                <div class="modal-buttons">
-                    <button id="share-btn">Share</button>
-                    <button id="cancel-btn">Cancel</button>
-                </div>
-            </div>
+<!-- Modal for captured photo -->
+<div id="photo-modal" class="photo-modal">
+    <div class="modal-content">
+        <img id="captured-image-preview" src="" alt="Captured Image">
+        <div class="modal-buttons">
+            <button id="share-btn">Share</button>
+            <button id="cancel-btn">Cancel</button>
         </div>
-        
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

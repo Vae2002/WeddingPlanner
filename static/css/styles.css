@@ -405,7 +405,7 @@ html, body {
     margin: 0;
     padding: 0;
     display: flex;
-    /* background-color:white; */
+    background-color: white;
     flex-direction: column;
     overflow-x: hidden;
 }
@@ -718,21 +718,6 @@ footer {
 
 .icon-link:hover {
     color: #007bff;
-}
-
-/* Capture icon bigger */
-.capture-icon svg {
-    width: 42px;
-    height: 42px;
-}
-
-.switch-camera-button svg {
-    width: 28px;
-    height: 28px;
-    stroke: white;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 8px;
-    border-radius: 50%;
 }
 
 /* Profile image with circle frame */
@@ -1109,32 +1094,125 @@ footer {
     object-fit: cover;
 }
 
-/* Buttons: Close and Switch Camera */
+/* Container for entire camera UI */
+.camera-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: white;
+}
+
+/* Main camera box */
+.camera-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 360px; /* match BG1.png width */
+    aspect-ratio: 9 / 16;
+    background: black;
+    overflow: hidden;
+}
+
+/* Responsive centering for desktop */
+@media (min-width: 768px) {
+    .camera-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Inner frame with video + overlay */
+.camera-frame-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+}
+
+/* Camera video stream */
+#camera-stream {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    background: black;
+}
+
+/* Overlay image/frame */
+#frame-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Capture button */
+.capture-button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: white;
+    border: 4px solid #ccc;
+    cursor: pointer;
+    z-index: 3;
+}
+
+/* Capture icon styling (if you add one) */
+.capture-icon svg {
+    width: 42px;
+    height: 42px;
+}
+
+/* Close & Switch Camera buttons */
 .close-button,
 .switch-camera-button {
     position: absolute;
     top: max(1rem, env(safe-area-inset-top));
-    z-index: 20;
-    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 3;
     padding: 10px;
     border-radius: 50%;
     border: none;
-    color: black;
     font-size: 1.2rem;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: black;
+    cursor: pointer;
 }
 
-/* Positioning for close and switch buttons */
+/* Left & right button positions */
 .close-button {
     left: max(1rem, env(safe-area-inset-left));
 }
 
 .switch-camera-button {
     right: max(1rem, env(safe-area-inset-right));
-    display: none; /* hidden by default, shown on mobile via JS */
+    display: none; /* shown on mobile via JS */
+}
+
+/* Icon inside switch camera button */
+.switch-camera-button svg {
+    width: 28px;
+    height: 28px;
+    stroke: white;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px;
+    border-radius: 50%;
 }
 
 /* Hover effect for close button */
@@ -1142,75 +1220,20 @@ footer {
     background: #ddd;
 }
 
-/* Camera wrapper container */
-.camera-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100svh; /* Use modern viewport unit with fallback below */
-    max-width: 450px;
-    aspect-ratio: 9 / 16;
-    z-index: 1;
-    background: black;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    overflow: hidden;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); /* iOS safe area */
+/* Canvas - hidden by default */
+#capture-canvas {
+    display: none;
 }
 
-/* Center camera-wrapper on desktop/laptop */
-@media (min-width: 768px) {
-    .camera-wrapper {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%;
-        max-width: 450px;
-        height: auto;
-        aspect-ratio: 9 / 16;
-        padding-bottom: 20px; /* No safe-area needed here */
-    }
+/* Modal preview image */
+#captured-image-preview {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
-/* Container for camera & video */
-.camera-container {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-/* Video styling inside container */
-.camera-container video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1; /* Below buttons */
-}
-
-/* Capture button */
-.capture-button {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: white;
-    border: 4px solid #ccc;
-    cursor: pointer;
-    z-index: 10;
-}
 
 .image-wrapper {
   position: relative;
@@ -1303,13 +1326,7 @@ position: absolute;
     z-index: 1001;
 }
 
-#captured-image-preview {
-  max-width: 100%;
-  max-height: 70vh; /* Or however much space you want to leave for buttons */
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
-}
+
 
 .photo-modal {
     position: fixed;
