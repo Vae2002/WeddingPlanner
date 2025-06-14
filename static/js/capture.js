@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Share photo
 if (shareBtn && modal) {
-    sshareBtn.addEventListener('click', () => {
+    shareBtn.addEventListener('click', () => {
     if (!photoSaved || !currentFilename) {
         alert("Please wait a moment while your photo is saving...");
         return;
