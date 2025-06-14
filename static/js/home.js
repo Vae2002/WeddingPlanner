@@ -254,10 +254,37 @@ updateCountdown(); // Initial call
     document.getElementById('qrModal').style.display = 'none';
   }
 
-  // Optional: Close modal on outside click
-  window.onclick = function(event) {
-    const modal = document.getElementById('qrModal');
-    if (event.target === modal) {
-      modal.style.display = 'none';
-    }
-  };
+  let modalImageList = []; // List of image sources
+let currentModalIndex = 0;
+
+// Open modal and set image
+function openModal(src) {
+  const modal = document.getElementById("imgModal");
+  const modalImg = document.getElementById("modalImage");
+
+  modalImageList = Array.from(document.querySelectorAll('.photo-grid img')).map(img => img.src);
+  currentModalIndex = modalImageList.indexOf(src);
+
+  if (currentModalIndex === -1) currentModalIndex = 0;
+
+  modal.style.display = "block";
+  modalImg.src = modalImageList[currentModalIndex];
+}
+
+function closeModal() {
+  document.getElementById("imgModal").style.display = "none";
+}
+
+function nextImage(event) {
+  event.stopPropagation(); // prevent modal from closing
+  if (modalImageList.length === 0) return;
+  currentModalIndex = (currentModalIndex + 1) % modalImageList.length;
+  document.getElementById("modalImage").src = modalImageList[currentModalIndex];
+}
+
+function prevImage(event) {
+  event.stopPropagation(); // prevent modal from closing
+  if (modalImageList.length === 0) return;
+  currentModalIndex = (currentModalIndex - 1 + modalImageList.length) % modalImageList.length;
+  document.getElementById("modalImage").src = modalImageList[currentModalIndex];
+}

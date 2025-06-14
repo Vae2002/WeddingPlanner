@@ -321,8 +321,6 @@
         <source src="static/videos/BG-RSVP.mp4" type="video/mp4" />
     </video>
 
-    <!-- <div class="bg-overlay"></div> -->
-
     <div class="RSVP-content">
         <div class="RSVP-buttons">
             <a href="{{ url_for('messenger') }}" class="RSVP-btn">RSVP</a>
@@ -331,6 +329,43 @@
     </div>
 </div>
 
+<br>
+
+<!-- Galery-Segment -->
+<div id="Galery-Segment" class="Galery-Segment">
+    <h2>Galery</h2>
+        <div id="profile-grid" class="photo-grid"
+            data-masonry='{"itemSelector": ".grid-item", "columnWidth": ".grid-item", "gutter": 10, "percentPosition": true}'>
+            {% for img in images %}
+            <div class="grid-item">
+                <img src="{{ url_for('static', filename='images/galery/' ~ img) }}" alt="Post"
+                    onclick="openModal(this.src)">
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="Galery-button">
+            <a href="{{ url_for('profile') }}" class="WISHES-btn">Galery</a>
+        </div>
+    
+</div>
+
+<!-- Modal -->
+    <!-- Modal with Prev/Next Controls -->
+    <div id="imgModal" class="modal" onclick="closeModal()">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+
+        <!-- Previous Button -->
+        <span class="modal-nav modal-prev" onclick="prevImage(event)">&#10094;</span>
+
+        <!-- Image Display -->
+        <img class="modal-content" id="modalImage">
+
+        <!-- Next Button -->
+        <span class="modal-nav modal-next" onclick="nextImage(event)">&#10095;</span>
+    </div>
+
+<br><br>
 
 <div class="gift-card">
     <video autoplay muted loop playsinline class="bg-video">
@@ -386,6 +421,7 @@
     </div>
 </div>
 
+<br> 
 
 <!-- ==== POST online zoom ==== -->
 <div class="post-wrapper">
