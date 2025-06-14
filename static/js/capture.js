@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilename = null;
     let currentStream = null;
     let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
+    let photoSaved = false;
 
     // Show the switch button only on mobile devices
     if (switchBtn && /Mobi|Android/i.test(navigator.userAgent)) {
@@ -71,69 +72,75 @@ document.addEventListener('DOMContentLoaded', () => {
     // Capture photo handler
     if (captureBtn && canvas && video && modal && capturedImg) {
         if (!captureBtn.dataset.listenerAttached) {
-        captureBtn.addEventListener('click', () => {
-            console.log('Capture clicked')
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+   captureBtn.addEventListener('click', () => {
+    console.log('Capture clicked');
+    photoSaved = false;
 
-            if (currentFacingMode === 'user') {
-                // Mirror the image on canvas
-                context.translate(canvas.width, 0);
-                context.scale(-1, 1);
-            }
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    if (currentFacingMode === 'user') {
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1);
+    }
 
-            // Reset transform matrix
-            context.setTransform(1, 0, 0, 1, 0, 0);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
-            const imageData = canvas.toDataURL('image/jpeg');
-            capturedImg.src = imageData;
-            modal.style.display = 'flex';
+    const imageData = canvas.toDataURL('image/jpeg');
+    capturedImg.src = imageData;
+    modal.style.display = 'flex';
 
-            // Save photo to server
-            fetch('/save-photo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imageData }),
-            })
-                .then(res => res.json())
-                .then(data => {
-                    currentFilename = data.filename;
-                });
-        });
+    fetch('/save-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageData }),
+    })
+    .then(res => res.json())
+    .then(data => {
+        currentFilename = data.filename;
+        photoSaved = true;
+    });
+});
+
         captureBtn.dataset.listenerAttached = true;
         }
     }
 
     // Share photo
 if (shareBtn && modal) {
-    shareBtn.addEventListener('click', () => {
-        Loader.open(); // ✅ Show loader
+    sshareBtn.addEventListener('click', () => {
+    if (!photoSaved || !currentFilename) {
+        alert("Please wait a moment while your photo is saving...");
+        return;
+    }
 
-        fetch(`/upload-to-drive/${currentFilename}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            Loader.close(); // ✅ Hide loader
+    Loader.open(); // ✅ Show loader
 
-            currentFilename = null;
-            modal.style.display = 'none';
+    fetch(`/upload-to-drive/${currentFilename}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        Loader.close();
+        currentFilename = null;
+        photoSaved = false; // reset for next photo
+        modal.style.display = 'none';
 
-            if (data.file_id) {
-                alert('Upload successful!\n\nPlease check explore tab to download your photo');
-            } else {
-                alert('Upload failed: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(err => {
-            Loader.close(); // ✅ Hide loader on error
-            alert('Error during upload');
-            console.error(err);
-        });
+        if (data.file_id) {
+            alert('Upload successful!\n\nPlease check explore tab to download your photo');
+        } else {
+            alert('Upload failed: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(err => {
+        Loader.close();
+        alert('Error during upload');
+        console.error(err);
     });
+});
+
 }
 
     // Cancel photo handler
