@@ -1183,14 +1183,18 @@ html, body {
 }
 
 #capture-btn {
+  position: fixed; /* Use fixed to always place relative to viewport */
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
   background-color: white;
   border: 2px solid #444;
   border-radius: 50%;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  width: 80px;
-  height: 80px;
   cursor: pointer;
-  position: relative;
+  z-index: 10; /* Ensure it's on top */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 #capture-btn.overlay-off {
@@ -1199,7 +1203,7 @@ html, body {
 }
 
 #capture-btn::after {
-  content: '🎨'; /* Overlay icon emoji */
+  content: '🎨';
   position: absolute;
   top: 5px;
   right: 5px;
@@ -1212,6 +1216,7 @@ html, body {
 #capture-btn.overlay-on::after {
   opacity: 1;
 }
+
 
 
 /* Capture button */
