@@ -19,9 +19,11 @@
             <img id="frame-overlay" src="{{ url_for('static', filename='images/BG1.png') }}" alt="Frame Overlay">
         </div>
 
-        <button id="capture-btn" class="capture-button" title="Take Photo">
-        </button>
-
+<div class="control-buttons">
+    <button id="prev-overlay-btn" class="prev-bg-button" title="Previous Effect">⇦</button>
+    <button id="capture-btn" class="capture-button" title="Take Photo"></button>
+    <button id="next-overlay-btn" class="next-bg-button" title="Next Effect">⇨</button>
+</div>
 
         <canvas id="capture-canvas" style="display: none;"></canvas>
     </div>
