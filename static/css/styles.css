@@ -401,6 +401,7 @@ p, h1, h2, h3 {
 
 /* Make page fill the whole viewport height */
 html, body {
+    width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
@@ -1094,10 +1095,14 @@ footer {
     object-fit: cover;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* Make the whole container fill viewport */
 .camera-container {
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1109,10 +1114,10 @@ footer {
 /* Make camera-wrapper fill the container */
 .camera-wrapper {
     position: relative;
-    width: 100vw;
-    height: 100vh;
+    width: calc(100svh * 9 / 16);
+    height: 100svh;
     max-width: 100vw;
-    max-height: 100vh;
+    max-height: 100svh;
     background: black;
     overflow: hidden;
     aspect-ratio: 9 / 16;
@@ -1212,9 +1217,9 @@ footer {
 
 @media (min-aspect-ratio: 9/16) {
     .camera-wrapper {
-        height: 100vh;
-        width: auto;
-        max-width: calc(100vh * 9 / 16);
+        width: calc(100vw);
+        height: calc(100vw * 16 / 9);
+        max-height: 100svh;
     }
 }
 
