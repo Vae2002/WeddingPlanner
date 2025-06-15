@@ -12,16 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
         imageList = Array.from(document.querySelectorAll('.photo-grid .grid-item img'));
     }
 
-    window.openModal = function (src) {
-        updateImageList(); // update the list when opening modal
-
-        modal.style.display = 'block';
-        modalImage.src = src;
-        downloadBtn.href = src;
-
-        currentIndex = imageList.findIndex(img => img.src === src);
-
-        // update download file name logic
+    function updateDownloadHandler(src) {
         const now = new Date();
         const timestamp = now.toISOString().replace(/[-:T]/g, '').slice(0, 14);
         const extension = src.split('.').pop().split('?')[0];
@@ -46,6 +37,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error(err);
             }
         };
+    }
+
+    window.openModal = function (src) {
+        updateImageList(); // update the list when opening modal
+
+        modal.style.display = 'block';
+        modalImage.src = src;
+        downloadBtn.href = src;
+        updateDownloadHandler(src); // ✅ now dynamic
+
+        currentIndex = imageList.findIndex(img => img.src === src);
     };
 
     window.closeModal = function () {
@@ -72,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const newSrc = imageList[currentIndex].src;
             modalImage.src = newSrc;
             downloadBtn.href = newSrc;
+            updateDownloadHandler(newSrc); // ✅ now updates for new image
         }
     }
 
