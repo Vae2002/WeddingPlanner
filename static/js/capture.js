@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     modal.style.display = 'none';
 
                     alert(data.file_id
-                        ? 'Upload successful! Check the Explore tab.'
+                        ? 'Upload successful!\n\nCheck the Search tab to download your photo.'
                         : 'Upload failed: ' + (data.error || 'Unknown error'));
                 })
                 .catch(err => {
