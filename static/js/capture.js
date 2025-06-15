@@ -8,14 +8,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelBtn = document.getElementById('cancel-btn');
     const switchBtn = document.getElementById('switch-camera-btn');
     const overlayImg = document.getElementById('frame-overlay');
+    const nextBtn = document.getElementById('next-overlay-btn');
+    const prevBtn = document.getElementById('prev-overlay-btn');
 
+    const overlays = [
+        null,
+        'static/images/BG1.png',
+        'static/images/BG2.png'
+        // Add more overlays as needed
+    ];
+
+    let overlayIndex = 1;
     let currentFilename = null;
     let currentStream = null;
-    let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
+    let currentFacingMode = 'user';
     let photoSaved = false;
-    let overlayIndex = 1; // 0 = no overlay, 1 = BG1.png, 2 = BG2.png
 
-    // Show the switch button only on mobile devices
+    // Helpers
+    function updateOverlay() {
+        if (overlayIndex === 0 || overlays[overlayIndex] == null) {
+            overlayImg.style.display = 'none';
+            captureBtn.classList.add('overlay-off');
+            captureBtn.classList.remove('overlay-on');
+        } else {
+            overlayImg.src = overlays[overlayIndex];
+            overlayImg.style.display = 'block';
+            captureBtn.classList.add('overlay-on');
+            captureBtn.classList.remove('overlay-off');
+        }
+    }
+
+    // Show switch button only on mobile
     if (switchBtn && /Mobi|Android/i.test(navigator.userAgent)) {
         switchBtn.style.display = 'block';
     }
@@ -57,24 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Start initial camera
+    // Start camera and set initial overlay
     if (video) {
         startCamera(currentFacingMode);
+        updateOverlay();
     }
 
-    // Initialize capture button visual feedback & overlay image on load
-    if (overlayIndex === 0) {
-        captureBtn.classList.add('overlay-off');
-        captureBtn.classList.remove('overlay-on');
-        overlayImg.style.display = 'none';
-    } else {
-        captureBtn.classList.add('overlay-on');
-        captureBtn.classList.remove('overlay-off');
-        overlayImg.style.display = 'block';
-        overlayImg.src = overlayIndex === 1 ? 'static/images/BG1.png' : 'static/images/BG2.png';
-    }
-
-    // Switch camera button handler
+    // Switch camera
     if (switchBtn) {
         switchBtn.addEventListener('click', () => {
             currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
@@ -82,7 +94,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Swipe detection on capture button to cycle overlay
+    // Add button handlers for overlay switching
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            overlayIndex = (overlayIndex + 1) % overlays.length;
+            updateOverlay();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            overlayIndex = (overlayIndex - 1 + overlays.length) % overlays.length;
+            updateOverlay();
+        });
+    }
+
+        // ✅ NEW: Add keyboard arrow navigation for overlays
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            overlayIndex = (overlayIndex + 1) % overlays.length;
+            updateOverlay();
+        } else if (e.key === 'ArrowLeft') {
+            overlayIndex = (overlayIndex - 1 + overlays.length) % overlays.length;
+            updateOverlay();
+        }
+    });
+
+    // Optional: swipe gesture to change overlays
     let touchStartX = null;
     let touchStartY = null;
     let touchMoved = false;
@@ -94,51 +132,30 @@ document.addEventListener('DOMContentLoaded', () => {
         touchMoved = false;
     });
 
-    captureBtn.addEventListener('touchmove', (e) => {
+    captureBtn.addEventListener('touchmove', () => {
         touchMoved = true;
     });
 
     captureBtn.addEventListener('touchend', (e) => {
-        if (touchStartX === null || touchStartY === null) return;
-
-        if (!touchMoved) {
-            // No swipe, this is a tap, let the click handler do its job
-            return;
-        }
+        if (!touchMoved) return;
 
         const touch = e.changedTouches[0];
         const dx = touch.clientX - touchStartX;
         const dy = touch.clientY - touchStartY;
+        const minSwipe = 40;
 
-        const minSwipeDistance = 40;
-        const maxVerticalMovement = 30;
-
-        if (Math.abs(dx) > minSwipeDistance && Math.abs(dy) < maxVerticalMovement) {
-            // Cycle overlay index: 0 → 1 → 2 → 0 ...
-            overlayIndex = (overlayIndex + 1) % 3;
-
-            if (overlayIndex === 0) {
-                overlayImg.style.display = 'none';
-                captureBtn.classList.add('overlay-off');
-                captureBtn.classList.remove('overlay-on');
-            } else {
-                overlayImg.style.display = 'block';
-                captureBtn.classList.add('overlay-on');
-                captureBtn.classList.remove('overlay-off');
-                overlayImg.src = overlayIndex === 1 ? 'static/images/BG1.png' : 'static/images/BG2.png';
-            }
-
-            // Reset touch coords
-            touchStartX = null;
-            touchStartY = null;
+        if (Math.abs(dx) > minSwipe && Math.abs(dy) < 30) {
+            overlayIndex = dx > 0
+                ? (overlayIndex - 1 + overlays.length) % overlays.length
+                : (overlayIndex + 1) % overlays.length;
+            updateOverlay();
         }
     });
 
-    // Capture photo handler
+    // Capture photo
     if (captureBtn && canvas && video && modal && capturedImg) {
         if (!captureBtn.dataset.listenerAttached) {
             captureBtn.addEventListener('click', () => {
-                console.log('Capture clicked');
                 photoSaved = false;
 
                 const frameAspectRatio = 9 / 16;
@@ -176,29 +193,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 context.setTransform(1, 0, 0, 1, 0, 0);
 
-                if (overlayIndex !== 0) {
+                if (overlayIndex !== 0 && overlays[overlayIndex]) {
                     const overlay = new Image();
-                    overlay.src = overlayIndex === 1 ? 'static/images/BG1.png' : 'static/images/BG2.png';
-
+                    overlay.src = overlays[overlayIndex];
                     overlay.onload = () => {
                         context.drawImage(overlay, 0, 0, canvas.width, canvas.height);
-
-                        const imageData = canvas.toDataURL('image/jpeg');
-                        capturedImg.src = imageData;
-                        modal.style.display = 'flex';
-
-                        fetch('/save-photo', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ image: imageData }),
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            currentFilename = data.filename;
-                            photoSaved = true;
-                        });
+                        saveAndShow();
                     };
                 } else {
+                    saveAndShow();
+                }
+
+                function saveAndShow() {
                     const imageData = canvas.toDataURL('image/jpeg');
                     capturedImg.src = imageData;
                     modal.style.display = 'flex';
@@ -208,11 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ image: imageData }),
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        currentFilename = data.filename;
-                        photoSaved = true;
-                    });
+                        .then(res => res.json())
+                        .then(data => {
+                            currentFilename = data.filename;
+                            photoSaved = true;
+                        });
                 }
             });
 
@@ -224,37 +230,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (shareBtn && modal) {
         shareBtn.addEventListener('click', () => {
             if (!photoSaved || !currentFilename) {
-                alert("Please wait a moment while your photo is saving...");
+                alert("Please wait while your photo saves...");
                 return;
             }
 
             Loader.open();
 
-            fetch(`/upload-to-drive/${currentFilename}`, {
-                method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-                Loader.close();
-                currentFilename = null;
-                photoSaved = false;
-                modal.style.display = 'none';
+            fetch(`/upload-to-drive/${currentFilename}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    Loader.close();
+                    currentFilename = null;
+                    photoSaved = false;
+                    modal.style.display = 'none';
 
-                if (data.file_id) {
-                    alert('Upload successful!\n\nPlease check explore tab to download your photo');
-                } else {
-                    alert('Upload failed: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(err => {
-                Loader.close();
-                alert('Error during upload');
-                console.error(err);
-            });
+                    alert(data.file_id
+                        ? 'Upload successful! Check the Explore tab.'
+                        : 'Upload failed: ' + (data.error || 'Unknown error'));
+                })
+                .catch(err => {
+                    Loader.close();
+                    alert('Error during upload');
+                    console.error(err);
+                });
         });
     }
 
-    // Cancel photo handler
+    // Cancel photo
     if (cancelBtn && modal) {
         cancelBtn.addEventListener('click', () => {
             if (!currentFilename) {

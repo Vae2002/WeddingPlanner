@@ -1087,16 +1087,14 @@ footer {
   box-sizing: border-box;
 }
 
-/* Make page fill the whole viewport height */
 html, body {
-    width: 100vw;
-    height: 100svh;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden; 
-    /* overflow: hidden; */
+  width: 100vw;
+  height: 100svh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 .camera-container, 
@@ -1105,19 +1103,17 @@ html, body {
   width: 100vw;
 }
 
-/* Make the whole container fill viewport */
 .camera-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100dvh;
-  background-color: white; /* or white */
+  background-color: white;
   overflow: hidden;
   z-index: 0;
 }
 
-/* Make camera-wrapper fill the container */
 .camera-wrapper {
   position: absolute;
   top: 0;
@@ -1128,7 +1124,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Responsive centering for desktop */
 @media (min-width: 768px) {
   .camera-wrapper {
     position: absolute;
@@ -1141,21 +1136,19 @@ html, body {
     max-width: calc(90vh * 9 / 16);
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
     border-radius: 12px;
-    background:white;
+    background: white;
     overflow: hidden;
   }
 }
-/* Center content and handle overflow */
+
 .camera-frame-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: black;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: black;
+  overflow: hidden;
 }
 
-/* Camera video stream */
-/* Video should cover the container */
 #camera-stream {
   position: absolute;
   top: 0;
@@ -1163,47 +1156,56 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  margin: 0;
-  padding: 0;
   background: black;
   z-index: 1;
 }
 
-/* Overlay image/frame */
 #frame-overlay {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform: translateX(-50%);
-    z-index: 2;
-    pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
 }
 
-#capture-btn {
-  position: fixed; /* Use fixed to always place relative to viewport */
+.control-buttons {
+  position: fixed;
   bottom: calc(20px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  gap: 0; /* Remove default spacing */
+}
+
+/* Center capture button */
+#capture-btn {
   width: 80px;
   height: 80px;
   background-color: white;
-  border: 2px solid #444;
+  border: 3px solid #ccc; /* Match side buttons */
   border-radius: 50%;
   cursor: pointer;
-  z-index: 10; /* Ensure it's on top */
+  z-index: 10;
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  transform: none;
+  margin: 0; /* Remove spacing */
 }
 
+/* Overlay off state */
 #capture-btn.overlay-off {
   background-color: #bbb;
   border-color: #999;
 }
 
 #capture-btn::after {
-  content: '🎨';
   position: absolute;
   top: 5px;
   right: 5px;
@@ -1217,85 +1219,79 @@ html, body {
   opacity: 1;
 }
 
-
-
-/* Capture button */
-.capture-button {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: white;
-    border: 4px solid #ccc;
-    cursor: pointer;
-    z-index: 3;
+/* Side buttons - same border as capture, same spacing */
+.prev-bg-button,
+.next-bg-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #ccc;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0; /* Flush against capture button */
 }
 
-/* Capture icon styling (if you add one) */
 .capture-icon svg {
-    width: 42px;
-    height: 42px;
+  width: 42px;
+  height: 42px;
 }
 
-/* Close & Switch Camera buttons */
 .close-button,
 .switch-camera-button {
-    position: absolute;
-    top: max(1rem, env(safe-area-inset-top));
-    z-index: 3;
-    padding: 10px;
-    border-radius: 50%;
-    border: none;
-    font-size: 1.2rem;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: black;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  top: max(1rem, env(safe-area-inset-top));
+  z-index: 3;
+  padding: 10px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.2rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Left & right button positions */
 .close-button {
-    left: max(1rem, env(safe-area-inset-left));
+  left: max(1rem, env(safe-area-inset-left));
 }
 
 .switch-camera-button {
-    right: max(1rem, env(safe-area-inset-right));
-    display: none; /* shown on mobile via JS */
+  right: max(1rem, env(safe-area-inset-right));
+  display: none;
 }
 
-/* Icon inside switch camera button */
 .switch-camera-button svg {
-    width: 28px;
-    height: 28px;
-    stroke: white;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 8px;
-    border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  stroke: white;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px;
+  border-radius: 50%;
 }
 
-/* Hover effect for close button */
 .close-button:hover {
-    background: #ddd;
+  background: #ddd;
 }
 
-/* Canvas - hidden by default */
 #capture-canvas {
-    display: none;
+  display: none;
 }
 
-/* Modal preview image */
 #captured-image-preview {
-    max-width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
 }
+
 
 
 .image-wrapper {
