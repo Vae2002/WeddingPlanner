@@ -399,18 +399,6 @@ p, h1, h2, h3 {
   }
 }
 
-/* Make page fill the whole viewport height */
-html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    /* background-color: white; */
-    flex-direction: column;
-    overflow-x: hidden;
-}
-
 .countdown-timer {
   position: relative;
   width: 100%;
@@ -1099,6 +1087,19 @@ footer {
   box-sizing: border-box;
 }
 
+/* Make page fill the whole viewport height */
+html, body {
+    width: 100vw;
+    height: 100svh;
+    margin: 0;
+    padding: 0;
+    /* display: flex; */
+    /* background-color: white; */
+    /* flex-direction: column; */
+    /* overflow-x: hidden;  */
+    overflow: hidden;
+}
+
 .camera-container, 
 .camera-wrapper {
   height: 100dvh;
@@ -1107,41 +1108,44 @@ footer {
 
 /* Make the whole container fill viewport */
 .camera-container {
-  display: block; /* no flex */
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100dvh;
-  position: relative;
+  background-color: white; /* or white */
   overflow: hidden;
-  background-color: white;
+  z-index: 0;
 }
 
 /* Make camera-wrapper fill the container */
 .camera-wrapper {
-  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100dvh;
-  margin: 0;
-  position: relative;
+  width: 100vw;
   background: black;
   overflow: hidden;
-  aspect-ratio: 9 / 16;
 }
 
 /* Responsive centering for desktop */
 @media (min-width: 768px) {
-    .camera-wrapper {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: auto;
-        height: 90vh; /* Slightly smaller so there’s margin top and bottom */
-        max-width: calc(90vh * 9 / 16);
-        margin: 0; /* centers horizontally */
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        border-radius: 12px;
-    }
+  .camera-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: 90vh;
+    aspect-ratio: 9 / 16;
+    max-width: calc(90vh * 9 / 16);
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    background:white;
+    overflow: hidden;
+  }
 }
-
 /* Center content and handle overflow */
 .camera-frame-container {
     position: relative;
@@ -1164,6 +1168,8 @@ footer {
   padding: 0;
   background: black;
   z-index: 1;
+  border: 2px solid red;
+
 }
 
 /* Overlay image/frame */
@@ -1218,13 +1224,13 @@ footer {
     justify-content: center;
 }
 
-@media (min-aspect-ratio: 9/16) {
+/* @media (min-aspect-ratio: 9/16) {
     .camera-wrapper {
         width: calc(100vw);
         height: calc(100vw * 16 / 9);
         max-height: 100svh;
     }
-}
+} */
 
 /* Left & right button positions */
 .close-button {
