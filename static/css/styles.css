@@ -1103,26 +1103,24 @@ footer {
 .camera-container {
     width: 100vw;
     height: 100svh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background-color: white;
     overflow: hidden;
     position: relative;
+    /* Remove flex centering */
+    display: block; /* or remove display flex */
 }
 
 /* Make camera-wrapper fill the container */
 .camera-wrapper {
     position: relative;
-    width: calc(100svh * 9 / 16);
-    height: 100svh;
+    width: 100vw;        /* Fill full width */
+    height: 100svh;      /* Fill full height */
     max-width: 100vw;
     max-height: 100svh;
     background: black;
     overflow: hidden;
     aspect-ratio: 9 / 16;
-    /* Center horizontally if viewport wider than 9:16 */
-    margin: 0 auto;
+    margin: 0;           /* Remove horizontal centering margin */
 }
 
 /* Responsive centering for desktop */
@@ -1135,7 +1133,7 @@ footer {
         width: auto;
         height: 90vh; /* Slightly smaller so there’s margin top and bottom */
         max-width: calc(90vh * 9 / 16);
-        margin: auto; /* centers horizontally */
+        margin: 0; /* centers horizontally */
         box-shadow: 0 0 10px rgba(0,0,0,0.2);
         border-radius: 12px;
     }
