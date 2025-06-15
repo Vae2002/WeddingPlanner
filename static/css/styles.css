@@ -1093,11 +1093,10 @@ html, body {
     height: 100svh;
     margin: 0;
     padding: 0;
-    /* display: flex; */
-    /* background-color: white; */
-    /* flex-direction: column; */
-    /* overflow-x: hidden;  */
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden; 
+    /* overflow: hidden; */
 }
 
 .camera-container, 
@@ -1223,14 +1222,6 @@ html, body {
     align-items: center;
     justify-content: center;
 }
-
-/* @media (min-aspect-ratio: 9/16) {
-    .camera-wrapper {
-        width: calc(100vw);
-        height: calc(100vw * 16 / 9);
-        max-height: 100svh;
-    }
-} */
 
 /* Left & right button positions */
 .close-button {
