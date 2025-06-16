@@ -60,43 +60,48 @@
         <script src="{{ url_for('static', filename='js/call.js') }}"></script>
         <script src="{{ url_for('static', filename='js/capture.js') }}"></script>
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const video = document.getElementById("vidcall-video");
-                const unmuteButton = document.getElementById("unmute-button");
+document.addEventListener("DOMContentLoaded", function () {
+    const video = document.getElementById("vidcall-video");
+    const unmuteButton = document.getElementById("unmute-button");
 
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-                if (isIOS) {
-                    unmuteButton.style.display = "block";
+    if (isIOS) {
+        unmuteButton.style.display = "block";
 
-                    unmuteButton.addEventListener("click", () => {
-                        video.muted = false;
-                        video.play().catch(err => console.log("Play failed:", err));
-                        unmuteButton.style.display = "none";
-                    });
+        unmuteButton.addEventListener("click", () => {
+            // Pause first to reset the video state
+            video.pause();
+            video.currentTime = 0;
 
-                } else {
-                    video.volume = 0;
-                    video.muted = true;
+            video.muted = false;
 
-                    video.play().then(() => {
-                       let vol = 0;
-video.muted = false; // unmute right away
-
-const fadeInterval = setInterval(() => {
-    vol = Math.min(vol + 0.2, 1); // increase faster
-    video.volume = vol;
-
-    if (vol >= 1) {
-        clearInterval(fadeInterval);
-    }
-}, 50); // faster interval (every 50ms)
-                    }).catch(err => {
-                        console.warn("Autoplay with fade-in failed:", err);
-                    });
-                }
+            // Call play() directly from the click event
+            video.play().then(() => {
+                unmuteButton.style.display = "none";
+            }).catch(err => {
+                console.error("iOS playback error:", err);
             });
+        });
 
-        </script>
+    } else {
+        // For non-iOS browsers: fade-in effect
+        video.volume = 0;
+        video.muted = true;
+
+        video.play().then(() => {
+            video.muted = false;
+            let vol = 0;
+            const fadeInterval = setInterval(() => {
+                vol = Math.min(vol + 0.2, 1);
+                video.volume = vol;
+                if (vol >= 1) clearInterval(fadeInterval);
+            }, 50);
+        }).catch(err => {
+            console.warn("Autoplay with fade-in failed:", err);
+        });
+    }
+});
+</script>
 
         {% endblock %}
