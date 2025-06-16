@@ -1201,7 +1201,7 @@ html, body {
 
 /* Overlay off state */
 #capture-btn.overlay-off {
-  background-color: #bbb;
+  background-color: white;
   border-color: #999;
 }
 
