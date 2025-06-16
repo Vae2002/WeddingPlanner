@@ -64,25 +64,39 @@
                 const video = document.getElementById("vidcall-video");
                 const unmuteButton = document.getElementById("unmute-button");
 
-                // Attempt to autoplay silently
-                video.play().catch(err => {
-                    console.log("Autoplay failed:", err);
-                });
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-                // User taps to unmute
-                unmuteButton.addEventListener("click", () => {
-                    video.muted = false;
-                    video.play().catch(err => console.log("Play after unmute failed:", err));
-                    unmuteButton.style.display = "none";
-                });
+                if (isIOS) {
+                    unmuteButton.style.display = "block";
 
-                // Auto-hide the button after 5 seconds if not clicked
-                setTimeout(() => {
-                    if (video.muted) {
+                    unmuteButton.addEventListener("click", () => {
+                        video.muted = false;
+                        video.play().catch(err => console.log("Play failed:", err));
                         unmuteButton.style.display = "none";
-                    }
-                }, 5000);
+                    });
+
+                } else {
+                    video.volume = 0;
+                    video.muted = true;
+
+                    video.play().then(() => {
+                       let vol = 0;
+video.muted = false; // unmute right away
+
+const fadeInterval = setInterval(() => {
+    vol = Math.min(vol + 0.2, 1); // increase faster
+    video.volume = vol;
+
+    if (vol >= 1) {
+        clearInterval(fadeInterval);
+    }
+}, 50); // faster interval (every 50ms)
+                    }).catch(err => {
+                        console.warn("Autoplay with fade-in failed:", err);
+                    });
+                }
             });
+
         </script>
 
         {% endblock %}
