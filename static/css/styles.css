@@ -966,6 +966,33 @@ footer {
   z-index: -1;
 }
 
+.video-wrapper {
+    position: fixed; /* match the video */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1; /* must be above the video */
+    pointer-events: none; /* optional: let clicks through except button */
+}
+
+#unmute-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    pointer-events: auto; /* enable click */
+}
+
 
 .call-controls {
   position: fixed;
@@ -1290,15 +1317,6 @@ html, body {
   object-fit: contain;
   display: block;
   margin: 0 auto;
-}
-
-#unmute-button {
-    background: rgba(0,0,0,0.6);
-    color: white;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
 }
 
 .image-wrapper {
