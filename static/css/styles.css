@@ -977,7 +977,7 @@ footer {
 }
 
 #unmute-button {
-  display: none; /* hidden by default */
+  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -990,8 +990,8 @@ footer {
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
+  pointer-events: auto; /* 👈 THIS FIXES IT */
 }
-
 
 .call-controls {
   position: fixed;
