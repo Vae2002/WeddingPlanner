@@ -1155,7 +1155,7 @@ html, body {
   z-index: 0;
 }
 
-.camera-wrapper {
+/* .camera-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -1163,7 +1163,22 @@ html, body {
   width: 100vw;
   background: black;
   overflow: hidden;
-}
+} */
+
+  .camera-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: 90vh;
+    aspect-ratio: 9 / 16;
+    max-width: calc(90vh * 9 / 16);
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    background: white;
+    overflow: hidden;
+  }
 
 @media (min-width: 768px) {
   .camera-wrapper {
