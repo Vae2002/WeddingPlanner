@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .bg-image {
+        background-image: url("{{ url_for('static', filename='images/home.png') }}");
+        filter: blur(8px);
+        height: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: fixed;
+        width: 100%;
+        z-index: -1;
+    }
+
+    .login-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255, 255, 255, 0.85);
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        text-align: center;
+    }
+
+    .login-container h2 {
+        margin-bottom: 20px;
+    }
+
+    .login-container button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .login-container button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<div class="bg-image"></div>
+
+<div class="login-container">
+    <h2>Welcome {{ username }}!</h2>
+    <p>Tap below to continue</p>
+    <button id="enter-button">Enter</button>
+</div>
+
+<audio id="background-audio" autoplay loop>
+    <source src="{{ url_for('static', filename='audio/background_song.mp3') }}" type="audio/mpeg">
+</audio>
+
+<script>
+    const button = document.getElementById('enter-button');
+    const audio = document.getElementById('background-audio');
+
+    button.addEventListener('click', () => {
+        audio.play().then(() => {
+            window.location.href = "{{ url_for('home') }}";
+        }).catch(err => {
+            console.log("Audio play failed:", err);
+            window.location.href = "{{ url_for('home') }}";
+        });
+    });
+</script>
+
+{% endblock %}
