@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   if (document.referrer.endsWith('/') || document.referrer.includes('/login')) {
-    sessionStorage.removeItem('bgAudioTime');
+    localStorage.removeItem('bgAudioTime');
   }
 
   const disc = document.getElementById("audio-player");
@@ -13,41 +13,46 @@ document.addEventListener("DOMContentLoaded", () => {
   let offsetX = 0;
   let offsetY = 0;
 
-  // Always mark that user has visited
   localStorage.setItem('hasVisited', 'true');
 
-  // Resume from saved time if available
-  const savedTime = sessionStorage.getItem('bgAudioTime');
-  if (savedTime) {
-    audio.currentTime = parseFloat(savedTime);
-  }
+  // Load saved time AFTER metadata is ready
+  const savedTime = localStorage.getItem('bgAudioTime');
+  audio.addEventListener('loadedmetadata', () => {
+    if (savedTime) {
+      audio.currentTime = parseFloat(savedTime);
+      console.log("Resumed audio at", audio.currentTime);
+    }
+  });
 
-  // Autoplay logic
+  // iOS detection
+  const isIOS = () => {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  };
+
   const audioAllowed = localStorage.getItem('audioAllowed');
   if (audioAllowed === 'true') {
-    // Try autoplay immediately
-    audio.play().then(() => {
-      console.log("Autoplay succeeded");
-    }).catch(() => {
-      console.warn("Autoplay blocked. Waiting for user interaction.");
-
-      // Wait for user interaction to resume audio (iOS fix)
+    if (isIOS()) {
+      console.warn("iOS detected - waiting for user interaction");
       const resumeAudio = () => {
         audio.play().then(() => {
-          console.log("Audio resumed after user interaction");
+          console.log("Audio resumed after user interaction on iOS");
         }).catch(err => {
           console.log("Audio resume failed:", err);
         });
         document.removeEventListener('click', resumeAudio);
         document.removeEventListener('touchstart', resumeAudio);
       };
-
       document.addEventListener('click', resumeAudio);
       document.addEventListener('touchstart', resumeAudio);
-    });
+    } else {
+      audio.play().then(() => {
+        console.log("Autoplay succeeded on non-iOS");
+      }).catch(err => {
+        console.warn("Autoplay failed:", err);
+      });
+    }
   }
 
-  // Click to toggle play/pause if not a drag
   disc.addEventListener("click", (e) => {
     const movedX = Math.abs(e.clientX - dragStartX);
     const movedY = Math.abs(e.clientY - dragStartY);
@@ -96,10 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Save audio time on page unload
-window.addEventListener('beforeunload', () => {
+// Use 'pagehide' instead of 'beforeunload'
+window.addEventListener('pagehide', () => {
   const audio = document.getElementById("background-audio");
   if (audio) {
-    sessionStorage.setItem('bgAudioTime', audio.currentTime);
+    localStorage.setItem('bgAudioTime', audio.currentTime);
   }
 });
