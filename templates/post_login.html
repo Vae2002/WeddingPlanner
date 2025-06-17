@@ -58,7 +58,7 @@
     <button id="enter-button">Enter</button>
 </div>
 
-<audio id="background-audio" autoplay loop>
+<audio id="background-audio" loop>
     <source src="{{ url_for('static', filename='audio/background_song.mp3') }}" type="audio/mpeg">
 </audio>
 
@@ -66,13 +66,18 @@
     const button = document.getElementById('enter-button');
     const audio = document.getElementById('background-audio');
 
-    button.addEventListener('click', () => {
-        audio.play().then(() => {
-            window.location.href = "{{ url_for('home') }}";
-        }).catch(err => {
+    button.addEventListener('click', async () => {
+        try {
+            await audio.play();
+            console.log("Audio started");
+        } catch (err) {
             console.log("Audio play failed:", err);
+        }
+
+        // Small delay before redirect
+        setTimeout(() => {
             window.location.href = "{{ url_for('home') }}";
-        });
+        }, 300);  // wait 300ms to ensure iOS processes the play event
     });
 </script>
 
