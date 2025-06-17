@@ -65,55 +65,26 @@
     const button = document.getElementById('enter-button');
     const audio = document.getElementById('background-audio');  // from base.html
 
-    // Simple iOS detection
-    function isIOS() {
-        return /iP(hone|od|ad)/.test(navigator.userAgent) || 
-               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    }
-
     button.addEventListener('click', async () => {
         if (!audio) {
             console.log("Audio element not found.");
             return;
         }
 
-        if (isIOS()) {
-            console.log("Detected iOS device");
-            if (audio.readyState >= 2) {
-                try {
-                    await audio.play();
-                    console.log("Audio started immediately (iOS ready)");
-                } catch (err) {
-                    console.log("Audio play failed on iOS ready:", err);
-                }
-            } else {
-                audio.load();
-                setTimeout(async () => {
-                    try {
-                        await audio.play();
-                        console.log("Audio started after load (iOS)");
-                    } catch (err) {
-                        console.log("Audio play failed after load on iOS:", err);
-                    }
-                }, 300);
-            }
-            // Extra wait on iOS to ensure user gesture is processed
-            setTimeout(() => {
-                window.location.href = "{{ url_for('home') }}";
-            }, 800);
-        } else {
-            console.log("Non-iOS device detected");
-            try {
-                await audio.play();
-                console.log("Audio started immediately (non-iOS)");
-            } catch (err) {
-                console.log("Audio play failed:", err);
-            }
-            // Fast redirect for non-iOS
-            setTimeout(() => {
-                window.location.href = "{{ url_for('home') }}";
-            }, 300);
+        try {
+            await audio.play();
+            console.log("Audio started");
+
+            // Store flag in localStorage to allow autoplay on next page
+            localStorage.setItem('audioAllowed', 'true');
+        } catch (err) {
+            console.log("Audio play failed:", err);
         }
+
+        // Redirect after short delay
+        setTimeout(() => {
+            window.location.href = "{{ url_for('home') }}";
+        }, 300);
     });
 </script>
 {% endblock %}
