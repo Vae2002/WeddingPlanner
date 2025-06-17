@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   if (document.referrer.endsWith('/') || document.referrer.includes('/login')) {
-    localStorage.removeItem('bgAudioTime');
+    sessionStorage.removeItem('bgAudioTime');
   }
 
   const disc = document.getElementById("audio-player");
@@ -13,18 +13,38 @@ document.addEventListener("DOMContentLoaded", () => {
   let offsetX = 0;
   let offsetY = 0;
 
-  // Always treat as first visit on page load
+  // Always mark that user has visited
   localStorage.setItem('hasVisited', 'true');
 
-  // Try to autoplay on every visit (like first visit)
-  audio.play().catch(() => {
-    console.warn("Autoplay blocked. User interaction required.");
-  });
-
   // Resume from saved time if available
-  const savedTime = localStorage.getItem('bgAudioTime');
+  const savedTime = sessionStorage.getItem('bgAudioTime');
   if (savedTime) {
     audio.currentTime = parseFloat(savedTime);
+  }
+
+  // Autoplay logic
+  const audioAllowed = localStorage.getItem('audioAllowed');
+  if (audioAllowed === 'true') {
+    // Try autoplay immediately
+    audio.play().then(() => {
+      console.log("Autoplay succeeded");
+    }).catch(() => {
+      console.warn("Autoplay blocked. Waiting for user interaction.");
+
+      // Wait for user interaction to resume audio (iOS fix)
+      const resumeAudio = () => {
+        audio.play().then(() => {
+          console.log("Audio resumed after user interaction");
+        }).catch(err => {
+          console.log("Audio resume failed:", err);
+        });
+        document.removeEventListener('click', resumeAudio);
+        document.removeEventListener('touchstart', resumeAudio);
+      };
+
+      document.addEventListener('click', resumeAudio);
+      document.addEventListener('touchstart', resumeAudio);
+    });
   }
 
   // Click to toggle play/pause if not a drag
@@ -80,6 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
 window.addEventListener('beforeunload', () => {
   const audio = document.getElementById("background-audio");
   if (audio) {
-    localStorage.setItem('bgAudioTime', audio.currentTime);
+    sessionStorage.setItem('bgAudioTime', audio.currentTime);
   }
 });
