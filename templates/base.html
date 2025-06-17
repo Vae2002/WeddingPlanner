@@ -89,21 +89,6 @@
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-        const audio = document.getElementById('background-audio');
-        if (!audio) return;
-
-        if (localStorage.getItem('audioAllowed') === 'true') {
-            try {
-                await audio.play();
-                console.log("Audio auto-played on home");
-            } catch (err) {
-                console.log("Autoplay failed on home:", err);
-            }
-        }
-    });
-    </script>
     
     {% block scripts %}{% endblock %}
 </body>

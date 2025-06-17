@@ -65,6 +65,14 @@
     const button = document.getElementById('enter-button');
     const audio = document.getElementById('background-audio');  // from base.html
 
+    document.addEventListener("DOMContentLoaded", () => {
+        if (audio) {
+            // Preload audio for iOS stability
+            audio.load();
+            console.log("Audio preloaded");
+        }
+    });
+
     button.addEventListener('click', async () => {
         if (!audio) {
             console.log("Audio element not found.");
@@ -84,7 +92,7 @@
         // Redirect after short delay
         setTimeout(() => {
             window.location.href = "{{ url_for('home') }}";
-        }, 300);
+        }, 6000);
     });
 </script>
 {% endblock %}
