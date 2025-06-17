@@ -224,7 +224,7 @@ def login():
             if not match.empty:
                 session['username'] = match.iloc[0]['username']  # original
                 session['normalized_username'] = input_username  # normalized
-                return render_template('post_login.html', username=input_username)
+                return render_template('post_login.html', username=input_username, play_audio=True)
             else:
                 return render_template('login.html', error="Username not found.")
 
