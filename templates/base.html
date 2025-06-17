@@ -90,30 +90,6 @@
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const audio = document.getElementById('background-audio');
-            const allowed = localStorage.getItem('audioAllowed');
-
-            if (allowed === 'true' && audio) {
-                // Listen for any user interaction (first click/tap)
-                const resumeAudio = () => {
-                    audio.play().then(() => {
-                        console.log("Audio resumed automatically after tap");
-                    }).catch(err => {
-                        console.log("Audio resume failed:", err);
-                    });
-
-                    // Only run once
-                    document.removeEventListener('click', resumeAudio);
-                    document.removeEventListener('touchstart', resumeAudio);
-                };
-
-                document.addEventListener('click', resumeAudio);
-                document.addEventListener('touchstart', resumeAudio);
-            }
-        });
-    </script>
 
     {% block scripts %}{% endblock %}
 </body>
