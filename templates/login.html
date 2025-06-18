@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    body, html {
+    body,
+    html {
         height: 100%;
         margin: 0;
         font-family: Arial, sans-serif;
@@ -27,7 +28,7 @@
         background-color: rgba(255, 255, 255, 0.85);
         padding: 30px 40px;
         border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         text-align: center;
     }
 
@@ -56,8 +57,11 @@
         background-color: #45a049;
     }
 
-    .login-container p {
+    /* Style for error message */
+    #error-msg {
         color: red;
+        min-height: 1.2em;  /* keep space even if empty */
+        margin-top: 10px;
     }
 </style>
 
@@ -65,14 +69,12 @@
 
 <div class="login-container">
     <h2>Welcome Guest</h2>
-    <form method="POST">
+    <form id="login-form" method="POST">
         <label>Enter your username:</label><br>
         <input type="text" name="username" required><br>
         <button type="submit">Login</button>
     </form>
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
+    <p id="error-msg"></p>
 </div>
 
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>

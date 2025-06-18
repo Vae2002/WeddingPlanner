@@ -208,32 +208,58 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@app.route('/', methods=['GET', 'POST'])
+# @app.route('/', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         # Normalize input: strip, lowercase, and remove internal spaces
+#         input_username = request.form.get('username', '').strip().lower().replace(' ', '')
+
+#         if input_username:
+#             # Fetch and normalize usernames in DB the same way
+#             user_df = pd.read_sql("SELECT * FROM guest_database", con=engine)
+#             user_df['normalized_username'] = user_df['username'].astype(str).str.strip().str.lower().str.replace(' ', '')
+
+#             match = user_df[user_df['normalized_username'] == input_username]
+
+#             if not match.empty:
+#                 session['username'] = match.iloc[0]['username']  # original
+#                 session['normalized_username'] = input_username  # normalized
+#                 # return render_template('post_login.html', username=session['username'], play_audio=True)
+#                 return redirect(url_for('home'))
+#             else:
+#                 return render_template('login.html', error="Username not found.")
+
+#     return render_template('login.html')
+
+@app.route('/')
+def login_page():
+    return render_template('login.html', play_audio=True)  # <-- add play_audio=True
+
+
+@app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        # Normalize input: strip, lowercase, and remove internal spaces
-        input_username = request.form.get('username', '').strip().lower().replace(' ', '')
+    # Normalize input: strip, lowercase, and remove internal spaces
+    input_username = request.form.get('username', '').strip().lower().replace(' ', '')
 
-        if input_username:
-            # Fetch and normalize usernames in DB the same way
-            user_df = pd.read_sql("SELECT * FROM guest_database", con=engine)
-            user_df['normalized_username'] = user_df['username'].astype(str).str.strip().str.lower().str.replace(' ', '')
+    if input_username:
+        user_df = pd.read_sql("SELECT * FROM guest_database", con=engine)
+        user_df['normalized_username'] = user_df['username'].astype(str).str.strip().str.lower().str.replace(' ', '')
 
-            match = user_df[user_df['normalized_username'] == input_username]
+        match = user_df[user_df['normalized_username'] == input_username]
 
-            if not match.empty:
-                session['username'] = match.iloc[0]['username']  # original
-                session['normalized_username'] = input_username  # normalized
-                return render_template('post_login.html', username=session['username'], play_audio=True)
-            else:
-                return render_template('login.html', error="Username not found.")
+        if not match.empty:
+            session['username'] = match.iloc[0]['username']
+            session['normalized_username'] = input_username
+            return jsonify({'success': True})
 
-    return render_template('login.html')
+    return jsonify({'success': False, 'error': 'Username not found'})
+
 
 @app.route('/reset-session')
 def reset_session():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('login_page'))  # updated to correct route
+
 
 @app.route('/get-user-info', methods=['GET'])
 @login_required
