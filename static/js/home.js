@@ -11,6 +11,9 @@ window.addEventListener("DOMContentLoaded", () => {
     let currentIndex = 0;
     let isTransitioning = false;
 
+    const autoplayIntervalMs = 7000; // 3 seconds autoplay interval
+    let autoplayTimer;
+
     const updateDots = () => {
       if (!dotsContainer) return;
       dotsContainer.innerHTML = "";
@@ -21,12 +24,12 @@ window.addEventListener("DOMContentLoaded", () => {
           if (isTransitioning) return;
           currentIndex = i;
           updateCarousel();
+          resetAutoplay();
         });
         dotsContainer.appendChild(dot);
       });
     };
 
-    // Add transitionend listener once, to toggle isTransitioning flag
     track.addEventListener('transitionend', () => {
       isTransitioning = false;
     });
@@ -50,16 +53,24 @@ window.addEventListener("DOMContentLoaded", () => {
       if (isTransitioning) return;
       if (currentIndex < slides.length - 1) {
         currentIndex++;
-        updateCarousel();
+      } else {
+        currentIndex = 0; // Loop back to first slide
       }
+      updateCarousel();
     };
 
     const goToPrevSlide = () => {
       if (isTransitioning) return;
       if (currentIndex > 0) {
         currentIndex--;
-        updateCarousel();
       }
+      updateCarousel();
+    };
+
+    // Reset autoplay timer on user interaction
+    const resetAutoplay = () => {
+      clearInterval(autoplayTimer);
+      autoplayTimer = setInterval(goToNextSlide, autoplayIntervalMs);
     };
 
     const addSwipeListeners = (element) => {
@@ -82,9 +93,8 @@ window.addEventListener("DOMContentLoaded", () => {
         const dx = e.touches[0].clientX - touchStartX;
         const dy = e.touches[0].clientY - touchStartY;
 
-        // If horizontal movement is dominant, prevent vertical scroll
         if (Math.abs(dx) > Math.abs(dy)) {
-          e.preventDefault();  // 👈 disables vertical scroll
+          e.preventDefault();
           hasMoved = true;
         }
       }, { passive: false });
@@ -96,6 +106,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         if (hasMoved && Math.abs(dx) > 50) {
           dx > 0 ? goToPrevSlide() : goToNextSlide();
+          resetAutoplay();
         }
 
         isTouching = false;
@@ -115,6 +126,7 @@ window.addEventListener("DOMContentLoaded", () => {
           const diff = mouseStartX - upEvent.clientX;
           if (Math.abs(diff) > 50) {
             diff > 0 ? goToNextSlide() : goToPrevSlide();
+            resetAutoplay();
           }
           isMouseDragging = false;
           document.removeEventListener("mousemove", onMouseMove);
@@ -128,8 +140,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const swipeArea = carousel.querySelector(".carousel-window") || carousel;
     addSwipeListeners(swipeArea);
-    nextBtn?.addEventListener("click", goToNextSlide);
-    prevBtn?.addEventListener("click", goToPrevSlide);
+    nextBtn?.addEventListener("click", () => {
+      goToNextSlide();
+      resetAutoplay();
+    });
+    prevBtn?.addEventListener("click", () => {
+      goToPrevSlide();
+      resetAutoplay();
+    });
 
     window.addEventListener("resize", () => {
       slides = Array.from(track.children);
@@ -138,6 +156,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Initial setup
     updateCarousel();
+
+    // Start autoplay
+    autoplayTimer = setInterval(goToNextSlide, autoplayIntervalMs);
   });
 
   // Days left logic
@@ -232,10 +253,8 @@ document.querySelectorAll('.copy-btn').forEach(button => {
     const valueToCopy = button.getAttribute('data-copy');
 
     navigator.clipboard.writeText(valueToCopy).then(() => {
-      // ✅ Alert user
       alert(`Copied: ${valueToCopy}`);
 
-      // Optional visual feedback with icon
       button.innerHTML = '<ion-icon name="checkmark-outline"></ion-icon>';
       setTimeout(() => {
         button.innerHTML = '<ion-icon name="copy-outline"></ion-icon>';
@@ -258,7 +277,6 @@ function closeQRModal() {
 let modalImageList = []; // List of image sources
 let currentModalIndex = 0;
 
-// Open modal and set image
 function openModal(src) {
   const modal = document.getElementById("imgModal");
   const modalImg = document.getElementById("modalImage");
@@ -277,14 +295,14 @@ function closeModal() {
 }
 
 function nextImage(event) {
-  event.stopPropagation(); // prevent modal from closing
+  event.stopPropagation();
   if (modalImageList.length === 0) return;
   currentModalIndex = (currentModalIndex + 1) % modalImageList.length;
   document.getElementById("modalImage").src = modalImageList[currentModalIndex];
 }
 
 function prevImage(event) {
-  event.stopPropagation(); // prevent modal from closing
+  event.stopPropagation();
   if (modalImageList.length === 0) return;
   currentModalIndex = (currentModalIndex - 1 + modalImageList.length) % modalImageList.length;
   document.getElementById("modalImage").src = modalImageList[currentModalIndex];
