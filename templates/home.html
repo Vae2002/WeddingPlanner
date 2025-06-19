@@ -1,446 +1,447 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- S&E Logo top-left -->
-<a href="{{ url_for('home') }}" class="logo-link" title="Home">
-    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="S&E Logo">
-</a>
+<div class="page-content">
+    <!-- S&E Logo top-left -->
+    <a href="{{ url_for('home') }}" class="logo-link" title="Home">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="S&E Logo">
+    </a>
 
-<a href="{{ url_for('wishes') }}" class="wishes-icon" title="Wishes">
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-        <path
-            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
-        </path>
-    </svg>
-</a>
+    <a href="{{ url_for('wishes') }}" class="wishes-icon" title="Wishes">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path
+                d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
+            </path>
+        </svg>
+    </a>
 
-<a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black"
-        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-</a>
+    <a href="{{ url_for('messenger') }}" class="message-icon" title="Messenger">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </a>
 
-<br><br><br><br>
+    <br><br><br><br>
 
-<h1 style="text-align: center; margin-top: 2rem;">
-    Hello {{ user.username }}!
-</h1>
+    <h1 style="text-align: center; margin-top: 2rem;">
+        Hello {{ user.username }}!
+    </h1>
 
-<!-- ==== POST 1 ==== -->
-<div class="post-wrapper">
-    <div class="feed-wrapper">
-        <div class="profile-header">
-            <a class="profile-link" href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
-                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
-            </a>
-            <div class="text-info">
-                <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
-                    <h2>laststeftoeunity</h2>
+    <!-- ==== POST 1 ==== -->
+    <div class="post-wrapper">
+        <div class="feed-wrapper">
+            <div class="profile-header">
+                <a class="profile-link" href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
                 </a>
-                <a href="{{ url_for('search_start') }}" style="color: inherit; text-decoration: none;">
-                    Trembesi Hotel BSD
-                </a>
-            </div>
-        </div>
-
-        <div class="image-carousel" id="carousel-1">
-            <div class="carousel-window">
-                <div class="carousel-track">
-                    <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
-                    </video>
-                    <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
-                    </video>
+                <div class="text-info">
+                    <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                        <h2>laststeftoeunity</h2>
+                    </a>
+                    <a href="{{ url_for('search_start') }}" style="color: inherit; text-decoration: none;">
+                        Trembesi Hotel BSD
+                    </a>
                 </div>
             </div>
-            <button class="carousel-btn prev" onclick="prevSlide('carousel-1')">‹</button>
-            <button class="carousel-btn next" onclick="nextSlide('carousel-1')">›</button>
-            <div class="carousel-dots" id="dots-1"></div>
-        </div>
 
-        <div class="horizontal-icon-wrapper">
+            <div class="image-carousel" id="carousel-1">
+                <div class="carousel-window">
+                    <div class="carousel-track">
+                        <video autoplay loop muted playsinline>
+                            <source src="{{ url_for('static', filename='videos/home1.mp4') }}" type="video/mp4">
+                        </video>
+                        <video autoplay loop muted playsinline>
+                            <source src="{{ url_for('static', filename='videos/home2.mp4') }}" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+                <button class="carousel-btn prev" onclick="prevSlide('carousel-1')">‹</button>
+                <button class="carousel-btn next" onclick="nextSlide('carousel-1')">›</button>
+                <div class="carousel-dots" id="dots-1"></div>
+            </div>
+
             <div class="horizontal-icon-wrapper">
-                <!-- Heart icon -->
-                <a href="#" class="icon-button" title="Like">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path
-                            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
-                        </path>
-                    </svg>
-                </a>
+                <div class="horizontal-icon-wrapper">
+                    <!-- Heart icon -->
+                    <a href="#" class="icon-button" title="Like">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <path
+                                d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
+                            </path>
+                        </svg>
+                    </a>
 
-                <!-- Paper plane icon -->
-                <a href="#" class="icon-button" title="Send">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                </a>
+                    <!-- Paper plane icon -->
+                    <a href="#" class="icon-button" title="Send">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </a>
 
-                <!-- Bookmark icon -->
-                <a href="#" class="icon-button" title="Bookmark">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="liked-by-wrapper">
-        <!-- Small profile images... -->
-        <h4 class="extra-info liked-by-text">
-            Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
-        </h4>
-    </div>
-
-    <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
-        <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
-    </a>
-    <p class="days-left" id="days-left-1" style="margin-top: 1rem;"></p>
-</div>
-
-
-
-<!-- ==== POST 2 ==== -->
-<div class="post-wrapper">
-    <div class="feed-wrapper">
-        <div class="profile-header">
-            <a class="profile-link" href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
-                <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
-            </a>
-            <div class="text-info">
-                <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
-                    <h2>laststeftoeunity</h2>
-                </a>
-                <a href="{{ url_for('search_start') }}" style="color: inherit; text-decoration: none;">
-                    Trembesi Hotel BSD
-                </a>
-            </div>
-        </div>
-
-        <div class="image-carousel" id="carousel-2">
-            <div class="carousel-window">
-                <div class="carousel-track">
-                    <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home4.mp4') }}" type="video/mp4">
-                    </video>
-                    <video autoplay loop muted playsinline>
-                        <source src="{{ url_for('static', filename='videos/home5.mp4') }}" type="video/mp4">
-                    </video>
+                    <!-- Bookmark icon -->
+                    <a href="#" class="icon-button" title="Bookmark">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </a>
                 </div>
             </div>
-            <button class="carousel-btn prev" onclick="prevSlide('carousel-2')">‹</button>
-            <button class="carousel-btn next" onclick="nextSlide('carousel-2')">›</button>
-            <div class="carousel-dots" id="dots-2"></div>
         </div>
 
-        <div class="horizontal-icon-wrapper">
+        <div class="liked-by-wrapper">
+            <!-- Small profile images... -->
+            <h4 class="extra-info liked-by-text">
+                Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
+            </h4>
+        </div>
+
+        <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+            <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
+        </a>
+        <p class="days-left" id="days-left-1" style="margin-top: 1rem;"></p>
+    </div>
+
+
+
+    <!-- ==== POST 2 ==== -->
+    <div class="post-wrapper">
+        <div class="feed-wrapper">
+            <div class="profile-header">
+                <a class="profile-link" href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                    <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
+                </a>
+                <div class="text-info">
+                    <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+                        <h2>laststeftoeunity</h2>
+                    </a>
+                    <a href="{{ url_for('search_start') }}" style="color: inherit; text-decoration: none;">
+                        Trembesi Hotel BSD
+                    </a>
+                </div>
+            </div>
+
+            <div class="image-carousel" id="carousel-2">
+                <div class="carousel-window">
+                    <div class="carousel-track">
+                        <video autoplay loop muted playsinline>
+                            <source src="{{ url_for('static', filename='videos/home4.mp4') }}" type="video/mp4">
+                        </video>
+                        <video autoplay loop muted playsinline>
+                            <source src="{{ url_for('static', filename='videos/home5.mp4') }}" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+                <button class="carousel-btn prev" onclick="prevSlide('carousel-2')">‹</button>
+                <button class="carousel-btn next" onclick="nextSlide('carousel-2')">›</button>
+                <div class="carousel-dots" id="dots-2"></div>
+            </div>
+
             <div class="horizontal-icon-wrapper">
-                <!-- Heart icon -->
-                <a href="#" class="icon-button" title="Like">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path
-                            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
-                        </path>
-                    </svg>
-                </a>
+                <div class="horizontal-icon-wrapper">
+                    <!-- Heart icon -->
+                    <a href="#" class="icon-button" title="Like">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <path
+                                d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-.9.9-.9-.9a5.5 5.5 0 1 0-7.8 7.8l.9.9L12 21.4l7.8-7.8.9-.9a5.5 5.5 0 0 0 0-7.8z">
+                            </path>
+                        </svg>
+                    </a>
 
-                <!-- Paper plane icon -->
-                <a href="#" class="icon-button" title="Send">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                </a>
+                    <!-- Paper plane icon -->
+                    <a href="#" class="icon-button" title="Send">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </a>
 
-                <!-- Bookmark icon -->
-                <a href="#" class="icon-button" title="Bookmark">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                    </svg>
-                </a>
+                    <!-- Bookmark icon -->
+                    <a href="#" class="icon-button" title="Bookmark">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="liked-by-wrapper">
+            <!-- Small profile images... -->
+            <h4 class="extra-info liked-by-text">
+                Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
+            </h4>
+        </div>
+
+        <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
+            <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
+        </a>
+        <p class="days-left" id="days-left-2" style="margin-top: 1rem;"></p>
+
+    </div>
+
+    <br><br>
+    <!-- COUNTDOWN TIMER WEDDING -->
+    <div id="countdown-timer" class="countdown-timer">
+        <h2>Countdown to the Wedding</h2>
+        <div id="countdown" class="countdown">
+            <div class="countdown-el-time">
+                <p class="big-text" id="days">0</p>
+                <span>days</span>
+            </div>
+            <div class="countdown-el-time">
+                <p class="big-text" id="hours">0</p>
+                <span>hours</span>
+            </div>
+            <div class="countdown-el-separator">
+                <p class="big-text" id="separator">:</p>
+            </div>
+            <div class="countdown-el-time">
+                <p class="big-text" id="mins">0</p>
+                <span>mins</span>
+            </div>
+            <div class="countdown-el-separator">
+                <p class="big-text" id="separator">:</p>
+            </div>
+            <div class="countdown-el-time">
+                <p class="big-text" id="seconds">0</p>
+                <span>seconds</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="calendar-buttons">
+        <a href="static/wedding-event.ics" download="Wedding.ics" class="calendar-btn">
+            Add to Device Calendar
+        </a>
+        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Stefanus+%26+Eunice+Wedding+%23LastSteftoEunity&dates=20250906T110000Z/20250906T130000Z&details=Join+us+for+the+wedding+on+6th+September+2025+at+Trembesi+Hotel+BSD%2C+Tangerang+Selatan%2C+Indonesia!&location=Trembesi+Hotel+BSD%2C+Tangerang+Selatan%2C+Indonesia"
+            target="_blank" class="calendar-btn google">
+            Add via Google Calendar
+        </a>
+    </div>
+
+    <br>
+
+    <div class="post-wrapper">
+        <div class="feed-wrapper">
+
+            <video autoplay loop muted playsinline>
+                <source src="{{ url_for('static', filename='videos/home3.mp4') }}" type="video/mp4">
+            </video>
+
+        </div>
+    </div>
+
+    <div class="text-info">
+        <h2>Holy Matrimony Address:</h2>
+        <h4>Jl. Gading Golf Boulevard No.888, Gading, Kec. Serpong, Kabupaten Tangerang, Banten 15332, Indonesia</h4>
+    </div>
+    <br>
+
+    <div id="map1" style="height: 250px; width: 100%;"></div>
+
+    <!-- Load Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        var lng1 = 106.6431;
+        var lat1 = -6.2588;
+        var map1 = L.map('map1').setView([lat1, lng1], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map1);
+
+        L.marker([lat1, lng1])
+            .addTo(map1)
+            .bindPopup('<a href="https://www.google.com/maps/place/Grace+Chapel/@-6.2588302,106.6404943,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69fb4381825fbd:0xb900578e564f1489!8m2!3d-6.2588355!4d106.6430746!16s%2Fg%2F11t9qk942_?entry=ttu&g_ep=EgoyMDI1MDYwOS4xIKXMDSoASAFQAw%3D%3D' + lat1 + ',' + lng1 + '" target="_blank">Open in Google Maps</a>')
+            .openPopup();
+    </script>
+
+
+    <div class="post-wrapper">
+        <div class="feed-wrapper">
+
+            <video autoplay loop muted playsinline>
+                <source src="{{ url_for('static', filename='videos/home3b.mp4') }}" type="video/mp4">
+            </video>
+
+        </div>
+    </div>
+
+    <div class="text-info">
+        <h2>Reception Address:</h2>
+        <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South
+            Tangerang City, Banten 15311, Indonesia</h4>
+    </div>
+    <br>
+
+    <div id="map2" style="height: 250px; width: 100%;"></div>
+
+    <!-- Load Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        var lng2 = 106.6683;
+        var lat2 = -6.2943;
+        var map2 = L.map('map2').setView([lat2, lng2], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map2);
+
+        L.marker([lat2, lng2])
+            .addTo(map2)
+            .bindPopup('<a href="https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D' + lat2 + ',' + lng2 + '" target="_blank">Open in Google Maps</a>')
+            .openPopup();
+    </script>
+
+
+    <!-- ==== POST 4 ==== -->
+    <div class="post-wrapper">
+        <div class="feed-wrapper">
+            <video autoplay loop muted playsinline>
+                <source src="{{ url_for('static', filename='videos/home7.mp4') }}" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div id="RSVP-Segment" class="RSVP-Segment">
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="static/videos/BG-RSVP.mp4" type="video/mp4" />
+        </video>
+
+        <div class="RSVP-content">
+            <div class="RSVP-buttons">
+                <a href="{{ url_for('messenger') }}" class="RSVP-btn">RSVP</a>
+                <a href="{{ url_for('wishes') }}" class="WISHES-btn">Wishes</a>
             </div>
         </div>
     </div>
 
-    <div class="liked-by-wrapper">
-        <!-- Small profile images... -->
-        <h4 class="extra-info liked-by-text">
-            Liked by <strong>laststeftoeunity</strong> and <strong>others</strong>
-        </h4>
-    </div>
+    <br>
 
-    <a href="{{ url_for('profile') }}" style="color: inherit; text-decoration: none;">
-        <p><strong>laststeftoeunity</strong> The Wedding of Stefanus & Eunice</p>
-    </a>
-    <p class="days-left" id="days-left-2" style="margin-top: 1rem;"></p>
-
-</div>
-
-<br><br>
-<!-- COUNTDOWN TIMER WEDDING -->
-<div id="countdown-timer" class="countdown-timer">
-    <h2>Countdown to the Wedding</h2>
-    <div id="countdown" class="countdown">
-        <div class="countdown-el-time">
-            <p class="big-text" id="days">0</p>
-            <span>days</span>
-        </div>
-        <div class="countdown-el-time">
-            <p class="big-text" id="hours">0</p>
-            <span>hours</span>
-        </div>
-        <div class="countdown-el-separator">
-            <p class="big-text" id="separator">:</p>
-        </div>
-        <div class="countdown-el-time">
-            <p class="big-text" id="mins">0</p>
-            <span>mins</span>
-        </div>
-        <div class="countdown-el-separator">
-            <p class="big-text" id="separator">:</p>
-        </div>
-        <div class="countdown-el-time">
-            <p class="big-text" id="seconds">0</p>
-            <span>seconds</span>
-        </div>
-
-    </div>
-</div>
-
-<div class="calendar-buttons">
-    <a href="static/wedding-event.ics" download="Wedding.ics" class="calendar-btn">
-        Add to Device Calendar
-    </a>
-    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Stefanus+%26+Eunice+Wedding+%23LastSteftoEunity&dates=20250906T110000Z/20250906T130000Z&details=Join+us+for+the+wedding+on+6th+September+2025+at+Trembesi+Hotel+BSD%2C+Tangerang+Selatan%2C+Indonesia!&location=Trembesi+Hotel+BSD%2C+Tangerang+Selatan%2C+Indonesia"
-        target="_blank" class="calendar-btn google">
-        Add via Google Calendar
-    </a>
-</div>
-
-<br>
-
-<div class="post-wrapper">
-    <div class="feed-wrapper">
-
-        <video autoplay loop muted playsinline>
-            <source src="{{ url_for('static', filename='videos/home3.mp4') }}" type="video/mp4">
-        </video>
-
-    </div>
-</div>
-
-<div class="text-info">
-    <h2>Holy Matrimony Address:</h2>
-    <h4>Jl. Gading Golf Boulevard No.888, Gading, Kec. Serpong, Kabupaten Tangerang, Banten 15332, Indonesia</h4>
-</div>
-<br>
-
-<div id="map1" style="height: 250px; width: 100%;"></div>
-
-<!-- Load Leaflet.js -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-    var lng1 = 106.6431;
-    var lat1 = -6.2588;
-    var map1 = L.map('map1').setView([lat1, lng1], 15);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map1);
-
-    L.marker([lat1, lng1])
-        .addTo(map1)
-        .bindPopup('<a href="https://www.google.com/maps/place/Grace+Chapel/@-6.2588302,106.6404943,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69fb4381825fbd:0xb900578e564f1489!8m2!3d-6.2588355!4d106.6430746!16s%2Fg%2F11t9qk942_?entry=ttu&g_ep=EgoyMDI1MDYwOS4xIKXMDSoASAFQAw%3D%3D' + lat1 + ',' + lng1 + '" target="_blank">Open in Google Maps</a>')
-        .openPopup();
-</script>
-
-
-<div class="post-wrapper">
-    <div class="feed-wrapper">
-
-        <video autoplay loop muted playsinline>
-            <source src="{{ url_for('static', filename='videos/home3b.mp4') }}" type="video/mp4">
-        </video>
-
-    </div>
-</div>
-
-<div class="text-info">
-    <h2>Reception Address:</h2>
-    <h4>Trembesi Tower, Jl. Pahlawan Seribu Lot VIIA CBD - BSD, Lengkong Gudang, Serpong Sub-District, South
-        Tangerang City, Banten 15311, Indonesia</h4>
-</div>
-<br>
-
-<div id="map2" style="height: 250px; width: 100%;"></div>
-
-<!-- Load Leaflet.js -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-    var lng2 = 106.6683;
-    var lat2 = -6.2943;
-    var map2 = L.map('map2').setView([lat2, lng2], 15);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map2);
-
-    L.marker([lat2, lng2])
-        .addTo(map2)
-        .bindPopup('<a href="https://www.google.com/maps/place/Trembesi+Hotel/@-6.2942917,106.6657408,17z/data=!3m1!4b1!4m9!3m8!1s0x2e69fb305aad53d7:0xa110abec18bc6549!5m2!4m1!1i2!8m2!3d-6.294297!4d106.6683157!16s%2Fg%2F11swqrytc4?entry=ttu&g_ep=EgoyMDI1MDUxMy4xIKXMDSoASAFQAw%3D%3D' + lat2 + ',' + lng2 + '" target="_blank">Open in Google Maps</a>')
-        .openPopup();
-</script>
-
-
-<!-- ==== POST 4 ==== -->
-<div class="post-wrapper">
-    <div class="feed-wrapper">
-        <video autoplay loop muted playsinline>
-            <source src="{{ url_for('static', filename='videos/home7.mp4') }}" type="video/mp4">
-        </video>
-    </div>
-</div>
-
-<div id="RSVP-Segment" class="RSVP-Segment">
-    <video autoplay muted loop playsinline class="bg-video">
-        <source src="static/videos/BG-RSVP.mp4" type="video/mp4" />
-    </video>
-
-    <div class="RSVP-content">
-        <div class="RSVP-buttons">
-            <a href="{{ url_for('messenger') }}" class="RSVP-btn">RSVP</a>
-            <a href="{{ url_for('wishes') }}" class="WISHES-btn">Wishes</a>
-        </div>
-    </div>
-</div>
-
-<br>
-
-<!-- Galery-Segment -->
-<div id="Galery-Segment" class="Galery-Segment">
-    <h2>Galery</h2>
-        <div id="profile-grid" class="photo-grid"
-            data-masonry='{"itemSelector": ".grid-item", "columnWidth": ".grid-item", "gutter": 10, "percentPosition": true}'>
-            {% for img in images %}
-            <div class="grid-item">
-                <img src="{{ url_for('static', filename='images/galery/' ~ img) }}" alt="Post"
-                    onclick="openModal(this.src)">
+    <!-- Galery-Segment -->
+    <div id="Galery-Segment" class="Galery-Segment">
+        <h2>Galery</h2>
+            <div id="profile-grid" class="photo-grid"
+                data-masonry='{"itemSelector": ".grid-item", "columnWidth": ".grid-item", "gutter": 10, "percentPosition": true}'>
+                {% for img in images %}
+                <div class="grid-item">
+                    <img src="{{ url_for('static', filename='images/galery/' ~ img) }}" alt="Post"
+                        onclick="openModal(this.src)">
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
 
-        <div class="Galery-button">
-            <a href="{{ url_for('profile') }}" class="WISHES-btn">Galery</a>
-        </div>
-    
-</div>
-
-<!-- Modal -->
-    <!-- Modal with Prev/Next Controls -->
-    <div id="imgModal" class="modal" onclick="closeModal()">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-
-        <!-- Previous Button -->
-        <span class="modal-nav modal-prev" onclick="prevImage(event)">&#10094;</span>
-
-        <!-- Image Display -->
-        <img class="modal-content" id="modalImage">
-
-        <!-- Next Button -->
-        <span class="modal-nav modal-next" onclick="nextImage(event)">&#10095;</span>
+            <div class="Galery-button">
+                <a href="{{ url_for('profile') }}" class="WISHES-btn">Galery</a>
+            </div>
+        
     </div>
 
-<br><br>
+    <!-- Modal -->
+        <!-- Modal with Prev/Next Controls -->
+        <div id="imgModal" class="modal" onclick="closeModal()">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
 
-<div class="gift-card">
-    <video autoplay muted loop playsinline class="bg-video">
-        <source src="static/videos/BG-wedding-gift.mp4" type="video/mp4" />
-    </video>
+            <!-- Previous Button -->
+            <span class="modal-nav modal-prev" onclick="prevImage(event)">&#10094;</span>
 
-    <div class="gift-content">
+            <!-- Image Display -->
+            <img class="modal-content" id="modalImage">
 
-        <div class="bank-info">
-            <h2>Stefanus Michael Sondjaja</h2>
+            <!-- Next Button -->
+            <span class="modal-nav modal-next" onclick="nextImage(event)">&#10095;</span>
+        </div>
 
-            <div class="account-container">
-                <div class="account">
-                    <p class="label">BCA:</p>
-                    <div class="value">
-                        <span>2881489777</span>
-                        <button class="copy-btn" data-copy="2881489777" aria-label="Copy BCA number">
-                            <ion-icon name="copy-outline"></ion-icon>
-                        </button>
+    <br><br>
+
+    <div class="gift-card">
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="static/videos/BG-wedding-gift.mp4" type="video/mp4" />
+        </video>
+
+        <div class="gift-content">
+
+            <div class="bank-info">
+                <h2>Stefanus Michael Sondjaja</h2>
+
+                <div class="account-container">
+                    <div class="account">
+                        <p class="label">BCA:</p>
+                        <div class="value">
+                            <span>2881489777</span>
+                            <button class="copy-btn" data-copy="2881489777" aria-label="Copy BCA number">
+                                <ion-icon name="copy-outline"></ion-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="account">
+                        <p class="label">WISE:</p>
+                        <div class="value">
+                            <span>@stefanusm14</span>
+                            <button class="copy-btn" data-copy="@stefanusm14" aria-label="Copy WISE account">
+                                <ion-icon name="copy-outline"></ion-icon>
+                            </button>
+                        </div>
+
+                        <button class="WISE-QR-btn" onclick="openQRModal()">Show QR</button>
+                    </div>
+
+                    <div class="account">
+                        <p class="label">PayPal:</p>
+                        <p>
+                            <a href="https://paypal.me/michaelsondjaja" class="link" target="_blank"
+                                rel="noopener">paypal.me/michaelsondjaja</a>
+                        </p>
                     </div>
                 </div>
 
-                <div class="account">
-                    <p class="label">WISE:</p>
-                    <div class="value">
-                        <span>@stefanusm14</span>
-                        <button class="copy-btn" data-copy="@stefanusm14" aria-label="Copy WISE account">
-                            <ion-icon name="copy-outline"></ion-icon>
-                        </button>
-                    </div>
-
-                    <button class="WISE-QR-btn" onclick="openQRModal()">Show QR</button>
-                </div>
-
-                <div class="account">
-                    <p class="label">PayPal:</p>
-                    <p>
-                        <a href="https://paypal.me/michaelsondjaja" class="link" target="_blank"
-                            rel="noopener">paypal.me/michaelsondjaja</a>
-                    </p>
-                </div>
             </div>
+        </div>
+    </div>
 
+    <!-- Modal -->
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-modal-content">
+            <span class="qr-close" onclick="closeQRModal()">&times;</span>
+            <img src="static/images/wise.jpeg" alt="WISE QR" class="qr-wise" />
+        </div>
+    </div>
+
+    <br> 
+
+    <!-- ==== POST online zoom ==== -->
+    <div class="post-wrapper">
+        <div class="feed-wrapper">
+            <video autoplay loop muted playsinline>
+                <source src="{{ url_for('static', filename='videos/home8.mp4') }}" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- ==== POST See You There ==== -->
+    <div class="post-wrapper">
+        <div class="feed-wrapper">
+            <video autoplay loop muted playsinline>
+                <source src="{{ url_for('static', filename='videos/homeEnd.mp4') }}" type="video/mp4">
+            </video>
         </div>
     </div>
 </div>
-
-<!-- Modal -->
-<div id="qrModal" class="qr-modal">
-    <div class="qr-modal-content">
-        <span class="qr-close" onclick="closeQRModal()">&times;</span>
-        <img src="static/images/wise.jpeg" alt="WISE QR" class="qr-wise" />
-    </div>
-</div>
-
-<br> 
-
-<!-- ==== POST online zoom ==== -->
-<div class="post-wrapper">
-    <div class="feed-wrapper">
-        <video autoplay loop muted playsinline>
-            <source src="{{ url_for('static', filename='videos/home8.mp4') }}" type="video/mp4">
-        </video>
-    </div>
-</div>
-
-<!-- ==== POST See You There ==== -->
-<div class="post-wrapper">
-    <div class="feed-wrapper">
-        <video autoplay loop muted playsinline>
-            <source src="{{ url_for('static', filename='videos/homeEnd.mp4') }}" type="video/mp4">
-        </video>
-    </div>
-</div>
-
 <br><br>
 
 </div>
@@ -454,6 +455,9 @@
     document.addEventListener("DOMContentLoaded", function () {
         if (sessionStorage.getItem("incomingCallShown") !== "true") {
             setTimeout(() => {
+                // Add blur to the page
+                document.body.classList.add("blur-background");
+                
                 sessionStorage.setItem("incomingCallShown", "true");
 
                 // Create audio element
@@ -463,32 +467,31 @@
                     console.warn("Autoplay blocked or error playing ringtone:", err);
                 });
 
-                // Create modal
+                // Add blur
+                document.body.classList.add("blur-background");
+
                 const modal = document.createElement("div");
+                modal.className = "incoming-call-modal";
                 modal.innerHTML = `
-                    <div style="position:fixed;top:0;left:0;width:100%;height:100%;
-                                background:rgba(0,0,0,0.7);display:flex;
-                                justify-content:center;align-items:center;z-index:9999;">
-                        <div style="background:white;padding:20px;text-align:center;
-                                    border-radius:10px;max-width:90%;">
-                            <p style="font-size:1.2rem;">📞 Incoming Call from Stefanus & Eunice</p>
-                            <button id="acceptCall" style="margin:10px;padding:10px 20px;">Accept</button>
-                            <button id="declineCall" style="margin:10px;padding:10px 20px;">Decline</button>
-                        </div>
+                    <div class="modal-box">
+                        <p style="font-size:1.2rem;">📞 Incoming Call from Stefanus & Eunice</p>
+                        <button id="acceptCall" style="margin:10px;padding:10px 20px;">Accept</button>
+                        <button id="declineCall" style="margin:10px;padding:10px 20px;">Decline</button>
                     </div>
                 `;
                 document.body.appendChild(modal);
 
-                // Button listeners
                 document.getElementById("acceptCall").onclick = () => {
                     audio.pause();
                     audio.currentTime = 0;
+                    document.body.classList.remove("blur-background");
                     window.location.href = "{{ url_for('video_call') }}?from=home";
                 };
 
                 document.getElementById("declineCall").onclick = () => {
                     audio.pause();
                     audio.currentTime = 0;
+                    document.body.classList.remove("blur-background");
                     window.location.href = "{{ url_for('home') }}";
                 };
             }, 10000); // 10 seconds
