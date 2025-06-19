@@ -5,7 +5,6 @@
         <h2>laststeftoeunity</h2>
     </a>
 
-
     <div class="profile-header">
         <a class="profile-link profile-large">
             <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
@@ -13,7 +12,6 @@
         <div class="text-info profile-name">
             <a>Stefanus & Eunice</a>
 
-            <!-- Stats wrapper -->
             <div class="profile-stats">
                 <div class="stat-group">
                     <div class="stat-number">55</div>
@@ -35,49 +33,27 @@
         <div class="center-container">
             <h1>Recent</h1>
         </div>
-        <div id="profile-grid" class="photo-grid"
-            data-masonry='{"itemSelector": ".grid-item", "columnWidth": ".grid-item", "gutter": 10, "percentPosition": true}'>
+        <!-- Added two-columns class -->
+        <div id="profile-grid" class="photo-grid two-columns">
             {% for img in images %}
-            <div class="grid-item">
-                <img src="{{ url_for('static', filename='images/galery/' ~ img) }}" alt="Post"
-                    onclick="openModal(this.src)">
+            <div class="grid-item" data-index="{{ loop.index0 }}">
+                <div class="image-wrapper">
+                    <img src="{{ url_for('static', filename='images/galery/' ~ img) }}" alt="Post" class="grid-image">
+                </div>
             </div>
             {% endfor %}
         </div>
     </section>
 
-    <!-- Modal -->
-    <!-- Modal with Prev/Next Controls -->
-    <div id="imgModal" class="modal" onclick="closeModal()">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-
-        <!-- Previous Button -->
-        <span class="modal-nav modal-prev" onclick="prevImage(event)">&#10094;</span>
-
-        <!-- Image Display -->
-        <img class="modal-content" id="modalImage">
-
-        <!-- Next Button -->
-        <span class="modal-nav modal-next" onclick="nextImage(event)">&#10095;</span>
+    <div id="imgModal" class="modal">
+        <div class="modal-image-wrapper">
+            <span class="modal-close">&times;</span>
+            <span class="modal-prev">&#10094;</span>
+            <span class="modal-next">&#10095;</span>
+            <img class="modal-content" id="modalImage">
+        </div>
     </div>
-
 </div>
 
-
 <script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
-<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const grid = document.querySelector('#profile-grid');
-        imagesLoaded(grid, function () {
-            new Masonry(grid, {
-                itemSelector: '.grid-item',
-                columnWidth: '.grid-item',
-                gutter: 10,
-                percentPosition: true
-            });
-        });
-    });
-</script>
-
 {% endblock %}

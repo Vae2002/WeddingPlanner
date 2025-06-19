@@ -8,10 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let imageList = [];
     let currentIndex = -1;
 
-    function updateImageList() {
-        imageList = Array.from(document.querySelectorAll('.photo-grid .grid-item img'));
-    }
-
     function updateDownloadHandler(src) {
         const now = new Date();
         const timestamp = now.toISOString().replace(/[-:T]/g, '').slice(0, 14);
@@ -39,55 +35,92 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
 
-    window.openModal = function (src) {
-        updateImageList(); // update the list when opening modal
-
+    // Open modal using index directly
+    function openModal(index) {
+        currentIndex = index;
         modal.style.display = 'block';
+        const src = imageList[currentIndex].src;
         modalImage.src = src;
-        downloadBtn.href = src;
-        updateDownloadHandler(src); // ✅ now dynamic
+        updateDownloadHandler(src);
+    }
 
-        currentIndex = imageList.findIndex(img => img.src === src);
-    };
-
-    window.closeModal = function () {
+    function closeModal() {
         modal.style.display = 'none';
-    };
-
-    window.nextImage = function (event) {
-        event.stopPropagation();
-        if (currentIndex < imageList.length - 1) {
-            showImage(currentIndex + 1);
-        }
-    };
-
-    window.prevImage = function (event) {
-        event.stopPropagation();
-        if (currentIndex > 0) {
-            showImage(currentIndex - 1);
-        }
-    };
+    }
 
     function showImage(index) {
         if (index >= 0 && index < imageList.length) {
             currentIndex = index;
-            const newSrc = imageList[currentIndex].src;
-            modalImage.src = newSrc;
-            downloadBtn.href = newSrc;
-            updateDownloadHandler(newSrc); // ✅ now updates for new image
+            const src = imageList[currentIndex].src;
+            modalImage.src = src;
+            updateDownloadHandler(src);
         }
     }
 
-    // Close modal on background or close button click
+    function nextImage(event) {
+        event.stopPropagation();
+        if (currentIndex < imageList.length - 1) {
+            showImage(currentIndex + 1);
+        }
+    }
+
+    function prevImage(event) {
+        event.stopPropagation();
+        if (currentIndex > 0) {
+            showImage(currentIndex - 1);
+        }
+    }
+
     modal.addEventListener('click', function (e) {
-        if (e.target.id === 'imgModal' || e.target.classList.contains('modal-close')) {
+        if (e.target.id === 'imgModal') {
             closeModal();
         }
     });
 
+    document.querySelector('.modal-close').addEventListener('click', closeModal);
+    document.querySelector('.modal-prev').addEventListener('click', prevImage);
+    document.querySelector('.modal-next').addEventListener('click', nextImage);
+
+    // Attach modal open logic to grid images and assign data-index
+    const images = document.querySelectorAll('.grid-image');
+    images.forEach((img, index) => {
+        img.dataset.index = index;  // Assign data-index
+        imageList.push(img);
+        img.addEventListener('click', () => openModal(index));  // Use index here
+    });
+
+    // Attach download handler to existing grid buttons (unchanged)
+    document.querySelectorAll('.download-hover-button').forEach(btn => {
+        btn.addEventListener('click', async function (event) {
+            event.preventDefault();
+            const src = this.getAttribute('data-src');
+            const now = new Date();
+            const timestamp = now.toISOString().replace(/[-:T]/g, '').slice(0, 14);
+            const extension = src.split('.').pop().split('?')[0];
+            const fileName = `img_${timestamp}.${extension}`;
+
+            try {
+                const response = await fetch(src);
+                const blob = await response.blob();
+
+                const blobUrl = URL.createObjectURL(blob);
+                const tempLink = document.createElement('a');
+                tempLink.href = blobUrl;
+                tempLink.download = fileName;
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+                URL.revokeObjectURL(blobUrl);
+            } catch (err) {
+                alert("Download failed.");
+                console.error(err);
+            }
+        });
+    });
+
     // === Lazy load / infinite scroll ===
+
     const scrollContainer = document.querySelector('.photo-grid');
-    let page = 1;
     let loading = false;
     let nextToken = null;
 
@@ -119,14 +152,47 @@ document.addEventListener("DOMContentLoaded", function () {
                         const img = new Image();
                         img.src = src;
                         img.alt = "Post";
+                        img.className = "grid-image";
 
                         img.onload = () => {
                             div.innerHTML = `
                                 <div class="image-wrapper">
-                                    <img src="${src}" alt="Post" onclick="openModal('${src}')">
-                                    <a href="${src}" class="download-hover-button" data-src="${src}" onclick="downloadFromGrid(event)">⭳</a>
+                                    <img src="${src}" alt="Post" class="grid-image">
+                                    <a href="${src}" class="download-hover-button" data-src="${src}">⭳</a>
                                 </div>`;
                             grid.appendChild(div);
+
+                            // Add newly loaded image to imageList and bind event
+                            const newImg = div.querySelector('.grid-image');
+                            newImg.dataset.index = imageList.length; // Assign next index
+                            imageList.push(newImg);
+                            newImg.addEventListener('click', () => openModal(newImg.dataset.index));
+
+                            const newBtn = div.querySelector('.download-hover-button');
+                            newBtn.addEventListener('click', async function (event) {
+                                event.preventDefault();
+                                const now = new Date();
+                                const timestamp = now.toISOString().replace(/[-:T]/g, '').slice(0, 14);
+                                const extension = src.split('.').pop().split('?')[0];
+                                const fileName = `img_${timestamp}.${extension}`;
+
+                                try {
+                                    const response = await fetch(src);
+                                    const blob = await response.blob();
+                                    const blobUrl = URL.createObjectURL(blob);
+                                    const tempLink = document.createElement('a');
+                                    tempLink.href = blobUrl;
+                                    tempLink.download = fileName;
+                                    document.body.appendChild(tempLink);
+                                    tempLink.click();
+                                    document.body.removeChild(tempLink);
+                                    URL.revokeObjectURL(blobUrl);
+                                } catch (err) {
+                                    alert("Download failed.");
+                                    console.error(err);
+                                }
+                            });
+
                             resolve();
                         };
 
@@ -153,7 +219,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     observer.disconnect();
                 }
 
-                updateImageList(); // refresh the global list
                 loading = false;
             })
             .catch(err => {
@@ -174,31 +239,3 @@ document.addEventListener("DOMContentLoaded", function () {
     const triggerEl = document.getElementById('grid-end-trigger');
     observer.observe(triggerEl);
 });
-
-// Global function (outside DOMContentLoaded) to allow inline onclick
-function downloadFromGrid(event) {
-    event.preventDefault();
-    const src = event.currentTarget.getAttribute('data-src');
-
-    const now = new Date();
-    const timestamp = now.toISOString().replace(/[-:T]/g, '').slice(0, 14);
-    const extension = src.split('.').pop().split('?')[0];
-    const fileName = `img_${timestamp}.${extension}`;
-
-    fetch(src)
-        .then(response => response.blob())
-        .then(blob => {
-            const blobUrl = URL.createObjectURL(blob);
-            const tempLink = document.createElement('a');
-            tempLink.href = blobUrl;
-            tempLink.download = fileName;
-            document.body.appendChild(tempLink);
-            tempLink.click();
-            document.body.removeChild(tempLink);
-            URL.revokeObjectURL(blobUrl);
-        })
-        .catch(err => {
-            alert("Download failed.");
-            console.error(err);
-        });
-}
