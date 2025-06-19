@@ -1,10 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const audio = document.getElementById('bg-audio');
     const video = document.getElementById('vidcall-video')
     const camStream = document.getElementById('vidcall-stream')
     const toggleCamBtn = document.getElementById('toggle-camera');
     const camContainer = document.querySelector('.vidcam-container');
     const cameraOffOverlay = document.getElementById('camera-off-overlay');
+    const closeBtn = document.getElementById('close-call');
+    const endCallBtn = document.getElementById('end-call');
+    const fromParam = new URLSearchParams(window.location.search).get('from') || 'messenger';
+    const returnURL = fromParam === 'home' ? '/home' : '/messenger';
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = returnURL;
+        });
+    }
+
+    if (endCallBtn) {
+        endCallBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = returnURL;
+        });
+    }
+
     
     function getQueryParam(key) {
         const params = new URLSearchParams(window.location.search);
@@ -69,26 +87,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const params = new URLSearchParams(window.location.search);
         return params.get(key);
     }
-
-    const from = getQueryParam('from') || 'messenger'; // fallback
     
     // Handle background audio end
-    if (audio) {
-        audio.addEventListener('ended', () => {
-            window.location.href = "/messenger";
-        });
-    }
-
-        // Handle background audio end
     if (video) {
         video.addEventListener('ended', () => {
-            window.location.href = from === 'home' ? "/home" : "/messenger";
+            window.location.href = returnURL;
         });
     }
 
     const switchBtn = document.getElementById('switch-camera-btn');
 
-    let currentFilename = null;
     let currentStream = null;
     let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
 
@@ -130,8 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         camContainer.style.display = "none";
         cameraOffOverlay.style.display = "flex";
     }
-
-
 
     // Flip camera
     if (switchBtn) {
