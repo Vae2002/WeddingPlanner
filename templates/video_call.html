@@ -10,7 +10,7 @@
 
 <div class="video-wrapper">
     <video id="vidcall-video" autoplay muted playsinline preload="auto">
-        <source src="{{ url_for('static', filename='videos/vidcall_clip.mp4') }}" type="video/mp4">
+        <source src="{{ url_for('static', filename='videos/call.mp4') }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
@@ -31,7 +31,7 @@
     </svg>
 </button>
 
-<a href="{{ url_for('messenger') }}" class="close-button"><</a>
+<a href="#" class="close-button" id="close-call"><</a>
 
 <div class="call-controls">
     <a href="#" id="toggle-camera" title="Toggle Camera"></a>
@@ -50,7 +50,7 @@
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
         </svg>
     </a>
-    <a href="{{ url_for('messenger') }}" title="End Call" class="end-call">
+    <a href="#" title="End Call" class="end-call" id="end-call">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24">
             <path
                 d="M21 15.46l-5.27-1.32a1 1 0 0 0-1.23.76l-.8 3.26a16 16 0 0 1-4.4 0l-.8-3.26a1 1 0 0 0-1.23-.76L3 15.46A2 2 0 0 1 1 13.58V9.42a2 2 0 0 1 2-1.88h18a2 2 0 0 1 2 1.88v4.16a2 2 0 0 1-2 1.88z" />
