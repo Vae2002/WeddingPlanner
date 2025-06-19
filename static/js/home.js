@@ -277,4 +277,12 @@ window.addEventListener("DOMContentLoaded", () => {
     currentModalIndex = (currentModalIndex - 1 + modalImageList.length) % modalImageList.length;
     document.getElementById("modalImage").src = modalImageList[currentModalIndex];
   }
+
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+  window.nextImage = nextImage;
+  window.prevImage = prevImage;
+  window.openQRModal = openQRModal;
+  window.closeQRModal = closeQRModal; 
+
 });
