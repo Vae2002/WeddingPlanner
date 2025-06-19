@@ -253,12 +253,6 @@ def get_user_info():
         sheet = get_sheet()
         records = sheet.get_all_records()
 
-        # Compute total number of people from all records
-        total_n_person = sum(
-            safe_int(r.get('n_person'), 0) or 0
-            for r in records
-        )
-
         for record in records:
             if str(record.get('username')).lower() == username.lower():
                 is_online = safe_int(record.get('is_online'), 0)
@@ -313,8 +307,7 @@ def get_user_info():
                     "n_person_confirm": n_person_confirm,
                     "wishes": wishes,
                     "is_filled": is_filled,
-                    "is_scanned": is_scanned,
-                    "total_n_person": total_n_person
+                    "is_scanned": is_scanned
                 })
 
         # User not found
@@ -328,8 +321,7 @@ def get_user_info():
             "n_person_confirm": 0,
             "wishes": None,
             "is_filled": 0,
-            "is_scanned": 0,
-            "total_n_person": 0
+            "is_scanned": 0
         })
 
     except Exception as e:
@@ -764,16 +756,41 @@ def profile():
 
     sheet = get_sheet()
     records = sheet.get_all_records()
+
     def safe_int(value, default=0):
         try:
             return int(value) if str(value).strip() != '' else default
         except (ValueError, TypeError):
             return default
+
+    # Total of n_person values
     total_n_person = sum(safe_int(r.get("n_person"), 0) for r in records)
 
-    return render_template('profile.html', images=image_files,
-                           total_n_person=total_n_person,
-                           show_footer=True, play_audio=True)
+    # Total of all confirmed headcounts
+    total_n_person_confirm = 0
+    for r in records:
+        val = r.get("n_person_confirm")
+        if isinstance(val, (int, float)):
+            total_n_person_confirm += int(val)
+        elif isinstance(val, str) and val.strip().startswith("["):
+            try:
+                parsed = eval(val)
+                if isinstance(parsed, list):
+                    total_n_person_confirm += sum(
+                        int(x[1]) for x in parsed
+                        if isinstance(x, list) and len(x) > 1 and str(x[1]).isdigit()
+                    )
+            except Exception as e:
+                print("Warning: Failed to parse n_person_confirm:", val, "Error:", e)
+
+    return render_template(
+        'profile.html',
+        images=image_files,
+        total_n_person=total_n_person,
+        total_n_person_confirm=total_n_person_confirm,
+        show_footer=True,
+        play_audio=True
+    )
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
