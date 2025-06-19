@@ -2,6 +2,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const audio = document.getElementById('bg-audio');
     const video = document.getElementById('vidcall-video')
     const camStream = document.getElementById('vidcall-stream')
+    const toggleCamBtn = document.getElementById('toggle-camera');
+    const cameraOffOverlay = document.getElementById('camera-off-overlay');
+    let cameraOn = true;
+
+    toggleCamBtn.addEventListener('click', () => {
+        const camContainer = document.querySelector('.vidcam-container');
+
+        if (cameraOn) {
+            // Turn camera off
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+
+            if (camContainer) camContainer.style.display = "none";
+            if (cameraOffOverlay) cameraOffOverlay.style.display = "flex";
+            if (switchBtn) switchBtn.style.display = "none";
+        } else {
+            // Turn camera on
+            if (camContainer) camContainer.style.display = "block";
+            if (cameraOffOverlay) cameraOffOverlay.style.display = "none";
+            if (switchBtn && /Mobi|Android/i.test(navigator.userAgent)) {
+                switchBtn.style.display = 'block';
+            }
+            startCamera(currentFacingMode);
+        }
+
+        cameraOn = !cameraOn;
+    });
+
+
 
     function getQueryParam(key) {
         const params = new URLSearchParams(window.location.search);
