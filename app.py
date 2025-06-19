@@ -253,6 +253,12 @@ def get_user_info():
         sheet = get_sheet()
         records = sheet.get_all_records()
 
+        # Compute total number of people from all records
+        total_n_person = sum(
+            safe_int(r.get('n_person'), 0) or 0
+            for r in records
+        )
+
         for record in records:
             if str(record.get('username')).lower() == username.lower():
                 is_online = safe_int(record.get('is_online'), 0)
@@ -307,7 +313,8 @@ def get_user_info():
                     "n_person_confirm": n_person_confirm,
                     "wishes": wishes,
                     "is_filled": is_filled,
-                    "is_scanned": is_scanned
+                    "is_scanned": is_scanned,
+                    "total_n_person": total_n_person
                 })
 
         # User not found
@@ -321,7 +328,8 @@ def get_user_info():
             "n_person_confirm": 0,
             "wishes": None,
             "is_filled": 0,
-            "is_scanned": 0
+            "is_scanned": 0,
+            "total_n_person": 0
         })
 
     except Exception as e:
@@ -748,15 +756,24 @@ def reels():
 @login_required
 def profile():
     image_folder = os.path.join('static', 'images', 'galery')
-  
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
         if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
     ]
-      # Debugging output
-    print("Images galery sent to template:", image_files)
-    return render_template('profile.html', images=image_files, show_footer=True, play_audio = True)
+
+    sheet = get_sheet()
+    records = sheet.get_all_records()
+    def safe_int(value, default=0):
+        try:
+            return int(value) if str(value).strip() != '' else default
+        except (ValueError, TypeError):
+            return default
+    total_n_person = sum(safe_int(r.get("n_person"), 0) for r in records)
+
+    return render_template('profile.html', images=image_files,
+                           total_n_person=total_n_person,
+                           show_footer=True, play_audio=True)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
