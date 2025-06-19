@@ -26,6 +26,11 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     };
 
+    // Add transitionend listener once, to toggle isTransitioning flag
+    track.addEventListener('transitionend', () => {
+      isTransitioning = false;
+    });
+
     const updateCarousel = () => {
       const slideWidth = slides[0]?.offsetWidth || 0;
       if (slideWidth === 0) {
@@ -36,10 +41,6 @@ window.addEventListener("DOMContentLoaded", () => {
       isTransitioning = true;
       track.style.transition = 'transform 0.3s ease-in-out';
       track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
-
-      track.addEventListener('transitionend', () => {
-        isTransitioning = false;
-      }, { once: true });
 
       updateDots();
       carousel.dataset.currentIndex = currentIndex;
@@ -61,45 +62,45 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     };
 
- const addSwipeListeners = (element) => {
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let isTouching = false;
-  let hasMoved = false;
+    const addSwipeListeners = (element) => {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isTouching = false;
+      let hasMoved = false;
 
-  element.addEventListener("touchstart", (e) => {
-    if (e.touches.length > 1) return;
-    isTouching = true;
-    hasMoved = false;
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: false });
+      element.addEventListener("touchstart", (e) => {
+        if (e.touches.length > 1) return;
+        isTouching = true;
+        hasMoved = false;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: false });
 
-  element.addEventListener("touchmove", (e) => {
-    if (!isTouching || e.touches.length > 1) return;
+      element.addEventListener("touchmove", (e) => {
+        if (!isTouching || e.touches.length > 1) return;
 
-    const dx = e.touches[0].clientX - touchStartX;
-    const dy = e.touches[0].clientY - touchStartY;
+        const dx = e.touches[0].clientX - touchStartX;
+        const dy = e.touches[0].clientY - touchStartY;
 
-    // If horizontal movement is dominant, prevent vertical scroll
-    if (Math.abs(dx) > Math.abs(dy)) {
-      e.preventDefault();  // 👈 disables vertical scroll
-      hasMoved = true;
-    }
-  }, { passive: false });
+        // If horizontal movement is dominant, prevent vertical scroll
+        if (Math.abs(dx) > Math.abs(dy)) {
+          e.preventDefault();  // 👈 disables vertical scroll
+          hasMoved = true;
+        }
+      }, { passive: false });
 
-  element.addEventListener("touchend", (e) => {
-    if (!isTouching) return;
+      element.addEventListener("touchend", (e) => {
+        if (!isTouching) return;
 
-    const dx = e.changedTouches[0].clientX - touchStartX;
+        const dx = e.changedTouches[0].clientX - touchStartX;
 
-    if (hasMoved && Math.abs(dx) > 50) {
-      dx > 0 ? goToPrevSlide() : goToNextSlide();
-    }
+        if (hasMoved && Math.abs(dx) > 50) {
+          dx > 0 ? goToPrevSlide() : goToNextSlide();
+        }
 
-    isTouching = false;
-    hasMoved = false;
-  });
+        isTouching = false;
+        hasMoved = false;
+      });
 
       let mouseStartX = 0;
       let isMouseDragging = false;
@@ -226,12 +227,12 @@ function updateCountdown() {
 const countdownInterval = setInterval(updateCountdown, 1000);
 updateCountdown(); // Initial call
 
- document.querySelectorAll('.copy-btn').forEach(button => {
-    button.addEventListener('click', () => {
-      const valueToCopy = button.getAttribute('data-copy');
+document.querySelectorAll('.copy-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    const valueToCopy = button.getAttribute('data-copy');
 
-      navigator.clipboard.writeText(valueToCopy).then(() => {
-    // ✅ Alert user
+    navigator.clipboard.writeText(valueToCopy).then(() => {
+      // ✅ Alert user
       alert(`Copied: ${valueToCopy}`);
 
       // Optional visual feedback with icon
@@ -246,15 +247,15 @@ updateCountdown(); // Initial call
   });
 });
 
-  function openQRModal() {
-    document.getElementById('qrModal').style.display = 'block';
-  }
+function openQRModal() {
+  document.getElementById('qrModal').style.display = 'block';
+}
 
-  function closeQRModal() {
-    document.getElementById('qrModal').style.display = 'none';
-  }
+function closeQRModal() {
+  document.getElementById('qrModal').style.display = 'none';
+}
 
-  let modalImageList = []; // List of image sources
+let modalImageList = []; // List of image sources
 let currentModalIndex = 0;
 
 // Open modal and set image

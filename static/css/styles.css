@@ -1610,6 +1610,7 @@ position: absolute;
   width: 100%;
   max-width: 600px;
   margin: 1rem auto;
+  touch-action: pan-y;
 }
 
 .carousel-window {
