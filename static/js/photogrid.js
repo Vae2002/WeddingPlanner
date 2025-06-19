@@ -166,7 +166,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             const newImg = div.querySelector('.grid-image');
                             newImg.dataset.index = imageList.length; // Assign next index
                             imageList.push(newImg);
-                            newImg.addEventListener('click', () => openModal(newImg.dataset.index));
+                            // === FIX HERE: cast dataset.index to number before passing ===
+                            newImg.addEventListener('click', () => openModal(Number(newImg.dataset.index)));
 
                             const newBtn = div.querySelector('.download-hover-button');
                             newBtn.addEventListener('click', async function (event) {
