@@ -3,14 +3,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const video = document.getElementById('vidcall-video')
     const camStream = document.getElementById('vidcall-stream')
     const toggleCamBtn = document.getElementById('toggle-camera');
+    const camContainer = document.querySelector('.vidcam-container');
     const cameraOffOverlay = document.getElementById('camera-off-overlay');
     let cameraOn = true;
+    setCameraIcon(cameraOn);
+
+    function setCameraIcon(isOn) {
+        const iconHTML = isOn
+            ? `
+            <!-- Camera Off Icon (strike-through) -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M17 10.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4.5l5 5v-13l-5 5z"/>
+                <line x1="3" y1="3" x2="21" y2="21" stroke="red" stroke-width="2"/>
+            </svg>`
+            : `
+            <!-- Camera On Icon (no strike-through) -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="black" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M17 10.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4.5l5 5v-13l-5 5z"/>
+            </svg>`;
+
+        toggleCamBtn.innerHTML = iconHTML;
+    }
+
 
     toggleCamBtn.addEventListener('click', () => {
-        const camContainer = document.querySelector('.vidcam-container');
-
         if (cameraOn) {
-            // Turn camera off
+            // Turn off camera
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
                 currentStream = null;
@@ -19,17 +39,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (camContainer) camContainer.style.display = "none";
             if (cameraOffOverlay) cameraOffOverlay.style.display = "flex";
             if (switchBtn) switchBtn.style.display = "none";
+
         } else {
-            // Turn camera on
+            // Turn on camera
             if (camContainer) camContainer.style.display = "block";
             if (cameraOffOverlay) cameraOffOverlay.style.display = "none";
             if (switchBtn && /Mobi|Android/i.test(navigator.userAgent)) {
                 switchBtn.style.display = 'block';
             }
+
             startCamera(currentFacingMode);
         }
 
         cameraOn = !cameraOn;
+        setCameraIcon(cameraOn);
     });
 
 
