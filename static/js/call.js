@@ -5,8 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleCamBtn = document.getElementById('toggle-camera');
     const camContainer = document.querySelector('.vidcam-container');
     const cameraOffOverlay = document.getElementById('camera-off-overlay');
-    let cameraOn = true;
+    
+    function getQueryParam(key) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(key);
+    }
+
+    const type = getQueryParam('type') || 'video';
+    let cameraOn = type !== 'voice';  // camera is off if type=voice
     setCameraIcon(cameraOn);
+
 
     function setCameraIcon(isOn) {
         const iconHTML = isOn
@@ -116,10 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initial camera start
-    if (camStream) {
+    if (camStream && cameraOn) {
         startCamera();
+    } else {
+        camContainer.style.display = "none";
+        cameraOffOverlay.style.display = "flex";
     }
+
 
 
     // Flip camera
