@@ -3,6 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const video = document.getElementById('vidcall-video')
     const camStream = document.getElementById('vidcall-stream')
 
+    function getQueryParam(key) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(key);
+    }
+
+    const from = getQueryParam('from') || 'messenger'; // fallback
+    
     // Handle background audio end
     if (audio) {
         audio.addEventListener('ended', () => {
@@ -13,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle background audio end
     if (video) {
         video.addEventListener('ended', () => {
-            window.location.href = "/messenger";
+            window.location.href = from === 'home' ? "/home" : "/messenger";
         });
     }
 
