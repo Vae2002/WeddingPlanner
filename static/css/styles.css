@@ -847,6 +847,15 @@ footer {
     color: white;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+
+/* Apply Alex Brush font to all headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Garamond', serif; /* Use Garamond for headings */
+    margin: 0;
+    line-height: 1.2;
+}
+
 .text-info h1,
 .text-info h2,
 .text-info h3,
@@ -854,7 +863,7 @@ footer {
 .text-info p{
     margin: 0;           /* Remove all margin */
     line-height: 1.2;    /* Adjust line spacing (you can tweak this) */
-}
+  }
 
 .profile-name{
     font-size: 24px;    /* Adjust name size */
@@ -982,7 +991,7 @@ footer {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1002;
+  z-index: 9999;
   background-color: rgba(0, 0, 0, 0.75);
   color: white;
   padding: 12px 20px;
@@ -1808,7 +1817,7 @@ position: absolute;
     width: 100vw;
     height: 100vh;
     background: white; /* WHITE, not transparent */
-    z-index: 900;
+    z-index: 800;
     display: none;
     justify-content: center;
     align-items: center;
