@@ -976,7 +976,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .video-wrapper {
-    position: fixed; /* match the video */
+    position: relative; /* match the video */
     top: 0;
     left: 0;
     width: 100vw;
