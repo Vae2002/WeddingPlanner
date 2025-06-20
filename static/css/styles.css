@@ -965,91 +965,6 @@ h1, h2, h3, h4, h5, h6 {
   background-color: black;
 }
 
-#vidcall-video {
-  position: fixed;
-  top: 0;       
-  left: 0;
-  width: 100vw;
-  height: calc(100vh); 
-  object-fit: contain;
-  z-index: -1;
-}
-
-.video-wrapper {
-    position: relative; /* match the video */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1; /* must be above the video */
-    pointer-events: none; /* optional: let clicks through except button */
-}
-
-#unmute-button {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  background-color: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  pointer-events: auto; /* 👈 THIS FIXES IT */
-}
-
-.call-controls {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: white;
-  border-radius: 30px;
-  padding: 10px 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  display: flex;
-  gap: 20px;
-  z-index: 1001;
-}
-
-.call-controls a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border-radius: 50%;
-  transition: background 0.3s;
-}
-
-.call-controls a:hover {
-  background-color: #f0f0f0;
-}
-
-.call-controls .end-call {
-  background-color: #e53935;
-  border-radius: 50%;
-  padding: 6px;
-}
-
-#unmute-audio-button {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  background-color: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
 .photo-grid {
  display: grid;
   grid-template-columns: repeat(3, 1fr); /* Always 3 equal columns */
@@ -1851,4 +1766,89 @@ position: absolute;
     justify-content: center;
     align-items: center;
     text-align: center;
+}
+
+#vidcall-video {
+  position: fixed;
+  top: 0;       
+  left: 0;
+  width: 100vw;
+  height: calc(100vh); 
+  object-fit: contain;
+  z-index: -1;
+}
+
+.video-wrapper {
+    position: relative; /* match the video */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1; /* must be above the video */
+    pointer-events: none; /* optional: let clicks through except button */
+}
+
+#unmute-button {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  pointer-events: auto; /* 👈 THIS FIXES IT */
+}
+
+.call-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border-radius: 30px;
+  padding: 10px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 20px;
+  z-index: 1001;
+}
+
+.call-controls a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.call-controls a:hover {
+  background-color: #f0f0f0;
+}
+
+.call-controls .end-call {
+  background-color: #e53935;
+  border-radius: 50%;
+  padding: 6px;
+}
+
+#unmute-audio-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
 }

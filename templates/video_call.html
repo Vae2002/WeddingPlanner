@@ -13,10 +13,11 @@
         <source src="{{ url_for('static', filename='videos/call.mp4') }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
-
-    <!-- Unmute Button -->
-    <button id="unmute-button">Tap to Unmute</button>
 </div>
+
+<!-- Unmute Button -->
+<button id="unmute-button">Tap to Unmute</button>
+
 
 <div class="vidcam-container">
     <video id="vidcall-stream" autoplay playsinline></video>
@@ -31,79 +32,80 @@
     </svg>
 </button>
 
-<a href="#" class="close-button" id="close-call"><</a>
+<a href="#" class="close-button" id="close-call">
+    << /a>
 
-<div class="call-controls">
-    <a href="#" id="toggle-camera" title="Toggle Camera"></a>
+        <div class="call-controls">
+            <a href="#" id="toggle-camera" title="Toggle Camera"></a>
 
-    <a href="#" title="Mic">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="black" viewBox="0 0 24 24">
-            <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z" />
-            <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
-            <line x1="12" y1="19" x2="12" y2="23" />
-            <line x1="8" y1="23" x2="16" y2="23" />
-        </svg>
-    </a>
-    <a href="#" title="Speaker">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="black" viewBox="0 0 24 24">
-            <path d="M11 5L6 9H2v6h4l5 4V5z" />
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-        </svg>
-    </a>
-    <a href="#" title="End Call" class="end-call" id="end-call">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24">
-            <path
-                d="M21 15.46l-5.27-1.32a1 1 0 0 0-1.23.76l-.8 3.26a16 16 0 0 1-4.4 0l-.8-3.26a1 1 0 0 0-1.23-.76L3 15.46A2 2 0 0 1 1 13.58V9.42a2 2 0 0 1 2-1.88h18a2 2 0 0 1 2 1.88v4.16a2 2 0 0 1-2 1.88z" />
-        </svg>
-    </a>
-</div>
+            <a href="#" title="Mic">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="black" viewBox="0 0 24 24">
+                    <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z" />
+                    <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
+                </svg>
+            </a>
+            <a href="#" title="Speaker">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="black" viewBox="0 0 24 24">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                </svg>
+            </a>
+            <a href="#" title="End Call" class="end-call" id="end-call">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24">
+                    <path
+                        d="M21 15.46l-5.27-1.32a1 1 0 0 0-1.23.76l-.8 3.26a16 16 0 0 1-4.4 0l-.8-3.26a1 1 0 0 0-1.23-.76L3 15.46A2 2 0 0 1 1 13.58V9.42a2 2 0 0 1 2-1.88h18a2 2 0 0 1 2 1.88v4.16a2 2 0 0 1-2 1.88z" />
+                </svg>
+            </a>
+        </div>
 
 
-<script src="{{ url_for('static', filename='js/call.js') }}"></script>
-<script src="{{ url_for('static', filename='js/capture.js') }}"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const video = document.getElementById("vidcall-video");
-    const unmuteButton = document.getElementById("unmute-button");
+        <script src="{{ url_for('static', filename='js/call.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/capture.js') }}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const video = document.getElementById("vidcall-video");
+                const unmuteButton = document.getElementById("unmute-button");
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-    if (isIOS) {
-        unmuteButton.style.display = "block";
+                if (isIOS) {
+                    unmuteButton.style.display = "block";
 
-        unmuteButton.addEventListener("click", () => {
-            // Pause first to reset the video state
-            video.pause();
-            video.currentTime = 0;
+                    unmuteButton.addEventListener("click", () => {
+                        // Pause first to reset the video state
+                        video.pause();
+                        video.currentTime = 0;
 
-            video.muted = false;
+                        video.muted = false;
 
-            // Call play() directly from the click event
-            video.play().then(() => {
-                unmuteButton.style.display = "none";
-            }).catch(err => {
-                console.error("iOS playback error:", err);
+                        // Call play() directly from the click event
+                        video.play().then(() => {
+                            unmuteButton.style.display = "none";
+                        }).catch(err => {
+                            console.error("iOS playback error:", err);
+                        });
+                    });
+
+                } else {
+                    // For non-iOS browsers: fade-in effect
+                    video.volume = 0;
+                    video.muted = true;
+
+                    video.play().then(() => {
+                        video.muted = false;
+                        let vol = 0;
+                        const fadeInterval = setInterval(() => {
+                            vol = Math.min(vol + 0.2, 1);
+                            video.volume = vol;
+                            if (vol >= 1) clearInterval(fadeInterval);
+                        }, 50);
+                    }).catch(err => {
+                        console.warn("Autoplay with fade-in failed:", err);
+                    });
+                }
             });
-        });
+        </script>
 
-    } else {
-        // For non-iOS browsers: fade-in effect
-        video.volume = 0;
-        video.muted = true;
-
-        video.play().then(() => {
-            video.muted = false;
-            let vol = 0;
-            const fadeInterval = setInterval(() => {
-                vol = Math.min(vol + 0.2, 1);
-                video.volume = vol;
-                if (vol >= 1) clearInterval(fadeInterval);
-            }, 50);
-        }).catch(err => {
-            console.warn("Autoplay with fade-in failed:", err);
-        });
-    }
-});
-</script>
-
-{% endblock %}
+        {% endblock %}
