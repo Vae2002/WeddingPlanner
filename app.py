@@ -548,7 +548,37 @@ def get_all_wishes():
 @app.route('/messenger')
 @login_required
 def messenger():
-    return render_template('messenger.html', show_footer=False, play_audio=True)
+    sheet = get_sheet()
+    records = sheet.get_all_records()
+
+    def safe_int(value, default=0):
+        try:
+            return int(value) if str(value).strip() != '' else default
+        except (ValueError, TypeError):
+            return default
+
+    total_n_person_confirm = 0
+    for r in records:
+        val = r.get("n_person_confirm")
+        if isinstance(val, (int, float)):
+            total_n_person_confirm += int(val)
+        elif isinstance(val, str) and val.strip().startswith("["):
+            try:
+                parsed = eval(val)
+                if isinstance(parsed, list):
+                    total_n_person_confirm += sum(
+                        int(x[1]) for x in parsed
+                        if isinstance(x, list) and len(x) > 1 and str(x[1]).isdigit()
+                    )
+            except Exception as e:
+                print("Warning: Failed to parse n_person_confirm:", val, "Error:", e)
+
+    return render_template(
+        'messenger.html',
+        total_n_person_confirm=total_n_person_confirm,
+        show_footer=False,
+        play_audio=True
+    )
 
 @app.route('/submit-answers', methods=['POST'])
 def submit_answers():
@@ -748,15 +778,49 @@ def reels():
 @login_required
 def profile():
     image_folder = os.path.join('static', 'images', 'galery')
-  
     image_files = [
         os.path.join(file)
         for file in os.listdir(image_folder)
         if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
     ]
-      # Debugging output
-    print("Images galery sent to template:", image_files)
-    return render_template('profile.html', images=image_files, show_footer=True, play_audio = True)
+
+    sheet = get_sheet()
+    records = sheet.get_all_records()
+
+    def safe_int(value, default=0):
+        try:
+            return int(value) if str(value).strip() != '' else default
+        except (ValueError, TypeError):
+            return default
+
+    # Total of n_person values
+    total_n_person = sum(safe_int(r.get("n_person"), 0) for r in records)
+
+    # Total of all confirmed headcounts
+    total_n_person_confirm = 0
+    for r in records:
+        val = r.get("n_person_confirm")
+        if isinstance(val, (int, float)):
+            total_n_person_confirm += int(val)
+        elif isinstance(val, str) and val.strip().startswith("["):
+            try:
+                parsed = eval(val)
+                if isinstance(parsed, list):
+                    total_n_person_confirm += sum(
+                        int(x[1]) for x in parsed
+                        if isinstance(x, list) and len(x) > 1 and str(x[1]).isdigit()
+                    )
+            except Exception as e:
+                print("Warning: Failed to parse n_person_confirm:", val, "Error:", e)
+
+    return render_template(
+        'profile.html',
+        images=image_files,
+        total_n_person=total_n_person,
+        total_n_person_confirm=total_n_person_confirm,
+        show_footer=True,
+        play_audio=True
+    )
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
