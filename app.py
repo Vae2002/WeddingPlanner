@@ -35,11 +35,17 @@ df = pd.read_csv(csv_url)
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # Construct credentials dict from environment variables
+
+private_key_vae = os.getenv("private_key")
+
+    # Properly format the private key
+formatted_key_vae = private_key_vae.replace('\\n', '\n')
+
 credentials_dict = {
     "type": os.getenv("type"),
     "project_id": os.getenv("project_id"),
     "private_key_id": os.getenv("private_key_id"),
-    "private_key": os.getenv("private_key"),
+    "private_key": formatted_key_vae,
     "client_email": os.getenv("client_email"),
     "client_id": os.getenv("client_id"),
     "auth_uri": os.getenv("auth_uri"),
@@ -210,8 +216,7 @@ def login_required(f):
 
 @app.route('/')
 def login_page():
-    return render_template('login.html')  # <-- add play_audio=True
-
+    return render_template('login.html') 
 
 @app.route('/login', methods=['POST'])
 def login():
