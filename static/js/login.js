@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('login-form');
-    const audio = document.getElementById('background-audio');
     const errorMsg = document.getElementById('error-msg');
 
     form.addEventListener('submit', async function(e) {
@@ -9,32 +8,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(form);
 
         try {
-            const response = await fetch('/login', { // <-- corrected endpoint
+            const response = await fetch('/login', {
                 method: 'POST',
                 body: formData
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            if (!response.ok) throw new Error('Network response was not ok');
 
             const data = await response.json();
 
             if (data.success) {
-                // ✅ Login successful
-
+                // ✅ Temporarily create and play audio to enable autoplay on next page
+                const tempAudio = new Audio('/static/audio/background_song.mp3');
+                tempAudio.loop = true;
                 try {
-                    if (audio) {
-                        // Attempt to preload and play audio right after form submit (user interaction)
-                        await audio.play();
-                        console.log("Audio started");
-                        localStorage.setItem('audioAllowed', 'true');
-                    }
+                    await tempAudio.play();
+                    console.log("Temp audio started to enable autoplay");
+                    localStorage.setItem('audioAllowed', 'true');
                 } catch (err) {
-                    console.warn("Audio play failed:", err);
+                    console.warn("Temp audio play failed:", err);
                 }
 
-                // Redirect after short delay
                 setTimeout(() => {
                     window.location.href = '/home';
                 }, 300);
