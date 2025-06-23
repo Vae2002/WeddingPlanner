@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cameraOffOverlay = document.getElementById('camera-off-overlay');
     const closeBtn = document.getElementById('close-call');
     const endCallBtn = document.getElementById('end-call');
-    const fromParam = new URLSearchParams(window.location.search).get('from') || 'messenger';
-    const returnURL = fromParam === 'home' ? '/home' : '/messenger';
+    const fromParam = new URLSearchParams(window.location.search).get('from') || 'rsvp';
+    const returnURL = fromParam === 'home' ? '/home' : '/rsvp';
 
     if (closeBtn) {
         closeBtn.addEventListener('click', (e) => {
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             stream.getVideoTracks()[0].addEventListener('ended', () => {
                 console.log('Camera stream ended.');
-                window.location.href = "/messenger";
+                window.location.href = "/RSVP";
             });
 
             currentStream = stream;

@@ -550,9 +550,9 @@ def get_all_wishes():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route('/messenger')
+@app.route('/rsvp')
 @login_required
-def messenger():
+def rsvp():
     sheet = get_sheet()
     records = sheet.get_all_records()
 
