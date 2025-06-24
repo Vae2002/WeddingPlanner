@@ -739,6 +739,13 @@ footer {
     border: 3px solid #bbb;
 }
 
+/* Modifier: medium version */
+.profile-medium {
+    width: 70px;
+    height: 70px;
+    border: 3px solid #bbb;
+}
+
 /* container to hold small profile pics stacked */
 .small-profiles {
     position: relative;
@@ -1453,15 +1460,52 @@ position: absolute;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 1rem;
+    padding: 0 4vw 1rem 4vw;
     max-height: 100%;
   }
+
+  .profile-header .text-info h1 {
+    font-size: 2rem; /* default for larger screens */
+}
+
+.profile-header .text-info h4 {
+    font-size: 1rem;
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 600px) {
+    .profile-header .text-info h1 {
+        font-size: 1.4rem;
+    }
+
+    .profile-header .text-info h4 {
+        font-size: 0.9rem;
+    }
+}
+
+.center-container .text-info h1 {
+    font-size: 2rem;
+}
+
+.center-container .text-info h3 {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 600px) {
+    .center-container .text-info h1 {
+        font-size: 1.2rem;
+    }
+
+    .center-container .text-info h3 {
+        font-size: 0.9rem;
+    }
+}
 
   .chat-box {
     flex-grow: 1;
     overflow-y: auto;
     /* background: #f9f9f9; */
-    padding: 1rem;
+    padding: 0 0.5rem;
     /* border: 1px solid #ccc; */
     border-radius: 12px;
     margin-bottom: 0.75rem;
@@ -1473,7 +1517,7 @@ position: absolute;
     margin: 0.5rem 0;
     padding: 0.6rem 1rem;
     border-radius: 20px;
-    max-width: 80%;
+    max-width: 90%;
     word-wrap: break-word;
   }
 
@@ -1488,20 +1532,27 @@ position: absolute;
     text-align: right;
   }
 
-  .input-area {
+ .input-area {
     position: fixed;
     bottom: 3rem;
-    left: 5rem;
-    width: 90%;
+    left: 0;
+    right: 0;
+    padding: 0 1rem;
     display: flex;
     gap: 0.5rem;
-  }
+    align-items: flex-end;
+    background: #fff;
+}
 
-  .input-area input {
+  .input-area textarea {
     flex: 1;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 8px;
+    font-size: 16px;
+    resize: none;
+    min-height: 40px;
+    box-sizing: border-box;
   }
 
   .input-area button {

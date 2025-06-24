@@ -24,6 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatBox = document.getElementById('chat-box');
   const nameInput = document.getElementById('name-input');
   const answerInput = document.getElementById('answer-input');
+  // Auto-resize the textarea when typing
+  answerInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+  });
+
   const submitBtn = document.getElementById('submit-answer');
   const submitCounterBtn = document.getElementById('submit-counter');
   const buttonAnswers = document.getElementById('button-answers');
@@ -292,7 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
     [nameInput, answerInput, submitBtn, noThanksBtn, buttonAnswers, counterControls].forEach(
       el => el.style.display = 'none'
     );
+    answerInput.style.height = 'auto';  // reset height when hiding
   }
+
 
   function disableInputs() {
     [nameInput, answerInput, submitBtn, noThanksBtn, submitCounterBtn].forEach(

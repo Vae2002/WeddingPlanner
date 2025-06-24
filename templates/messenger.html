@@ -40,7 +40,7 @@
 <body>
   <br><br><br>
   <div class="center-container">
-      <a class="profile-link profile-large">
+      <a class="profile-link profile-medium">
           <img src="{{ url_for('static', filename='images/profile.jpeg') }}" alt="Profile">
       </a>
       <div class="text-info">
@@ -61,13 +61,13 @@
 
     <div id="chat-box" class="chat-box"></div>
 
-    <div class="input-area" style="display: flex; align-items: center; gap: 8px;">
+    <div class="input-area" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
       <!-- Name input for question[0] -->
       <input type="text" id="name-input" placeholder="Please enter your name" style="display: none;" />
       <div id="name-warning" class="warning" style="color: red; display: none;"></div>
 
       <button id="no-thanks-btn" style="display: none;">No, thank you.</button>
-      <input type="text" id="answer-input" placeholder="Type your answer..." style="display: none;" />
+      <textarea id="answer-input" placeholder="Type your answer..." style="display: none;"></textarea>
       <button id="submit-answer" style="display: none;">Send</button>
 
       <div id="counter-controls" style="display: none; flex-direction: row; align-items: center; gap: 8px; margin-left: 10px;">
