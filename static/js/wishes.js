@@ -19,6 +19,7 @@ const contrastingBackgrounds = [
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
+  Loader.open();
   fetch('/get-all-wishes')
     .then(response => response.json())
     .then(data => {
@@ -60,5 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(err => {
       console.error('Error fetching wishes:', err);
+    })
+    .finally(() => {
+      Loader.close(); 
     });
 });

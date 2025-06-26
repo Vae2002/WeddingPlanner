@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 setTimeout(() => {
                     window.location.href = '/home';
-                }, 300);
+                }, 100);
             } else {
                 errorMsg.textContent = data.error || 'Login failed';
             }

@@ -26,11 +26,12 @@
                 <li>
                     <a href="{{ url_for('home') }}" title="Home" class="icon-link">
                         <!-- Home Icon (simple house) -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor"
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linejoin="round" stroke-linecap="round" viewBox="0 0 24 24">
                             <path
                                 d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
-                        </svg>
+                        </svg> -->
+                        <ion-icon name="home-outline"></ion-icon>
                     </a>
                 </li>
                 <li>
@@ -90,8 +91,9 @@
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-
-    {% block scripts %}{% endblock %}
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+ {% block scripts %}{% endblock %}
 </body>
 
 </html>

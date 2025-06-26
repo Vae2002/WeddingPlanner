@@ -79,6 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   async function initChat() {
+    Loader.open();
+
     try {
       const res = await fetch('/get-user-info');
       const data = await res.json();
@@ -128,9 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.error('Init error:', err);
       currentQuestion = 1;
-    }
-
-    askNextQuestion();
+    }finally {
+    Loader.close(); // ✅ Always called, even if returned early
+    if (!stopAsking) askNextQuestion();
+   }
   }
 
   function appendMessage(text, type) {
