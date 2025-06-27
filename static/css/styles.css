@@ -339,8 +339,8 @@ p, h1, h2, h3 {
 
 .RSVP-btn {
   display: inline-block;
-  padding: 0.5rem 1rem;
-  font-size: 0.6rem;
+  padding: 0.75rem 1.2rem;
+  font-size: 0.8rem;
   font-weight: bold;
   color: white;
   background: linear-gradient(135deg, #c8a2c8, #f5c6ec); /* lavender to blush pink */
@@ -362,10 +362,28 @@ p, h1, h2, h3 {
   transform: scale(0.98);
 }
 
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-wish-button {
+  color: white;              /* override text */
+  font-weight: bold;         /* custom style */
+}
+
 .WISHES-btn {
   display: inline-block;
-  padding: 0.5rem 1rem;
-  font-size: 0.6rem;
+  padding: 0.75rem 1.2rem;
+  font-size: 0.8rem;
   font-weight: bold;
   color: rgb(110, 110, 110);
   background: linear-gradient(135deg, #c8ddee, #e3f0fa); 
@@ -976,7 +994,7 @@ h1, h2, h3, h4, h5, h6 {
  display: grid;
   grid-template-columns: repeat(3, 1fr); /* Always 3 equal columns */
   gap: 5px;
-  padding: 5px;
+  /* padding: 5px; */
   width: 100%;
   border-radius: 20px;
   /* box-sizing: border-box; */
@@ -995,7 +1013,7 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: repeat(2, minmax(150px, 1fr));
   gap: 2px;
   column-gap: 1em;
-  padding: 1em;
+  /* padding: 1em; */
   max-width: 1200px;
   margin: auto;
 }
@@ -1639,11 +1657,11 @@ position: absolute;
 }
 
 .carousel-btn.prev {
-  left: 10px;
+  left: -25px;
 }
 
 .carousel-btn.next {
-  right: 10px;
+  right: -25px;
 }
 
 .carousel-dots {

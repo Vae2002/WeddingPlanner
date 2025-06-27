@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div style="display: flex; align-items: center; gap: 10px;">
-  <a href="{{ url_for('home') }}" class="close-button" style="font-size:24px; text-decoration:none; color:black;">&lt;</a>
-  <h2 style="margin: 0 0 0 30px;">laststeftoeunity</h2>
+<div class="header-bar">
+  <div class="header-left">
+    <a href="{{ url_for('home') }}" class="close-button">&lt;</a>
+    <h2>laststeftoeunity</h2>
+  </div>
+  <div class="add-wish-button">
+    <a href="{{ url_for('rsvp') }}" class="RSVP-btn add-wish-button">Add Wish</a>
+  </div>
 </div>
 
 
