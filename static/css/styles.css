@@ -322,19 +322,21 @@ p, h1, h2, h3 {
 .RSVP-Segment {
   position: relative;
   width: 100%;
-  aspect-ratio: 40 / 22; /* Optional: keeps it proportional */
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 .RSVP-content {
   position: relative;
   z-index: 1;
   padding: 2rem;
   width: 100%;
+  padding-top: 6rem;
 }
 
 .RSVP-btn {
@@ -1597,6 +1599,7 @@ position: absolute;
     flex-direction: column;
     align-items: left;
     overflow:visible;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); */
 }
 
 .image-carousel {
