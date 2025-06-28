@@ -46,7 +46,7 @@
                     <div class="image-wrapper">
                         <img src="{{ url_for('static', filename=img.url) }}" alt="Post" class="grid-image">
                         <a href="{{ url_for('static', filename=img.url) }}" class="download-hover-button"
-                            data-src="{{ url_for('static', filename=img.url) }}">⭳</a>
+                            data-src="{{ url_for('static', filename=img.url) }}"><ion-icon name="cloud-download-outline"></ion-icon></a>
                     </div>
                 </div>
                 {% endfor %}
@@ -61,7 +61,7 @@
                 <span class="modal-prev">&#10094;</span>
                 <span class="modal-next">&#10095;</span>
                 <img class="modal-content" id="modalImage">
-                <a id="downloadBtn" href="#" download class="download-button">Download</a>
+                <a id="downloadBtn" href="#" download class="download-button"><ion-icon name="cloud-download-outline"></ion-icon></a>
             </div>
         </div>
 
@@ -69,5 +69,7 @@
 </body>
 
 <script src="{{ url_for('static', filename='js/photogrid.js') }}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
 {% endblock %}

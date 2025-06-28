@@ -1397,6 +1397,9 @@ position: absolute;
     font-weight: bold;
     cursor: pointer;
     z-index: 1001;
+    border-radius: 100px;
+    background-color: rgba(0, 0, 0, 0.3);
+
 }
 
 
