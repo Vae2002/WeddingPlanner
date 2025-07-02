@@ -367,14 +367,19 @@ def barcode_route():
 
     username = session['username']
     user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
-    barcode_value = user_df.iloc[0].get('barcode', '')
-    # n_person_confirm = user_df.iloc[0].get('n_person_confirm', '')
+    raw_value = user_df.iloc[0].get('barcode', '')
 
-    if not barcode_value:
+    if not raw_value:
         return "No barcode value found", 404
 
+    # CLEAN the barcode value (remove .0 if it's a float)
+    if isinstance(raw_value, float):
+        barcode_value = str(int(raw_value))  # Removes .0
+    else:
+        barcode_value = str(raw_value).split('.')[0] if str(raw_value).endswith('.0') else str(raw_value)
+
     # Generate barcode
-    ean = barcode.get('code128', str(barcode_value), writer=ImageWriter())
+    ean = barcode.get('code128', barcode_value, writer=ImageWriter())
     buffer = io.BytesIO()
     ean.write(buffer)
     buffer.seek(0)
