@@ -286,3 +286,44 @@ window.addEventListener("DOMContentLoaded", () => {
   window.closeQRModal = closeQRModal; 
 
 });
+
+function openBarcodeModal() {
+  const barcodeImage = document.getElementById("barcodeImage");
+  const barcodeUsername = document.getElementById("barcodeUsername");
+  const guestCount = document.getElementById("guestCount");
+  const kodeAngpao = document.getElementById("kodeAngpao");
+
+  // Set barcode image (cache bust)
+  barcodeImage.src = "/barcode?" + new Date().getTime();
+
+  // Get username from H1 greeting
+  const helloText = document.querySelector("h1")?.textContent || "";
+  const username = helloText.replace("Hello", "").replace("!", "").trim();
+  barcodeUsername.textContent = username;
+
+  // Fetch user info
+  fetch("/get-user-info")
+    .then(response => response.json())
+    .then(data => {
+      const count = data.n_person_confirm ?? 0;
+      guestCount.textContent = `Jumlah Tamu: ${count}`;
+
+      const kode = data.kode_angpao ?? "-";
+      kodeAngpao.innerHTML = `Kode Angpao: <strong>${kode}</strong>`;
+    })
+    .catch(err => {
+      guestCount.textContent = "Jumlah Tamu: -";
+      kodeAngpao.innerHTML = `Kode Angpao: <strong>-</strong>`;
+      console.error("Failed to fetch user info:", err);
+    });
+
+  document.getElementById("barcodeModal").style.display = "block";
+}
+
+function closeBarcodeModal() {
+    document.getElementById("barcodeModal").style.display = "none";
+}
+
+// Attach event listener
+document.getElementById("showBarcodeBtn").addEventListener("click", openBarcodeModal);
+

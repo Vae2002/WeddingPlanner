@@ -312,6 +312,7 @@ def get_user_info():
                     "n_person_confirm": n_person_confirm,
                     "wishes": wishes,
                     "is_filled": is_filled,
+                    "kode_angpao": record.get('kode_angpao'),
                     "is_scanned": is_scanned
                 })
 
@@ -353,6 +354,32 @@ def home():
     print("Images galery sent to template:", image_files)
 
     return render_template('home.html',user=user_data ,images=image_files ,show_footer = True, play_audio = True)
+
+import barcode
+from barcode.writer import ImageWriter
+from flask import send_file
+
+@app.route('/barcode')
+@login_required
+def barcode_route():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
+    barcode_value = user_df.iloc[0].get('barcode', '')
+    # n_person_confirm = user_df.iloc[0].get('n_person_confirm', '')
+
+    if not barcode_value:
+        return "No barcode value found", 404
+
+    # Generate barcode
+    ean = barcode.get('code128', str(barcode_value), writer=ImageWriter())
+    buffer = io.BytesIO()
+    ean.write(buffer)
+    buffer.seek(0)
+
+    return send_file(buffer, mimetype='image/png')
 
 # untuk trigger loading screen
 @app.route('/search-start')

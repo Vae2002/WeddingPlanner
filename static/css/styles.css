@@ -1927,3 +1927,50 @@ position: absolute;
   font-size: 16px;
   cursor: pointer;
 }
+
+.modal-image-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.barcode-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    max-width: 80%;
+}
+
+.barcode-username {
+    color: black;
+    font-size: 2.6rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.barcode-img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+}
+
+.barcode-guest-count {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.barcode-angpao {
+  margin-top: 20px;
+  font-size: 1.8rem;     /* Increased from 1.2rem */
+  font-weight: bold;
+  color: #000;
+}
+
+.barcode-angpao strong {
+  font-weight: bold;
+  color: #000;
+}
