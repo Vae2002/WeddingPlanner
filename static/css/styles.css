@@ -407,6 +407,14 @@ p, h1, h2, h3 {
   transform: scale(0.98);
 }
 
+.zoom-button-wrapper {
+    position: absolute;
+    bottom: 170px;  /* Adjust as needed */
+    left: 50%;
+    transform: translateX(-50%); 
+    z-index: 1000;
+}
+
 @media (min-width: 750px) {
   .RSVP-btn,
   .WISHES-btn {
@@ -1602,6 +1610,7 @@ position: absolute;
     flex-direction: column;
     align-items: left;
     overflow:visible;
+    position: relative;
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); */
 }
 
