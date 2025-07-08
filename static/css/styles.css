@@ -409,7 +409,7 @@ p, h1, h2, h3 {
 
 .zoom-button-wrapper {
     position: absolute;
-    bottom: 170px;  /* Adjust as needed */
+    bottom: 20%;  
     left: 50%;
     transform: translateX(-50%); 
     z-index: 1000;
