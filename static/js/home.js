@@ -158,7 +158,6 @@ window.addEventListener("DOMContentLoaded", () => {
     autoplayTimer = setInterval(goToNextSlide, autoplayIntervalMs);
   });
 
-  // The rest of your code remains unchanged:
 
   // Days left logic
   const targetDate = new Date("2025-09-06");
@@ -305,15 +304,15 @@ function openBarcodeModal() {
   fetch("/get-user-info")
     .then(response => response.json())
     .then(data => {
+      console.log("Received user info:", data);
       const count = data.n_person_confirm ?? 0;
       guestCount.textContent = `Jumlah Tamu: ${count}`;
 
-      const kode = data.kode_angpao ?? "-";
-      kodeAngpao.innerHTML = `Kode Angpao: <strong>${kode}</strong>`;
+      // const kode = data.kode_angpao ?? "-";
+      // kodeAngpao.innerHTML = `Kode Angpao: <strong>${kode}</strong>`;
     })
     .catch(err => {
       guestCount.textContent = "Jumlah Tamu: -";
-      kodeAngpao.innerHTML = `Kode Angpao: <strong>-</strong>`;
       console.error("Failed to fetch user info:", err);
     });
 

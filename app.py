@@ -340,20 +340,29 @@ def home():
         return redirect(url_for('login'))
     
     username = session['username']
-    user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
+    
+    sheet = get_sheet()
+    records = sheet.get_all_records()
+    df = pd.DataFrame(records)
+    
+    user_df = df[df['username'].str.strip().str.lower() == username.strip().lower()]
     user_data = user_df.iloc[0].to_dict() if not user_df.empty else {}
-
+    has_confirm = (
+        not user_df.empty and
+        str(user_df.iloc[0].get('n_person_confirm', '0')).isdigit() and
+        int(user_df.iloc[0]['n_person_confirm']) > 0
+    )
     image_folder = os.path.join('static', 'images', 'galery')
   
     image_files = [
     os.path.join(file)
     for file in os.listdir(image_folder)
     if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
-    ][:4]  # <-- only take the first 6
+    ][:4]  
       # Debugging output
     print("Images galery sent to template:", image_files)
 
-    return render_template('home.html',user=user_data ,images=image_files ,show_footer = True, play_audio = True)
+    return render_template('home.html',user=user_data ,images=image_files , has_confirm=has_confirm, show_footer = True, play_audio = True)
 
 import barcode
 from barcode.writer import ImageWriter
@@ -362,21 +371,29 @@ from flask import send_file
 @app.route('/barcode')
 @login_required
 def barcode_route():
-    if 'username' not in session:
-        return redirect(url_for('login'))
+    # if 'username' not in session:
+    #     return redirect(url_for('login'))
 
     username = session['username']
-    user_df = pd.read_sql("SELECT * FROM guest_database WHERE username = ?", con=engine, params=(username,))
-    raw_value = user_df.iloc[0].get('barcode', '')
+    user_df = pd.read_sql(
+        "SELECT * FROM guest_database WHERE username = ?",
+        con=engine,
+        params=(username,)
+    )
 
-    if not raw_value:
+    if user_df.empty:
+        return "User not found in database", 404
+
+    raw_value = user_df.iloc[0].get('barcode')
+
+    if pd.isna(raw_value) or raw_value == '':
         return "No barcode value found", 404
 
-    # CLEAN the barcode value (remove .0 if it's a float)
-    if isinstance(raw_value, float):
-        barcode_value = str(int(raw_value))  # Removes .0
-    else:
-        barcode_value = str(raw_value).split('.')[0] if str(raw_value).endswith('.0') else str(raw_value)
+    # Normalize barcode value
+    try:
+        barcode_value = str(int(float(raw_value)))  # Removes ".0" and handles float inputs
+    except (ValueError, TypeError):
+        barcode_value = str(raw_value).strip()
 
     # Generate barcode
     ean = barcode.get('code128', barcode_value, writer=ImageWriter())

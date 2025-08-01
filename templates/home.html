@@ -29,23 +29,26 @@
         Hello {{ user.username }}!
     </h1>
 
+
     <!-- Show Barcode Button -->
+{% if has_confirm %}
     <div style="text-align: center; margin-top: 1rem;">
         <button id="showBarcodeBtn" class="calendar-btn">Show Barcode</button>
     </div>
+{% endif %}
 
     <!-- Barcode Modal -->
     <div id="barcodeModal" class="modal" onclick="closeBarcodeModal()">
-    <div class="modal-image-wrapper" onclick="event.stopPropagation()">
-        <span class="modal-close" onclick="closeBarcodeModal()">&times;</span>
+        <div class="modal-image-wrapper" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeBarcodeModal()">&times;</span>
 
-        <div class="barcode-container">
-        <p id="barcodeUsername" class="barcode-username"></p>
-        <img id="barcodeImage" class="barcode-img" alt="User Barcode">
-        <!-- <p id="kodeAngpao" class="barcode-angpao"></p>  -->
-        <!-- <p id="guestCount" class="barcode-guest-count"></p> -->
+            <div class="barcode-container">
+                <p id="barcodeUsername" class="barcode-username"></p>
+                <img id="barcodeImage" class="barcode-img" alt="User Barcode">
+                <!-- <p id="kodeAngpao" class="barcode-angpao"></p>  -->
+                <p id="guestCount" class="barcode-guest-count"></p>
+            </div>
         </div>
-    </div>
     </div>
 
     <!-- ==== POST 1 ==== -->
