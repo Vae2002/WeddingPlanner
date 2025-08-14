@@ -218,16 +218,35 @@ def login_required(f):
 def login_page():
     return render_template('login.html') 
 
+import pandas as pd
+from flask import request, session, jsonify
+import re
+
+# Function to normalize unwanted phrases (like '& Partner' and '& Family')
+def normalize_username(username):
+    # Replace '& Partner' and '& Family' with 'and' (case insensitive)
+    username = re.sub(r'\s*&\s*(Partner|Family|Fam)', 'and', username, flags=re.IGNORECASE)
+    # Remove all special characters (if needed), handle spaces and make lowercase
+    username = re.sub(r'[^a-z0-9]', '', username.strip().lower())  # Only keep alphanumeric characters
+    return username
+
 @app.route('/login', methods=['POST'])
 def login():
-    # Normalize input: strip, lowercase, and remove internal spaces
+    # Get the input username and normalize it (lowercase, strip, remove spaces)
     input_username = request.form.get('username', '').strip().lower().replace(' ', '')
 
-    if input_username:
-        user_df = pd.read_sql("SELECT * FROM guest_database", con=engine)
-        user_df['normalized_username'] = user_df['username'].astype(str).str.strip().str.lower().str.replace(' ', '')
+    # Apply custom normalization to the input username
+    input_username = normalize_username(input_username)
 
-        match = user_df[user_df['normalized_username'] == input_username]
+    if input_username:
+        # Fetch users from the database
+        user_df = pd.read_sql("SELECT * FROM guest_database", con=engine)
+        
+        # Normalize the usernames from the database
+        user_df['normalized_username'] = user_df['username'].apply(normalize_username)
+
+        # Match the normalized input with the normalized usernames from the database
+        match = user_df[user_df['normalized_username'].str.contains(input_username, case=False)]
 
         if not match.empty:
             session['username'] = match.iloc[0]['username']
