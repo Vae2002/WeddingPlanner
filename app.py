@@ -220,12 +220,19 @@ def login_page():
 
 import re
 
-# Function to normalize unwanted phrases (like '& Partner' and '& Family')
+import re
+
+# Function to normalize unwanted phrases (like '& Partner', '& Family', and others)
 def normalize_username(username):
-    # Replace '& Partner' and '& Family' with 'and' (case insensitive)
+    # Replace '& Partner', '& Family', '& Fam' with 'and' (case insensitive)
     username = re.sub(r'\s*&\s*(Partner|Family|Fam)', 'and', username, flags=re.IGNORECASE)
-    # Remove all special characters (if needed), handle spaces and make lowercase
+    
+    # Remove 'Bapak', 'Ibu', 'Yth.', and 'Yth. Bapak'
+    username = re.sub(r'\b(Bapak|Ibu|Yth\.|Yth\. Bapak|Yth\. Ibu|Pastor|Ps\.|Dr\.|Mr\.|Mrs\.|Om|Tante|Oma|Opa|Kakak|Cici|Koko|Ci|Ko|Kak)\b', '', username, flags=re.IGNORECASE)
+    
+    # Remove all special characters, spaces, and make lowercase
     username = re.sub(r'[^a-z0-9]', '', username.strip().lower())  # Only keep alphanumeric characters
+    
     return username
 
 @app.route('/login', methods=['POST'])
