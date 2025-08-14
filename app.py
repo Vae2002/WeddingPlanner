@@ -218,8 +218,6 @@ def login_required(f):
 def login_page():
     return render_template('login.html') 
 
-import pandas as pd
-from flask import request, session, jsonify
 import re
 
 # Function to normalize unwanted phrases (like '& Partner' and '& Family')
