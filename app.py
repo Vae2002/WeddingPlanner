@@ -226,7 +226,7 @@ def normalize_username(username):
     username = re.sub(r'\s*&\s*(Partner|Family|Fam)', 'and', username, flags=re.IGNORECASE)
     
     # Remove common honorifics like 'Mr.', 'Mrs.', 'Dr.', 'Yth.', etc. (case insensitive)
-    username = re.sub(r'\b(Mr\.|Mrs\.|Ms\.|Dr\.|Yth\.|Yth\. Bapak|Yth\. Ibu|Bapak|Ibu|Pastor|Ps\.|Om|Tante|Oma|Opa|Kakak|Cici|Koko|Ci|Ko|Kak)\b', '', username, flags=re.IGNORECASE)
+    username = re.sub(r'\b(Mr\.|Mrs\.|Ms\.|Dr\.|Yth\.|Yth\. Bapak|Yth\. Ibu|Bapak|Ibu|Pastor|Ps\.|Om|Tante|Oma|Opa|Kakak|Apak|Susuk|Ci|Ko|Kak)\b', '', username, flags=re.IGNORECASE)
     
     # Remove all special characters, spaces, and make lowercase
     username = re.sub(r'[^a-z0-9]', '', username.strip().lower())  # Only keep alphanumeric characters
