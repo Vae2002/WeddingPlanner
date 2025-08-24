@@ -427,7 +427,7 @@ def barcode_route():
 
 # untuk trigger loading screen
 @app.route('/search-start')
-@login_required
+# @login_required
 def search_start():
     print("Debug: loadinggg....." , flush=True)
 
@@ -533,7 +533,7 @@ def map_view():
     return render_template('search.html', lat=latitude, lng=longitude, maps_url=maps_url)
 
 @app.route('/capture')
-@login_required
+# @login_required
 def capture():
     return render_template('capture.html', show_footer=False, play_audio = False)
 
