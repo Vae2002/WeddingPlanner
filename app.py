@@ -434,7 +434,7 @@ def search_start():
     return render_template('loading_search.html',show_footer = True)  # Shows loader + JS to trigger real download
 
 @app.route('/fetch-images')
-@login_required
+# @login_required
 def fetch_images():
     image_folder = os.path.join('static', 'images', 'explore')
     os.makedirs(image_folder, exist_ok=True)
@@ -462,7 +462,7 @@ def fetch_images():
 
 
 @app.route('/search')
-@login_required
+# @login_required
 def search():
     image_files = session.get('image_queue', [])
 
@@ -481,7 +481,7 @@ def search():
 
 
 @app.route('/load-more-images')
-@login_required
+# @login_required
 def load_more_images():
     page_token = session.get('next_page_token', None)
     image_folder = os.path.join('static', 'images', 'explore')
@@ -538,7 +538,7 @@ def capture():
     return render_template('capture.html', show_footer=False, play_audio = False)
 
 @app.route('/save-photo', methods=['POST'])
-@login_required
+# @login_required
 def save_photo():
     data = request.get_json()
     image_data = data['image']
@@ -561,7 +561,7 @@ def save_photo():
 
    
 @app.route('/delete-photo/<filename>', methods=['DELETE'])
-@login_required
+# @login_required
 def delete_photo(filename):
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     if os.path.exists(file_path):
