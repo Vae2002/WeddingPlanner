@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 import json
+import ast
 
 load_dotenv()
 
@@ -355,6 +356,39 @@ def get_user_info():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def has_confirm_value(x):
+    # case 1: already an int
+    if isinstance(x, int):
+        return x > 0
+
+    # case 2: list of lists (e.g. [[0, '1'], [1, '1'], ...])
+    if isinstance(x, list) and all(isinstance(i, list) for i in x):
+        try:
+            return any(int(i[1]) > 0 for i in x if len(i) > 1 and str(i[1]).isdigit())
+        except Exception:
+            return False
+
+    # case 3: single list like [0, '1']
+    if isinstance(x, list):
+        try:
+            return int(x[1]) > 0
+        except Exception:
+            return False
+
+    # case 4: string representation of a list or list-of-lists
+    if isinstance(x, str) and x.strip().startswith("["):
+        import ast
+        try:
+            parsed = ast.literal_eval(x)
+            return has_confirm_value(parsed)   # recursive check
+        except Exception:
+            return False
+
+    # fallback
+    return False
+
+
+
 @app.route('/home')
 @login_required
 def home():
@@ -370,10 +404,9 @@ def home():
     user_df = df[df['username'].str.strip().str.lower() == username.strip().lower()]
     user_data = user_df.iloc[0].to_dict() if not user_df.empty else {}
     has_confirm = (
-        not user_df.empty and
-        str(user_df.iloc[0].get('n_person_confirm', '0')).isdigit() and
-        int(user_df.iloc[0]['n_person_confirm']) > 0
+        not user_df.empty and user_df['n_person_confirm'].apply(has_confirm_value).any()
     )
+
     image_folder = os.path.join('static', 'images', 'galery')
   
     image_files = [
